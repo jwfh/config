@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/Users/jacobhouse/.oh-my-zsh
+export ZSH=/Users/jacobhouse/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -88,12 +88,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-
-alias jh00461='sshfs -o allow_other,defer_permissions jh00461@garfield.cs.mun.ca: ~/jh00461/'
-alias jwhouse='sshfs -o allow_other,defer_permissions jwhouse@ganymede.pcglabs.mun.ca: ~/jwhouse/'
-alias mnyc='sshfs -o allow_other,defer_permissions jacobh1@nyc1-01.jacobhouse.ca:/var/www ~/nyc'
-alias jacobh='mkdir ~/jacobh;mount_smbfs //jacobh@able.jacobhouse.ca/jacobh ~/jacobh'
-
 function pdfpextr()
 {
     # this function uses 3 arguments:
@@ -108,28 +102,14 @@ function pdfpextr()
        ${3}
 }
 
-alias mountprv='diskutil coreStorage unlockVolume CBB346A1-A66E-4C26-A001-36193EA29992;diskutil mount /dev/disk2'
 alias start_sage=''/Applications/SageMath-8.0.app/Contents/Resources/sage/sage' --notebook=sagenb'
 export MAGICK_HOME=/Users/jacobhouse/ImageMagick-7.0.7/
 export PATH="$MAGICK_HOME/bin:$PATH"
 export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 export PATH="/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/bin:$PATH:/usr/local/Cellar/inetutils/1.9.4_1/bin"
-function pdfppextr()
-{
-    # this function uses 3 arguments:
-    #     $1 is the first page of the range to extract
-    #     $2 is the last page of the range to extract
-    #     $3 is the input file
-    #     output file will be named "inputfile_pXX-pYY.pdf"
-    gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dAutoRotatePages=/None \
-       -dFirstPage=${1} \
-       -dLastPage=${2} \
-       -sOutputFile=${3%.pdf}_p${1}-p${2}.pdf \
-       ${3}
-}
 
-alias tolatex='cp ~/.latexmkrc.orig ~/.latexmkrc'
-alias totex='cp ~/.texmkrc ~/.latexmkrc'
+alias tolatex='cp ~/.texrc/.latexmkrc ~/.latexmkrc'
+alias totex='cp ~/.texrc/.texmkrc ~/.latexmkrc'
 alias kitty='cat'
 alias cols='sudo defaults write com.apple.finder AlwaysOpenInColumnView True'
 
@@ -146,9 +126,3 @@ alias nortondns1='sudo networksetup -setdnsservers Wi-Fi 199.85.126.10 199.85.12
 alias nortondns2='sudo networksetup -setdnsservers Wi-Fi 199.85.126.20 199.85.127.20;sudo killall -HUP mDNSResponder'
 alias nortondns3='sudo networksetup -setdnsservers Wi-Fi 199.85.126.30 199.85.127.30;sudo killall -HUP mDNSResponder'
 alias lockwifi='sudo airport prefs RequireAdminIBSS=YES RequireAdminPowerToggle=YES RequireAdminNetworkChange=YES'
-
-alias rm='echo "Use trash command or the full path, i.e., /bin/rm"'
-
-function trash() {
-	mv ${1} ~/.Trash/
-}
