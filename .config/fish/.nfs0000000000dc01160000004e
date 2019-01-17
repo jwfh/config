@@ -1,0 +1,493 @@
+- cmd: fish_config 
+  when: 1547034735
+- cmd: ssh garfield
+  when: 1547034921
+- cmd: omf install agnoster
+  when: 1547035000
+- cmd: cd Desktop/
+  when: 1547035008
+  paths:
+    - Desktop/
+- cmd: curl -L https://get.oh-my.fish | fish
+  when: 1547034970
+- cmd: echo '\\n\\n'
+  when: 1547167298
+- cmd: echo '^M'
+  when: 1547167304
+- cmd: echo
+  when: 1547167326
+- cmd: which echo
+  when: 1547484522
+- cmd: nm `which echo`
+  when: 1547484531
+- cmd: objdump --help
+  when: 1547484553
+- cmd: objdump -d (which echo) | lc 
+  when: 1547484581
+- cmd: lc
+  when: 1547484586
+- cmd: man lc
+  when: 1547484592
+- cmd: objdump -d (which echo) | wc
+  when: 1547484617
+- cmd: man wc
+  when: 1547484638
+- cmd: objdump -d (which echo) | wc -l
+  when: 1547484643
+- cmd: objdump -d (which echo)
+  when: 1547484650
+- cmd: nm (which echo)
+  when: 1547484665
+- cmd: man nm
+  when: 1547484671
+- cmd: cd Documents/engi8894/
+  when: 1547484679
+  paths:
+    - Documents/engi8894/
+- cmd: cd tutorial/c/
+  when: 1547484686
+  paths:
+    - tutorial/c/
+- cmd: nm tutorial 
+  when: 1547484694
+  paths:
+    - tutorial
+- cmd: nm main.o
+  when: 1547484704
+  paths:
+    - main.o
+- cmd: nm Course.o
+  when: 1547484714
+  paths:
+    - Course.o
+- cmd: strace 
+  when: 1547484752
+- cmd: strace echo "hello"
+  when: 1547484758
+- cmd: cd ../../
+  when: 1547484792
+  paths:
+    - ../../
+- cmd: mkdir lab
+  when: 1547484795
+- cmd: cd lab/
+  when: 1547484798
+  paths:
+    - lab/
+- cmd: md 1
+  when: 1547484800
+- cmd: mkdir 2
+  when: 1547484801
+- cmd: mkdir 1
+  when: 1547484804
+- cmd: rm -r 2
+  when: 1547484808
+  paths:
+    - 2
+- cmd: cd 1/
+  when: 1547484811
+  paths:
+    - 1/
+- cmd: strace echo "hello" > echo.1
+  when: 1547484831
+- cmd: strace echo "hello" > echo.2
+  when: 1547484833
+- cmd: main wdiff 
+  when: 1547484851
+- cmd: zsh
+  when: 1547484910
+- cmd: pwd
+  when: 1547484936
+- cmd: rm *echo.
+  when: 1547484940
+- cmd: rm echo*
+  when: 1547484947
+- cmd: strace --hel
+  when: 1547484989
+- cmd: man strace
+  when: 1547484996
+- cmd: strace --help
+  when: 1547485006
+- cmd: strace
+  when: 1547485009
+- cmd: strace echo "hello" -oecho.1
+  when: 1547485020
+- cmd: strace echo "hello" -o echo.1
+  when: 1547485025
+- cmd: man wdiff
+  when: 1547485099
+- cmd: diff echo.1 echo.2
+  when: 1547485118
+  paths:
+    - echo.1
+    - echo.2
+- cmd: vi echo.1 
+  when: 1547485190
+  paths:
+    - echo.1
+- cmd: colordiff -side-by-side echo.1 echo.2
+  when: 1547485450
+  paths:
+    - echo.1
+    - echo.2
+- cmd: colordiff --side-by-side echo.1 echo.2
+  when: 1547485454
+  paths:
+    - echo.1
+    - echo.2
+- cmd: colordiff --side-by-side --normal  echo.1 echo.2
+  when: 1547485477
+  paths:
+    - echo.1
+    - echo.2
+- cmd: colordiff --side-by-side --minimal   echo.1 echo.2
+  when: 1547485511
+  paths:
+    - echo.1
+    - echo.2
+- cmd: colordiff --brief 
+  when: 1547485578
+- cmd: sdiff -bBWs echo.1 echo.2
+  when: 1547485593
+  paths:
+    - echo.1
+    - echo.2
+- cmd: colordiff --side-by-side --minimal cat.1 cat.2 
+  when: 1547485650
+  paths:
+    - cat.1
+    - cat.2
+- cmd: colordiff --side-by-side --minimal cat.1 echo 1 
+  when: 1547485685
+  paths:
+    - cat.1
+- cmd: rm *
+  when: 1547485773
+- cmd: vi 
+  when: 1547486951
+- cmd: vi .zshrc 
+  when: 1547486965
+  paths:
+    - .zshrc
+- cmd: strace echo "hello" | tee echo.1
+  when: 1547487313
+- cmd: strace echo "hello" | tee echo.2
+  when: 1547487315
+- cmd: less echo.1 
+  when: 1547487366
+  paths:
+    - echo.1
+- cmd: strace -o echo.1 echo "hello"
+  when: 1547487389
+- cmd: strace -o echo.2 echo "hello"
+  when: 1547487394
+- cmd: wdiff echo.1 echo.2
+  when: 1547487472
+  paths:
+    - echo.1
+    - echo.2
+- cmd: wdiff --no-common echo.1 echo.2
+  when: 1547487500
+  paths:
+    - echo.1
+    - echo.2
+- cmd: wdiff --no-common echo.1 echo.2 | tee echo.diff
+  when: 1547487589
+  paths:
+    - echo.1
+    - echo.2
+- cmd: less echo.diff 
+  when: 1547487593
+  paths:
+    - echo.diff
+- cmd: man 1 man
+  when: 1547487926
+- cmd: strace -o cat.2 cat /etc/fstab 
+  when: 1547488048
+  paths:
+    - /etc/fstab
+- cmd: strace -o cat.1 cat /etc/fstab 
+  when: 1547488054
+  paths:
+    - /etc/fstab
+- cmd: wdiff --no-common echo.1 cat.1 
+  when: 1547488085
+  paths:
+    - echo.1
+    - cat.1
+- cmd: colordiff --help
+  when: 1547488165
+- cmd: colordiff --side-by-side --minimal cat.1 echo.1
+  when: 1547488442
+  paths:
+    - cat.1
+    - echo.1
+- cmd: clang stuff.s
+  when: 1547488662
+  paths:
+    - stuff.s
+- cmd: clang -o stuff.o stuff.s 
+  when: 1547488698
+  paths:
+    - stuff.s
+- cmd: less stuff.s 
+  when: 1547488713
+  paths:
+    - stuff.s
+- cmd: man clang
+  when: 1547488834
+- cmd: wget https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/main.c
+  when: 1547488870
+- cmd: clang -S main.c -o test
+  when: 1547488899
+  paths:
+    - main.c
+- cmd: cat test
+  when: 1547488904
+  paths:
+    - test
+- cmd: rm test
+  when: 1547488913
+  paths:
+    - test
+- cmd: ls
+  when: 1547489833
+- cmd: cat stuff.s
+  when: 1547489847
+  paths:
+    - stuff.s
+- cmd: man 3 int
+  when: 1547490183
+- cmd: man 2 int
+  when: 1547490186
+- cmd: man 1 int 
+  when: 1547490189
+- cmd: locate unistd_64.h
+  when: 1547490429
+- cmd: uname -m
+  when: 1547490434
+- cmd: uname -r
+  when: 1547490449
+- cmd: less /usr/src/linux-headers-4.4.0-128-generic/arch/x86/include/generated/uapi/asm/unistd_64.h
+  when: 1547490460
+  paths:
+    - /usr/src/linux-headers-4.4.0-128-generic/arch/x86/include/generated/uapi/asm/unistd_64.h
+- cmd: cat /usr/src/linux-headers-4.4.0-128-generic/arch/x86/include/generated/uapi/asm/unistd_64.h | grep -n write
+  when: 1547490480
+  paths:
+    - /usr/src/linux-headers-4.4.0-128-generic/arch/x86/include/generated/uapi/asm/unistd_64.h
+- cmd: man 2 write 
+  when: 1547490521
+- cmd: vi stuff.s 
+  when: 1547491052
+  paths:
+    - stuff.s
+- cmd: chmod +x stuff.o 
+  when: 1547491216
+  paths:
+    - stuff.o
+- cmd: ./stuff.o
+  when: 1547491218
+- cmd: clang stuff.o stuff 
+  when: 1547491228
+  paths:
+    - stuff.o
+- cmd: less stuff.o 
+  when: 1547491248
+  paths:
+    - stuff.o
+- cmd: less stuff.os
+  when: 1547491251
+- cmd: objdump -d stuff.o 
+  when: 1547491270
+  paths:
+    - stuff.o
+- cmd: wget --no-check-certificate https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/main.c
+  when: 1547491337
+- cmd: rm main.c.1
+  when: 1547491342
+  paths:
+    - main.c.1
+- cmd: wget --no-check-certificate https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/Makefile
+  when: 1547491350
+- cmd: less Makefile 
+  when: 1547491404
+  paths:
+    - Makefile
+- cmd: less main.c
+  when: 1547491410
+  paths:
+    - main.c
+- cmd: ./syscalls test
+  when: 1547491472
+- cmd: man grep
+  when: 1547491501
+- cmd: objdump -d syscalls | grep -A 5
+  when: 1547491529
+  paths:
+    - syscalls
+- cmd: objdump -d syscalls | grep -A
+  when: 1547491531
+  paths:
+    - syscalls
+- cmd: objdump -d syscalls | grep -A stuff.o
+  when: 1547491723
+  paths:
+    - syscalls
+    - stuff.o
+- cmd: objdump -d syscalls | grep -A stuff.o 
+  when: 1547491730
+  paths:
+    - syscalls
+    - stuff.o
+- cmd: objdump -d syscall
+  when: 1547491737
+- cmd: vi main.c
+  when: 1547491798
+  paths:
+    - main.c
+- cmd: nm stuff.o 
+  when: 1547491966
+  paths:
+    - stuff.o
+- cmd: whoami 
+  when: 1547492223
+- cmd: cd
+  when: 1547492225
+- cmd: clang stuff.o -o stuff 
+  when: 1547492387
+  paths:
+    - stuff.o
+- cmd: wget --no-check-certificate https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/stuff.s
+  when: 1547492413
+- cmd: wget --no-check-certificate https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/stuff.s -o stuff.s
+  when: 1547492420
+  paths:
+    - stuff.s
+- cmd: rm *.o
+  when: 1547492429
+- cmd: rm stuff.s.2 
+  when: 1547492443
+  paths:
+    - stuff.s.2
+- cmd: wget -o stuff.s --no-check-certificate https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/stuff.s
+  when: 1547492458
+  paths:
+    - stuff.s
+- cmd: l
+  when: 1547492467
+- cmd: less stuff.s
+  when: 1547492474
+  paths:
+    - stuff.s
+- cmd: wget -O stuff.s --no-check-certificate https://www.engr.mun.ca/~anderson/teaching/8894/lab/1/stuff.s
+  when: 1547492490
+  paths:
+    - stuff.s
+- cmd: rm stuff.s.1 
+  when: 1547492494
+  paths:
+    - stuff.s.1
+- cmd: ./syscalls
+  when: 1547492504
+- cmd: finger aaodeh
+  when: 1547492992
+- cmd: cd Documents/engi8894/lab/1/
+  when: 1547493277
+  paths:
+    - Documents/engi8894/lab/1/
+- cmd: vi Makefile 
+  when: 1547493282
+  paths:
+    - Makefile
+- cmd: strace -o strace.txt ./syscalls 
+  when: 1547493315
+  paths:
+    - ./syscalls
+- cmd: objdump -d syscalls | less
+  when: 1547492539
+  paths:
+    - syscalls
+- cmd: less strace.txt 
+  when: 1547493320
+  paths:
+    - strace.txt
+- cmd: vi stuff.s
+  when: 1547493384
+  paths:
+    - stuff.s
+- cmd: nm syscalls 
+  when: 1547493596
+  paths:
+    - syscalls
+- cmd: rm strace.txt 
+  when: 1547493700
+  paths:
+    - strace.txt
+- cmd: colordiff --side-by-side --minimal syscalls.trace echo.1 
+  when: 1547493841
+  paths:
+    - syscalls.trace
+    - echo.1
+- cmd: rm stuff.o
+  when: 1547494374
+  paths:
+    - stuff.o
+- cmd: clang -c stuff.s -o stuff.o
+  when: 1547494406
+  paths:
+    - stuff.s
+- cmd: rm main.o
+  when: 1547494412
+  paths:
+    - main.o
+- cmd: make
+  when: 1547494413
+- cmd: strace -o syscalls.trace ./syscalls 
+  when: 1547494420
+  paths:
+    - ./syscalls
+- cmd: ll
+  when: 1547494422
+- cmd: colordiff --side-by-side --minimal echo.1 syscalls.trace 
+  when: 1547494428
+  paths:
+    - echo.1
+    - syscalls.trace
+- cmd: lldb 
+  when: 1547494446
+- cmd: man svn
+  when: 1547494601
+- cmd: objdump -d syscalls 
+  when: 1547494814
+  paths:
+    - syscalls
+- cmd: lldb-4.0 ./syscalls
+  when: 1547494896
+  paths:
+    - ./syscalls
+- cmd: strace -o syscalls.txt syscalls 
+  when: 1547495976
+  paths:
+    - syscalls
+- cmd: strace -o syscalls.txt ./syscalls 
+  when: 1547495980
+  paths:
+    - syscalls.txt
+    - ./syscalls
+- cmd: less stuff.s
+  when: 1547496401
+  paths:
+    - stuff.s
+- cmd: ll
+  when: 1547496752
+- cmd: mv echo.diff echo-cat.diff
+  when: 1547496787
+  paths:
+    - echo.diff
+- cmd: ll
+  when: 1547496788
+- cmd: cp stuff.s modified.s
+  when: 1547496934
+  paths:
+    - stuff.s
