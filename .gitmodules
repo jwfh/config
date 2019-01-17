@@ -64,3 +64,6 @@
 [submodule ".vim/bundle/vim-surround"]
 	path = .vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround
+[submodule ".omz-addons/xxf"]
+	path = .omz-addons/xxf
+	url = https://github.com/xfanwu/oh-my-zsh-custom-xxf
