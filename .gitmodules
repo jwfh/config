@@ -67,3 +67,6 @@
 [submodule ".oh-my-zsh-addons/xxf"]
 	path = .oh-my-zsh-addons/xxf
 	url = https://github.com/xfanwu/oh-my-zsh-custom-xxf
+[submodule "images/loginwindowbgconverter"]
+	path = images/loginwindowbgconverter
+	url = https://github.com/SilverWolf32/loginwindowbgconverter
