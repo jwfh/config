@@ -240,8 +240,30 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 
 # Install the things that Apple didn't
 brew install dot
-brew install htop
 brew install trombonehero/homebrew-grading/libgrading
+
+# Install htop
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL "https://hisham.hm/htop/releases/2.2.0/htop-2.2.0.tar.gz"
+tar -xvf htop-2.2.0.tar.gz
+cd htop-2.2.0
+./configure
+make
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Install cd to
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL https://github.com/jbtule/cdto/releases/download/2_6_0/cdto_2_6.zip
+unzip cdto_2_6.zip
+cd cdto_2_6
+cp -R iterm/cd\ to.app/ "/Applications/cd to (iTerm).app/"
+cp -R terminal/cd\ to.app/ "/Applications/cd to (Terminal).app/"
+cd "$HOME"
+rm -rf "$TMPA"
 
 # Instal Fish, the friendly interactive shell
 TMPA=$(mktemp -d)
