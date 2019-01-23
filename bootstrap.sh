@@ -19,6 +19,21 @@ xcode-select --install &
 exit 1
 fi
 
+# Install cmake
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3.tar.gz
+tar -xzvf cmake-3.13.3.tar.gz
+cd cmake-3.13.3
+./bootstrap
+make
+make install
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Clone the dotfiles repository
+git clone --recurse https://github.com/jwfh/dotfiles "$HOME/.dotfiles"
+
 # Install OpenSSL from source
 TMPA=$(mktemp -d)
 cd "$TMPA"
@@ -113,6 +128,7 @@ brew install dot
 brew install doxygen
 brew install htop
 brew install golang
+brew install trombonehero/homebrew-grading/libgrading
 
 # Use MacApps to install a number of useful applications
 curl -s 'https://macapps.link/en/firefox' | sh
