@@ -22,7 +22,7 @@ sudo nvram SystemAudioVolume=" "
 
 # Check if Xcode command line tools are installed.
 # If not, the user needs to install it manually. Apple has made scripting this impossible.
-xcode-select -p > /dev/null
+gcc --version > /dev/null
 if [ $? -ne 0 ]; then
 echo << EndOfMessage
 Xcode Command Line tools not installed.
