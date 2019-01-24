@@ -8,6 +8,7 @@ nnoremap <silent> <C-n> :set relativenumber!<cr>
 set background=dark
 " colorscheme solarized
 colorscheme gruvbox
+set mouse=nicr
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
