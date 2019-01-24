@@ -6,8 +6,8 @@ set number relativenumber
 nnoremap <silent> <C-n> :set relativenumber!<cr>
 
 set background=dark
-colorscheme solarized
-" colorscheme gruvbox
+" colorscheme solarized
+colorscheme gruvbox
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
