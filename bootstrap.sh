@@ -38,7 +38,7 @@ fi
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL "https://github.com/fxcoudert/gfortran-for-macOS/releases/download/8.2/gfortran-8.2-Mojave.dmg"
-hdiuril mount -nobrowse gfortran-8.2-Mojave.dmg -mountpoint "/Volumes/gfortran-8.2-Mojave"
+hdiutil mount -nobrowse gfortran-8.2-Mojave.dmg -mountpoint "/Volumes/gfortran-8.2-Mojave"
 cd "/Volumes/gfortran-8.2-Mojave/gfortran-8.2-Mojave"
 sudo installer -verbose -pkg gfortran.pkg -target /
 cd "$HOME"
