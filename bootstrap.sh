@@ -62,7 +62,7 @@ cd "$TMPA"
 curl -OL "https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3-Darwin-x86_64.dmg"
 hdiutil mount -nobrowse cmake-3.13.3-Darwin-x86_64.dmg -mountpoint /Volumes/cmake-3.13.3-Darwin-x86_64
 cp -rv /Volumes/cmake-3.13.3-Darwin-x86_64/CMake.app/ /Applications/CMake.app/
-sudo /Applications/CMake.app/Conents/bin/cmake-gui --install
+sudo /Applications/CMake.app/Contents/bin/cmake-gui --install
 diskutil umount /Volumes/cmake-3.13.3-Darwin-x86_64
 cd "$HOME"
 rm -rf "$TMPA"
@@ -108,6 +108,13 @@ osascript -e "tell application \"Finder\" to set desktop picture to POSIX file \
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -L "https://pilotfiber.dl.sourceforge.net/project/lzmautils/xz-5.2.4.tar.gz" -o "xz-5.2.4.tar.gz"
+tar -xvf "xz-5.2.4.tar.gz"
+cd xz-5.2.4
+./configure
+make
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
 
 # Install Python
 TMPA=$(mktemp -d)
@@ -119,7 +126,6 @@ cd Python-3.7.2
 make
 sudo make install
 cd "$HOME"
-sudo chown -R $(whoami) /usr/local/lib/python3.7/site-packages
 rm -rf "$TMPA"
 
 # Install useful Python modules
@@ -153,15 +159,6 @@ cd "$TMPA"
 curl -OL https://dl.google.com/go/go1.11.4.darwin-amd64.pkg
 sudo installer -verbose -pkg go1.11.4.darwin-amd64.pkg -target /
 cd "$HOME"
-rm -rf "$TMPA"
-
-# Install gem
-TMPA=$(mktemp -d)
-git clone --recurse https://github.com/rubygems/rubygems "$TMPA"
-cd "$TMPA"
-sudo ruby setup.rb
-cd "$HOME"
-test -f "/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/bin/bundle" && sudo ln -s "/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/bin/bundle" "/usr/local/bin/bundle"
 rm -rf "$TMPA"
 
 # Install Jekyll static site generator
@@ -239,7 +236,8 @@ rm -rf "$TMPA"
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # Install the things that Apple didn't
-brew install dot
+brew install graphviz
+brew install wget
 brew install trombonehero/homebrew-grading/libgrading
 
 # Install htop
