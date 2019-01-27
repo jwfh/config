@@ -34,6 +34,9 @@ xcode-select --install &
 exit 1
 fi
 
+# Install SDK Headers on Mojave
+sudo installer -verbose -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+
 # Install gfortran
 TMPA=$(mktemp -d)
 cd "$TMPA"
