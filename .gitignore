@@ -1,2 +1,3 @@
 .local/share/fish/fish_history
 .config/texstudio/texstudio.ini
+.config/texstudio/**
