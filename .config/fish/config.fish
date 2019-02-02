@@ -12,3 +12,6 @@ set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
 set -gx PATH $HOME/.cargo/bin $PATH
+
+# Enable Vi key bindings
+fish_vi_key_bindings

@@ -107,3 +107,5 @@ set directory=~/.vim/backup/
 let g:syntastic_mode_map = {
     \ "mode": "active",
     \ "passive_filetypes": ["tex"] }
+let g:syntastic_python_checkers=['flake8']
+
