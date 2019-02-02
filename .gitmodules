@@ -16,9 +16,6 @@
 [submodule ".vim/bundle/hardmode"]
 	path = .vim/bundle/hardmode
 	url = git://github.com/wikitopian/hardmode.git
-[submodule ".vim/bundle/quicktex"]
-	path = .vim/bundle/quicktex
-	url = https://github.com/brennier/quicktex
 [submodule ".vim/bundle/rust.vim"]
 	path = .vim/bundle/rust.vim
 	url = https://github.com/rust-lang/rust.vim.git
@@ -70,3 +67,6 @@
 [submodule "images/loginwindowbgconverter"]
 	path = images/loginwindowbgconverter
 	url = https://github.com/SilverWolf32/loginwindowbgconverter
+[submodule ".vim/bundle/quicktex"]
+	path = .vim/bundle/quicktex
+	url = https://github.com/jwfh/quicktex
