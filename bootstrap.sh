@@ -157,6 +157,7 @@ sudo python3 -m pip install requests
 sudo python3 -m pip install urllib3
 sudo python3 -m pip install Werkzeug
 sudo python3 -m pip install flake8
+sudo python3 -m pip install pylint
 sudo python3 -m pip install pygments
 
 # Install Mono
