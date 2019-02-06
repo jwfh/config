@@ -70,3 +70,9 @@
 [submodule ".vim/bundle/quicktex"]
 	path = .vim/bundle/quicktex
 	url = https://github.com/jwfh/quicktex
+; [submodule ".vim/bundle/YouCompleteMe"]
+; 	path = .vim/bundle/YouCompleteMe
+; 	url = https://github.com/Valloric/YouCompleteMe
+[submodule ".vim/bundle/YouCompleteMe"]
+	path = .vim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe

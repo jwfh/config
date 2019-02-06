@@ -24,12 +24,13 @@ sudo nvram SystemAudioVolume=" "
 # If not, the user needs to install it manually. Apple has made scripting this impossible.
 gcc --version > /dev/null
 if [ $? -ne 0 ]; then
-echo << EndOfMessage
-Xcode Command Line tools not installed.
-If Xcode installation does not begin automatically, you'll need to do 
-this yourself.\r\n\r\nRestart this script by running './bootstrap.sh'
-after installation is complete.
-EndOfMessage
+	echo "Xcode Command Line tools not installed."
+	echo ""
+	echo "If Xcode installation does not begin automatically, you'll need to do"
+	echo "this yourself."
+	echo ""
+	echo "Restart this script by running './bootstrap.sh' after installation "
+	echo "is complete."
 xcode-select --install &
 exit 1
 fi
@@ -72,6 +73,9 @@ rm -rf "$TMPA"
 
 # Clone the dotfiles repository
 git clone --recurse https://github.com/jwfh/dotfiles "$HOME/.dotfiles"
+# There's more work to be done here to get Vim's YCM plugin working after we 
+# install Python and rebuild LLVM and Clang
+
 # Symlink our custom ZSH theme into the OMZ directory
 ln -s "$HOME/.dotfiles/.oh-my-zsh-addons/xxf/themes/xxf.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/xxf.zsh-theme"
 # Create other necessary symlinks
@@ -123,7 +127,7 @@ rm -rf "$TMPA"
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tgz
-tar xzvf Python-3.7.2.tgz
+tar -xvf Python-3.7.2.tgz
 cd Python-3.7.2
 ./configure --prefix=/usr/local --enable-shared --enable-optimizations --with-openssl=/usr/local/openssl-1.0.2h/
 make
@@ -152,6 +156,71 @@ sudo python3 -m pip install pysnmp
 sudo python3 -m pip install requests
 sudo python3 -m pip install urllib3
 sudo python3 -m pip install Werkzeug
+sudo python3 -m pip install flake8
+sudo python3 -m pip install pygments
+
+# Install Mono
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL https://download.mono-project.com/archive/5.16.0/macos-10-universal/MonoFramework-MDK-5.16.0.220.macos10.xamarin.universal.pkg
+sudo installer -verbose -pkg MonoFramework-MDK-5.16.0.220.macos10.xamarin.universal.pkg -target /
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Install Swig (dependency of LLDB below)
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL https://phoenixnap.dl.sourceforge.net/project/swig/swig/swig-3.0.12/swig-3.0.12.tar.gz
+tar -xvf swig-3.0.12.tar.gz
+cd swig-3.0.12
+./configure
+make
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Install LLVM/Clang from source to ensure we have the most up-to-date version
+# (Building Vi's YCM plugin with anything but the latest here will make a big mess of Vi)
+TMPA=$(mktemp -d)
+git clone https://github.com/llvm/llvm-project.git "$TMPA"
+cd "$TMPA"
+mkdir build
+cd build
+cmake -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_DOXYGEN=ON -G "Unix Makefiles" ../llvm
+make -j$(sysctl -n hw.ncpu) VERBOSE=1
+make check-all
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Install Lua
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
+tar zxf lua-5.3.5.tar.gz
+cd lua-5.3.5
+make macosx test
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Build MacVim 
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL https://github.com/macvim-dev/macvim/archive/snapshot-154.tar.gz
+cd macvim-snapshot-154
+make
+make test
+sudo make install
+ln -s /Applications/MacVim.app/Contents/bin/vim /usr/local/bin/vim
+ln -s /Applications/MacVim.app/Contents/bin/vim /usr/local/bin/vi
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Build Vi's YouCompleteMe plugin
+cd "$HOME/.dotfiles/.vim/YouCompleteMe"
+git submodule update --init --recursive 
+python3 ./install.py --all 
 
 # Install Rust ($HOME/.cargo/bin should be in path from config/fish/config.fish)
 curl https://sh.rustup.rs -sSf | sh
@@ -266,7 +335,7 @@ cp -R terminal/cd\ to.app/ "/Applications/cd to (Terminal).app/"
 cd "$HOME"
 rm -rf "$TMPA"
 
-# Instal Fish, the friendly interactive shell
+# Install Fish, the friendly interactive shell
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL "https://github.com/fish-shell/fish-shell/releases/download/3.0.0/fish-3.0.0.tar.gz"
@@ -292,7 +361,6 @@ rm -rf "$TMPA"
 curl -s 'https://macapps.link/en/firefox' | sh
 curl -s 'https://macapps.link/en/chrome' | sh
 curl -s 'https://macapps.link/en/drive' | sh
-curl -s 'https://macapps.link/en/macvim' | sh
 curl -s 'https://macapps.link/en/intellij' | sh
 curl -s 'https://macapps.link/en/docker' | sh
 curl -s 'https://macapps.link/en/vscode' | sh
