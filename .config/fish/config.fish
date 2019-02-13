@@ -11,7 +11,7 @@ alias gvim='/Applications/MacVim.app/Contents/MacOS/MacVim'
 set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
-set -gx PATH $HOME/.cargo/bin $PATH
+set -gx PATH $HOME/.cargo/bin $HOME/bin $PATH
 
 # Enable Vi key bindings
 fish_vi_key_bindings
