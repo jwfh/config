@@ -109,7 +109,7 @@ cd "$HOME"
 rm -rf "$TMPA"
 
 # Add custom wallpaper
-osascript -e "tell application \"Finder\" to set desktop picture to POSIX file \"$HOME/.dotfiles/images/coffee.jpg\""
+# osascript -e "tell application \"Finder\" to set desktop picture to POSIX file \"$HOME/.dotfiles/images/coffee.jpg\""
 
 # Install LZMA
 TMPA=$(mktemp -d)
@@ -165,6 +165,31 @@ TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL https://download.mono-project.com/archive/5.16.0/macos-10-universal/MonoFramework-MDK-5.16.0.220.macos10.xamarin.universal.pkg
 sudo installer -verbose -pkg MonoFramework-MDK-5.16.0.220.macos10.xamarin.universal.pkg -target /
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Install Doxygen
+TMPA=$(mktemp -d)
+cd "$TMPA"
+git clone https://github.com/doxygen/doxygen.git
+cd doxygen
+mkdir build
+cd build
+cmake -G "Unix Makefiles" ..
+make
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
+
+# Install Perl-compatible Regular Expressions
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz
+tar -xvf pcre-8.42.tar.gz
+cd pcre-8.42
+./configure 
+make
+sudo make install
 cd "$HOME"
 rm -rf "$TMPA"
 
@@ -289,19 +314,6 @@ diskutil umount /Volumes/TeXstudio
 # curl -OL "http://mirror.its.dal.ca/ctan/systems/mac/mactex/MacTeX.pkg"
 curl -OL "http://www.cs.mun.ca/~jwhouse/mactex/MacTeX.pkg"
 sudo installer -verbose -pkg MacTeX.pkg -target /
-cd "$HOME"
-rm -rf "$TMPA"
-
-# Install Doxygen
-TMPA=$(mktemp -d)
-cd "$TMPA"
-git clone https://github.com/doxygen/doxygen.git
-cd doxygen
-mkdir build
-cd build
-cmake -G "Unix Makefiles" ..
-make
-make install
 cd "$HOME"
 rm -rf "$TMPA"
 

@@ -12,6 +12,7 @@ set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
 set -gx PATH $HOME/.cargo/bin $HOME/bin $PATH
+# set -gx PATH $HOME/.cargo/bin $HOME/bin /opt/tools/miniconda3/bin $PATH
 
 # Enable Vi key bindings
 fish_vi_key_bindings
