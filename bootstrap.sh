@@ -17,9 +17,6 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-# Disable the sound effects on boot
-sudo nvram SystemAudioVolume=" "
-
 # Check if Xcode command line tools are installed.
 # If not, the user needs to install it manually. Apple has made scripting this impossible.
 gcc --version > /dev/null
@@ -93,6 +90,10 @@ ln -sf "$HOME/.dotfiles/.texrc" "$HOME/.texrc"
 ln -sf "$HOME/.dotfiles/.config/texstudio" "$HOME/.config/texstudio"
 cp "$HOME/.dotfiles/.latexmkrc" "$HOME/.latexmkrc"
 
+# Set ZSH to be the default shell. If you want Fish, add the path to 
+# /etc/shells and run `chsh -s $(which fish)` from ZSH.
+chsh -s $(which zsh)
+
 # Install OpenSSL from source
 TMPA=$(mktemp -d)
 cd "$TMPA"
@@ -107,9 +108,6 @@ sudo ln -s /usr/local/openssl-1.0.2h/bin/openssl /usr/local/bin/openssl
 openssl version -a
 cd "$HOME"
 rm -rf "$TMPA"
-
-# Add custom wallpaper
-# osascript -e "tell application \"Finder\" to set desktop picture to POSIX file \"$HOME/.dotfiles/images/coffee.jpg\""
 
 # Install LZMA
 TMPA=$(mktemp -d)
@@ -373,7 +371,6 @@ rm -rf "$TMPA"
 # Use MacApps to install a number of useful applications
 curl -s 'https://macapps.link/en/firefox' | sh
 curl -s 'https://macapps.link/en/chrome' | sh
-curl -s 'https://macapps.link/en/drive' | sh
 curl -s 'https://macapps.link/en/intellij' | sh
 curl -s 'https://macapps.link/en/docker' | sh
 curl -s 'https://macapps.link/en/vscode' | sh
