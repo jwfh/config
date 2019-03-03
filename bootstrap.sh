@@ -219,7 +219,7 @@ git clone https://github.com/llvm/llvm-project.git "$TMPA"
 cd "$TMPA"
 mkdir build
 cd build
-cmake -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_DOXYGEN=ON -G "Unix Makefiles" ../llvm
+cmake -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" ../llvm
 make -j$(sysctl -n hw.ncpu) VERBOSE=1
 make check-all
 sudo make install
