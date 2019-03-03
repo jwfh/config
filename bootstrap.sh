@@ -58,9 +58,18 @@ diskutil umount /Volumes/jdk-11.0.2_osx-x64_bin
 rm -rf "$TMPA"
 
 # Install cmake
+# This software presents a EULA before allowing itself to be installed. The EULA is presented with the `less` viewer. When you are
+# presented with the EULA, press G <Enter> Y <Enter> to continue.
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL "https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3-Darwin-x86_64.dmg"
+cat << 'EOF' | less
+This piece of software requires that you accept an end user license
+agreement before continuing. To do this, after dismissing this message,
+when you are shown the EULA, press `G` <Enter> `Y` <Enter>.
+
+To dismiss this message, press `q`.
+EOF
 hdiutil mount -nobrowse cmake-3.13.3-Darwin-x86_64.dmg -mountpoint /Volumes/cmake-3.13.3-Darwin-x86_64
 cp -rv /Volumes/cmake-3.13.3-Darwin-x86_64/CMake.app/ /Applications/CMake.app/
 sudo /Applications/CMake.app/Contents/bin/cmake-gui --install
