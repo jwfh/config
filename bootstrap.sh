@@ -103,6 +103,18 @@ cp "$HOME/.dotfiles/.latexmkrc" "$HOME/.latexmkrc"
 # /etc/shells and run `chsh -s $(which fish)` from ZSH.
 chsh -s $(which zsh)
 
+# Install pkg-config
+TMPA=$(mktemp -d)
+cd "$TMPA"
+curl -OL "http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz"
+tar -xfv pkg-config-0.28.tar.gz
+cd pkg-config-0.28
+./configure --prefix=/usr/local CC="/usr/bin/cc" --with-internal-glib
+make
+sudo make install
+cd "$HOME"
+rm -rf "$TMPA"
+
 # Install OpenSSL from source
 TMPA=$(mktemp -d)
 cd "$TMPA"
@@ -130,42 +142,39 @@ sudo make install
 cd "$HOME"
 rm -rf "$TMPA"
 
-# Install Python
+# Install Anaconda (Python 3)
 TMPA=$(mktemp -d)
 cd "$TMPA"
-curl -OL https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tgz
-tar -xvf Python-3.7.2.tgz
-cd Python-3.7.2
-./configure --prefix=/usr/local --enable-shared --enable-optimizations --with-openssl=/usr/local/openssl-1.0.2h/
-make
-sudo make install
+curl -OL "https://repo.anaconda.com/archive/Anaconda3-2018.12-MacOSX-x86_64.sh"
+sudo sh Anaconda3-2018.12-MacOSX-x86_64.sh -p /opt/tools/anaconda3 -b
 cd "$HOME"
 rm -rf "$TMPA"
 
 # Install useful Python modules
-sudo python3 -m pip install --upgrade pip
-sudo python3 -m pip install numpy
-sudo python3 -m pip install numba
-sudo python3 -m pip install pyasn1
-sudo python3 -m pip install pymysql
-sudo python3 -m pip install cryptography
-sudo python3 -m pip install dill
-sudo python3 -m pip install Flask
-sudo python3 -m pip install Flask-Login
-sudo python3 -m pip install WTForms
-sudo python3 -m pip install Flask-WTF
-sudo python3 -m pip install itsdangerous
-sudo python3 -m pip install Jinja2
-sudo python3 -m pip install passlib
-sudo python3 -m pip install Pillow
-sudo python3 -m pip install pycups
-sudo python3 -m pip install pysnmp
-sudo python3 -m pip install requests
-sudo python3 -m pip install urllib3
-sudo python3 -m pip install Werkzeug
-sudo python3 -m pip install flake8
-sudo python3 -m pip install pylint
-sudo python3 -m pip install pygments
+sudo conda install -y pip
+sudo conda install -y numpy
+sudo conda install -y numba
+sudo conda install -y pyasn1
+sudo conda install -y pymysql
+sudo conda install -y cryptography
+sudo conda install -y dill
+sudo conda install -y Flask
+sudo conda install -y Flask-Login
+sudo conda install -y WTForms
+sudo conda install -y Flask-WTF
+sudo conda install -y itsdangerous
+sudo conda install -y Jinja2
+sudo conda install -y passlib
+sudo conda install -y Pillow
+sudo conda install -y pycups
+sudo conda install -y pysnmp
+sudo conda install -y requests
+sudo conda install -y urllib3
+sudo conda install -y Werkzeug
+sudo conda install -y flake8
+sudo conda install -y pylint
+sudo conda install -y pygments
+sudo conda update --all -y
 
 # Install Mono
 TMPA=$(mktemp -d)
@@ -241,6 +250,7 @@ rm -rf "$TMPA"
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL https://github.com/macvim-dev/macvim/archive/snapshot-154.tar.gz
+tar -xvf snapshot-154.tar.gz
 cd macvim-snapshot-154
 make
 make test
@@ -393,11 +403,11 @@ curl -s 'https://macapps.link/en/handbrake' | sh
 curl -s 'https://macapps.link/en/skype' | sh
 curl -s 'https://macapps.link/en/slack' | sh
 
-# Install Kinematic (Docker manager)
+# Install Kitematic (Docker manager)
 TMPA=$(mktemp -d)
 cd "$TMPA"
 curl -OL "https://download.docker.com/kitematic/Kitematic-Mac.zip"
-unzip Kinematic-Mac.zip
+unzip Kitematic-Mac.zip
 cp -R ./Kitematic.app /Applications
 cd "$HOME"
 rm -rf "$TMPA"
