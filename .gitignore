@@ -3,3 +3,4 @@
 .config/texstudio/**
 .vim/.netrwhist
 .config/fish/fish_history
+.config/fish/fishd.*
