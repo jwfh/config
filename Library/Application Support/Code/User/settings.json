@@ -1,0 +1,74 @@
+{
+  // Adjust the zoom level of the window. The original size is 0 and each increment above (e.g. 1) or below (e.g. -1) represents zooming 20% larger or smaller. You can also enter decimals to adjust the zoom level with a finer granularity.
+  "window.zoomLevel": 1,
+
+  // Enable Emmet abbreviations in languages that are not supported by default. Add a mapping here between the language and emmet supported language.
+  //  E.g.: `{"vue-html": "html", "javascript": "javascriptreact"}`
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "jsx": "html"
+  },
+
+  // Controls whether the editor should automatically format the pasted content. A formatter must be available and the formatter should be able to format a range in a document.
+  "editor.formatOnPaste": true,
+
+  // Format a file on save. A formatter must be available, the file must not be saved after delay, and the editor must not be shutting down.
+  "editor.formatOnSave": true,
+
+  // The number of spaces a tab is equal to. This setting is overridden based on the file contents when `editor.detectIndentation` is on.
+  "editor.tabSize": 2,
+
+  // Controls whether `editor.tabSize#` and `#editor.insertSpaces` will be automatically detected when a file is opened based on the file contents.
+  "editor.detectIndentation": true,
+
+  // Number of spaces it should use per tab
+  "prettier.tabWidth": 2,
+
+  // Controls the printing of trailing commas wherever possible.
+  //  Valid options:
+  //     'none' - No trailing commas
+  //     'es5' - Trailing commas where valid in ES5 (objects, arrays, etc)
+  //     'all' - Trailing commas wherever possible (function arguments)
+  "prettier.trailingComma": "all",
+
+  // Include parentheses around a sole arrow function parameter
+  "prettier.arrowParens": "always",
+
+  // Specify the global whitespace sensitivity for HTML files.
+  //  Valid options:
+  // 'css' - Respect the default value of CSS display property.
+  // 'strict' - Whitespaces are considered sensitive.
+  // 'ignore' - Whitespaces are considered insensitive.
+  "prettier.htmlWhitespaceSensitivity": "strict",
+
+  // Specify the end of line used by prettier
+  "prettier.endOfLine": "lf",
+
+  // Use 'prettier-eslint' instead of 'prettier'. Other settings will only be fallbacks in case they could not be inferred from eslint rules.
+  "prettier.eslintIntegration": true,
+
+  // If true, will use single instead of double quotes
+  "prettier.singleQuote": true,
+
+  // Controls the font size in pixels.
+  "editor.fontSize": 13,
+
+  // Enables/Disables font ligatures.
+  "editor.fontLigatures": true,
+
+  // Controls how the editor should render whitespace characters.
+  //  - none
+  //  - boundary: Render whitespace characters except for single spaces between words.
+  //  - all
+  "editor.renderWhitespace": "boundary",
+
+  // Controls how lines should wrap.
+  //  - off: Lines will never wrap.
+  //  - on: Lines will wrap at the viewport width.
+  //  - wordWrapColumn: Lines will wrap at `editor.wordWrapColumn`.
+  //  - bounded: Lines will wrap at the minimum of viewport and `editor.wordWrapColumn`.
+  "editor.wordWrap": "on",
+
+  // Specifies the color theme used in the workbench.
+  "workbench.colorTheme": "Gruvbox Dark (Hard)"
+}

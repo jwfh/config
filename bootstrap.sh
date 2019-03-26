@@ -98,6 +98,12 @@ ln -sf "$HOME/.dotfiles/.oh-my-zsh" "$HOME/.oh-my-zsh"
 ln -sf "$HOME/.dotfiles/.texrc" "$HOME/.texrc"
 ln -sf "$HOME/.dotfiles/.config/texstudio" "$HOME/.config/texstudio"
 cp "$HOME/.dotfiles/.latexmkrc" "$HOME/.latexmkrc"
+mkdir -p "$HOME/Library/Application Support/Code/User"
+mkdir -p "$HOME/Library/Application Support/Code - Insiders/User"
+ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindinds.json"
+ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code - Insiders/User/settings.json"
+ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code - Insiders/User/keybindinds.json"
 
 # Set ZSH to be the default shell. If you want Fish, add the path to 
 # /etc/shells and run `chsh -s $(which fish)` from ZSH.
