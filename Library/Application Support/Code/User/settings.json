@@ -70,5 +70,9 @@
   "editor.wordWrap": "on",
 
   // Specifies the color theme used in the workbench.
-  "workbench.colorTheme": "Gruvbox Dark (Hard)"
+  "workbench.colorTheme": "Gruvbox Dark (Hard)",
+  "git.autofetch": true,
+  "git.defaultCloneDirectory": "$HOME/Repositories",
+  "git.detectSubmodulesLimit": 50,
+  "git.showPushSuccessNotification": true
 }
