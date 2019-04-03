@@ -11,7 +11,7 @@ alias gvim='/Applications/MacVim.app/Contents/MacOS/MacVim'
 set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
-set -gx PATH $HOME/.cargo/bin $HOME/bin /opt/tools/anaconda3/bin $HOME/.dotfiles/bin $PATH
+set -gx PATH $HOME/.cargo/bin $HOME/bin /usr/local/go/bin /opt/tools/anaconda3/bin $HOME/.dotfiles/bin $PATH
 
 
 set -gx PKG_CONFIG_PATH "/usr/local/opt/libffi/lib/pkgconfig" $PKG_CONFIG_PATH 
