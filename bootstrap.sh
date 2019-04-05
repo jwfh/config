@@ -693,6 +693,7 @@ defaults write org.x.X11 wm_ffm -bool true
 
 # Install the Solarized Dark theme for iTerm
 open "${HOME}/.dotfiles/iTerm/Solarized Dark.itermcolors"
+open "${HOME}/.dotfiles/iTerm/gruvbox-contrib/iterm2/gruvbox-dark.itermcolors"
 
 # Prevent Time Machine from prompting to use new hard drives as backup volume
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true

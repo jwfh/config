@@ -73,3 +73,6 @@
 [submodule ".vim/bundle/YouCompleteMe"]
 	path = .vim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
+[submodule "iTerm/gruvbox-contrib"]
+	path = iTerm/gruvbox-contrib
+	url = https://github.com/morhetz/gruvbox-contrib.git
