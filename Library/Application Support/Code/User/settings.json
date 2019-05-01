@@ -74,5 +74,32 @@
   "git.autofetch": true,
   "git.defaultCloneDirectory": "$HOME/Repositories",
   "git.detectSubmodulesLimit": 50,
-  "git.showPushSuccessNotification": true
+  "git.showPushSuccessNotification": true,
+
+  // Whether to lint Python files.
+  "python.linting.enabled": true,
+
+  // Arguments passed in. Each argument is a separate item in the array.
+  "python.linting.flake8Args": [],
+
+  // Severity of Flake8 message type 'E'.
+  "python.linting.flake8CategorySeverity.E": "Error",
+
+  // Severity of Flake8 message type 'F'.
+  "python.linting.flake8CategorySeverity.F": "Error",
+
+  // Severity of Flake8 message type 'W'.
+  "python.linting.flake8CategorySeverity.W": "Warning",
+
+  // Whether to lint Python files using flake8
+  "python.linting.flake8Enabled": true,
+
+  // Path to flake8, you can use a custom version of flake8 by modifying this setting to include the full path.
+  "python.linting.flake8Path": "flake8",
+
+  // Patterns used to exclude files or folders from being linted.
+  "python.linting.ignorePatterns": [".vscode/*.py", "**/site-packages/**/*.py"],
+
+  // Whether to lint Python files when saved.
+  "python.linting.lintOnSave": true
 }
