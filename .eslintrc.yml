@@ -18,6 +18,7 @@ rules:
   indent:
     - error
     - 2
+    - SwitchCase: 1
   linebreak-style:
     - error
     - unix
@@ -108,8 +109,6 @@ rules:
   no-extra-boolean-cast:
     - error
   require-yield:
-    - error
-  no-inline-comments:
     - error
   valid-typeof:
     - error
