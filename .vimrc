@@ -109,3 +109,6 @@ let g:syntastic_mode_map = {
     \ "passive_filetypes": ["tex"] }
 let g:syntastic_python_checkers=['flake8']
 
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+let g:syntastic_cpp_checkers = ['clang_check', 'gcc']
