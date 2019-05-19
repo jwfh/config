@@ -101,5 +101,10 @@
   "python.linting.ignorePatterns": [".vscode/*.py", "**/site-packages/**/*.py"],
 
   // Whether to lint Python files when saved.
-  "python.linting.lintOnSave": true
+  "python.linting.lintOnSave": true,
+  "prettier.bracketSpacing": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always"
 }
