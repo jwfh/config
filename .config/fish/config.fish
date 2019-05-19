@@ -37,5 +37,12 @@ set -gx CPPFLAGS "-I/usr/local/opt/sqlite/include" $CPPFLAGS
 # For pkg-config to find sqlite you may need to set:
 set -gx PKG_CONFIG_PATH "/usr/local/opt/sqlite/lib/pkgconfig" $PKG_CONFIG_PATH
 
+# Maybe fix libstdc++
+set -gx CPPFLAGS "-I/usr/include" $CPPFLAGS
+
 # Enable Vi key bindings
 fish_vi_key_bindings
+
+alias tc='tmux new'
+alias ta='tmux attach -t'
+alias gd='git diff'

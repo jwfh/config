@@ -1,6 +1,8 @@
 .local/share/fish/fish_history
+.local/share/fish/fish_read_history
 .config/texstudio/texstudio.ini
 .config/texstudio/**
 .vim/.netrwhist
 .config/fish/fish_history
 .config/fish/fishd.*
+.DS_Store
