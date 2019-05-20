@@ -46,3 +46,14 @@ fish_vi_key_bindings
 alias tc='tmux new'
 alias ta='tmux attach -t'
 alias gd='git diff'
+
+function shortURI --description 'Uses go.jwfh.ca to shorten a URI'
+	if test (count $argv) -eq 1
+		set uri $argv[1]
+		curl -d url="$uri" https://go.jwfh.ca/api/create
+	else if test (count $argv) -eq 2
+		set uri $argv[1]
+		set short $argv[2]
+		curl -d url="$uri" -d short="$short" https://go.jwfh.ca/api/create
+	end 
+end 
