@@ -1,7 +1,5 @@
-CC=clang
-CFLAGS=-Weverything
+all: 
+	find . -type d -depth 1 -exec make -C {} \;
 
-all: pdfmerge
-
-pdfmerge: pdfmerge.c
-	$(CC) -o ../bin/pdfmerge pdfmerge.c
+clean:
+	rm -rf ../bin/*
