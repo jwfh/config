@@ -79,3 +79,6 @@
 [submodule "x/aphelia"]
 	path = x/aphelia
 	url = https://github.com/vardy/aphelia
+[submodule "x/tinywm"]
+	path = x/tinywm
+	url = https://github.com/mackstann/tinywm
