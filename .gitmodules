@@ -76,3 +76,6 @@
 [submodule "iTerm/gruvbox-contrib"]
 	path = iTerm/gruvbox-contrib
 	url = https://github.com/morhetz/gruvbox-contrib.git
+[submodule "x/aphelia"]
+	path = x/aphelia
+	url = https://github.com/vardy/aphelia
