@@ -1,0 +1,695 @@
+#!/usr/bin/env bash
+
+# Determine OS type code for determining which version (if applicable) of an installation
+# command to run for different OSs.
+#
+# We will use the following codes:
+#	1: macOS
+#	2: FreeBSD
+# 	3: Ubuntu
+# 	4: Manjaro
+printf "\`bootstrap\` running on "
+case `uname -s` in
+	"Darwin")
+		printf "macOS...\n\n"
+		OS=1
+		;;
+	"FreeBSD")
+		printf "FreeBSD...\n\n"
+		OS=2
+		;;
+	"Linux")
+		# Determine which Linux flavour
+		case `lsb_release -i | awk '{ print $3 }'` in
+			"Ubuntu")
+				printf "Ubuntu...\n\n"
+				OS=3
+				;;
+			"ManjaroLinux")
+				printf "Manjaro...\n\n"
+				OS=4
+				;;
+			*)
+				printf "unknown Linux distro... exiting.\n\n"
+				exit 1
+		esac
+		;;
+	*)
+		printf "unknown OS type... exiting.\n\n"
+		exit 1
+esac
+
+# Function to check if a binary doesn't exist in the user's path.
+#
+# This is used so that the script can be re-ran if a failure occurs midway through the installation,
+# without attempting to re-install programs that installed the first time.
+binaryExists() {
+	if test $# -ne 1; then
+		printf "Invalid arguments to binaryExists.\nUsage: binaryExists <binary-name>\n"
+		exit 1
+	fi
+	builtin type -P "$1" &>/dev/null
+}
+
+# Put all installation files in $HOME/bootstrapfiles
+INSTALLDIR="$HOME/bootstrapfiles"
+test -d "$INSTALLDIR" || mkdir "$INSTALLDIR"
+
+# # Tell Bash to exit on any error
+# set -e
+set -x
+
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+test $OS -eq 1 && osascript -e 'tell application "System Preferences" to quit'
+
+binaryExists sudo
+if test $? -ne 0; then
+	echo "\`sudo\` binary does not exist. Please install \`sudo\` and try again."
+	exit 1
+fi
+
+# Ask for the administrator password upfront
+echo "\`bootstrap\` requires root privileges to install software. Please enter your password below."
+sudo -v
+
+# Keep-alive: update existing `sudo` time stamp until `bootstrap` has finished
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+# Do updates
+case $OS in 
+	2)
+		sudo pkg upgrade -y
+		;;
+	3)
+		sudo apt update -y && sudo apt upgrade -y
+		;;
+	4)
+		sudo pacman -Syy --noconfirm
+		sudo pacman -Su --noconfirm
+		;;
+esac
+
+# Install source tree
+case $OS in 
+	2)
+		fetch -o "$INSTALLDIR" ftp://ftp.freebsd.org/pub/`uname -s`/releases/`uname -m`/`uname -r | cut -d'-' -f1,2`/src.txz
+		tar -C / -xvf "$INSTALLDIR/src.txz"
+		sudo portsnap fetch
+		sudo portsnap extract
+		sudo portsnap update
+		;;
+esac
+
+# Install some compilers and build tools
+case $OS in
+	1)
+		gcc --version >/dev/null
+		if test $? -ne 0; then
+			echo "Xcode Command Line tools not installed."
+			echo ""
+			echo "If Xcode installation does not begin automatically, you'll need to do"
+			echo "this yourself."
+			echo ""
+			echo "Restart this script by running './bootstrap' after installation "
+			echo "is complete."
+			xcode-select --install &
+			exit 1
+		fi
+		;;
+	2)
+		sudo pkg install -y llvm60 gcc binutils
+		;;
+	3)
+		sudo apt install -y clang gcc llvm binutils
+		;;
+	4)
+		sudo pacman -Sy --noconfirm gcc clang llvm
+		;;
+esac
+
+# Install SDK Headers on Mojave if not already installed 
+# A more tactful way of checking if installation ocurred is welcome.
+if test $OS -eq 1 && test ! -f "$INSTALLDIR/macOS_SDK_headers_for_macOS_10.14.pkg"; then
+	sudo installer -verbose -pkg "/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg" -target /
+	cp "/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg" "$INSTALLDIR/macOS_SDK_headers_for_macOS_10.14.pkg"
+fi
+
+# Tell future builds that we wish to use Clang
+CC=`which clang`
+CXX=`which clang++`
+# export CPPFLAGS="-I/usr/local/openssl-1.0.2h/include"
+# export LDFLAGS="-L/usr/local/openssl-1.0.2h/lib"
+
+# Install GDB and LLDB debuggers
+binaryExists gdb
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y gdb
+			;;
+		3)
+			sudo apt install -y gdb
+			;;
+		4)
+			sudo pacman -Sy --noconfirm gdb
+			;;
+	esac
+fi
+binaryExists lldb
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		3)
+			sudo apt install -y lldb
+			;;
+		4)
+			sudo pacman -Sy --noconfirm lldb
+			;;
+	esac
+fi
+
+# Install gfortran
+binaryExists gfortran 
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			cd "$INSTALLDIR"
+			curl -OL "https://github.com/fxcoudert/gfortran-for-macOS/releases/download/8.2/gfortran-8.2-Mojave.dmg"
+			hdiutil mount -nobrowse gfortran-8.2-Mojave.dmg -mountpoint "/Volumes/gfortran-8.2-Mojave"
+			sudo installer -verbose -pkg "/Volumes/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg" -target /
+			diskutil umount "/Volumes/gfortran-8.2-Mojave"
+			;;
+		3)
+			sudo apt install -y gfortran
+			;;
+	esac
+
+fi
+
+# Install cmake
+binaryExists cmake
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			# This software presents a EULA before allowing itself to be installed. The EULA is presented with the `less` viewer. When you are
+			# presented with the EULA, press G <Enter> Y <Enter> to continue.
+			cd "$INSTALLDIR"
+			curl -OL "https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3-Darwin-x86_64.dmg"
+			cat << 'EOF' | less
+This piece of software requires that you accept an end user license
+agreement before continuing. To do this, after dismissing this message,
+when you are shown the EULA, press `G` <Enter> `Y` <Enter>.
+
+To dismiss this message, press `q`.
+EOF
+			hdiutil mount -nobrowse cmake-3.13.3-Darwin-x86_64.dmg -mountpoint /Volumes/cmake-3.13.3-Darwin-x86_64
+			cp -rv /Volumes/cmake-3.13.3-Darwin-x86_64/CMake.app/ /Applications/CMake.app/
+			sudo /Applications/CMake.app/Contents/bin/cmake-gui --install
+			diskutil umount /Volumes/cmake-3.13.3-Darwin-x86_64
+			;;
+		2)
+			sudo pkg install -y cmake gmake
+			;;
+		3)
+			sudo apt install -y make cmake
+			sudo ln -s `which make` /usr/local/bin/gmake
+			;;
+		4)
+			sudo pacman  -Sy --noconfirm make cmake
+			;;
+	esac
+fi
+
+# Install automake
+binaryExists automake
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y automake
+			;;
+		3)
+			sudo apt install -y automake
+			;;
+		4)
+			sudo pacman -Sy --noconfirm automake
+			;;
+	esac
+fi
+
+# Install pkg-config
+binaryExists pkg-config
+if test $? -ne 0; then
+	case $OS in
+		1)
+			cd "$INSTALLDIR"
+			curl -OL "http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz"
+			tar -xfv pkg-config-0.28.tar.gz
+			cd pkg-config-0.28
+			./configure --prefix=/usr/local CC="/usr/bin/cc" --with-internal-glib
+			make
+			sudo make install
+			;;
+		2)
+			sudo pkg install -y devel/pkgconf
+			;;
+		3)
+			sudo apt install -y pkgconf
+			;;
+		4)
+			sudo pacman -Sy --noconfirm pkgconf
+			;;
+	esac
+fi
+
+# Install OpenSSL
+binaryExists openssl
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			cd "$INSTALLDIR"
+			curl --remote-name https://www.openssl.org/source/openssl-1.0.2h.tar.gz
+			tar -xzvf openssl-1.0.2h.tar.gz
+			cd openssl-1.0.2h
+			./configure darwin64-x86_64-cc --prefix=/usr/local/openssl-1.0.2h shared
+			make depend
+			make
+			sudo make install
+			sudo ln -s /usr/local/openssl-1.0.2h/bin/openssl /usr/local/bin/openssl
+			openssl version -a
+			;;
+		2)
+			sudo pkg install -y openssl
+			;;
+		3)
+			sudo apt install -y openssl
+			;;
+		4)
+			sudo pacman -Sy --noconfirm openssl
+			;;
+	esac
+fi
+
+# Install LZMA
+binaryExists lzma
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			cd "$INSTALLDIR"
+			curl -OL "https://pilotfiber.dl.sourceforge.net/project/lzmautils/xz-5.2.4.tar.gz"
+			tar -xvf "xz-5.2.4.tar.gz"
+			cd xz-5.2.4
+			./configure
+			make
+			sudo make install
+			;;
+		2)
+			sudo pkg install -y lzma
+			;;
+		3)
+			sudo apt install -y lzma
+			;;
+		4)
+			sudo pacman -Sy --noconfirm lzip
+			;;
+	esac
+fi
+
+# Install HomeBrew - The missing package manager for macOS
+if test $OS -eq 1; then
+	binaryExists brew || sudo ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+# Install Python 3
+binaryExists python3
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			brew install python3
+
+			;;
+		2)
+			sudo pkg install -y python3 \
+				py36-numpy \
+				py36-llvmlite \
+				py36-numba \
+				py36-scipy \
+				py36-pyasn1 \
+				py36-pymysql \
+				py36-cryptography \
+				py36-dill \
+				py36-Flask \
+				py36-Flask-Compress \
+				py36-Flask-HTTPAuth \
+				py36-Flask-Login \
+				py36-Flask-RESTful \
+				py36-Flask-SocketIO \
+				py36-wtforms \
+				py36-Flask-WTF \
+				py36-Flask-Uploads \
+				py36-itsdangerous \
+				py36-Jinja2 \
+				py36-passlib \
+				py36-pillow \
+				py36-willow \
+				py36-pycups \
+				py36-pysnmp \
+				py36-pysnmp-mibs \
+				py36-requests \
+				py36-urllib3 \
+				py36-werkzeug \
+				py36-flake8 \
+				py36-flake8-bugbear \
+				py36-flake8-builtins \
+				py36-flake8-docstrings \
+				py36-flake8-import-order \
+				py36-flake8-quotes \
+				py36-autopep8 \
+				py36-pep8 \
+				py36-pep8-naming \
+				py36-pygments \
+
+			;;
+		3)
+			sudo apt install -y python3 python3-dev \
+				python3-flake8 \
+				python3-numpy \
+				python3-llvmlite \
+				python3-numba \
+				python3-scipy \
+				python3-pyasn1 \
+				python3-pymysql \
+				python3-cryptography \
+				python3-dill \
+				python3-flask \
+				python3-flask-autoindex \
+				python3-flask-bcrypt \
+				python3-flask-compress \
+				python3-flask-limiter \
+				python3-flask-login \
+				python3-flask-restful \
+				python3-flask-security \
+				python3-flask-socketio \
+				python3-wtforms \
+				python3-flaskext.wtf \
+				python3-itsdangerous \
+				python3-jinja2 \
+				python3-passlib \
+				python3-willow \
+				python3-pysnmp4 \
+				python3-pysmi \
+				python3-requests \
+				python3-urllib3 \
+				python3-werkzeug \
+				python3-flake8 \
+				python3-flake8-docstrings \
+				python3-pep8 \
+				python3-pep8-naming \
+				python3-importmagic \
+				python3-pygments \
+
+			;;
+		4)
+			sudo pacman -Sy --noconfirm python3 \
+				flake8 \
+				numpy \
+				scipy \
+				python-pyasn1 \
+				python-cryptography \
+				python-flask \
+				python-flask-autoindex \
+				python-flask-caching \
+				python-flask-login \
+				python-flask-restful \
+				python-flask-security \
+				python-flask-socketio \
+				python-wtforms \
+				python-flask-wtf \
+				python-itsdangerous \
+				python-jinja \
+				python-passlib \
+				python-pillow \
+				python-pycups \
+				python-pysnmp \
+				python-requests \
+				python-urllib3 \
+				python-werkzeug \
+				python-pygments \
+
+			;;
+	esac
+fi
+## Note: On FreeBSD, one must import NumPy or SciPy BEFORE importing Numba, or Python will complain about missing shared object files
+
+# Install Git
+binaryExists git
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y git
+			;;
+		3)
+			sudo apt install -y git
+			;;
+		4)
+			sudo pacman -Sy --noconfirm git
+			;;
+	esac
+fi
+
+# Clone dotfiles from GitHub
+test -d "$HOME/.dotfiles" || git clone --recurse https://github.com/jwfh/dotfiles "$HOME/.dotfiles"
+test -d "$HOME/.config" || mkdir "$HOME/.config"
+test -d "$HOME/.local/share" || mkdir -p "$HOME/.local/share"
+
+ln -s "$HOME/.dotfiles/.oh-my-zsh-addons/xxf/themes/xxf.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/xxf.zsh-theme"
+ln -sf "$HOME/.dotfiles/.config/fish" "$HOME/.config/fish"
+ln -sf "$HOME/.dotfiles/.config/omf" "$HOME/.config/omf"
+ln -sf "$HOME/.dotfiles/.local/share/fish" "$HOME/.local/share/fish"
+ln -sf "$HOME/.dotfiles/.local/share/omf" "$HOME/.local/share/omf"
+ln -sf "$HOME/.dotfiles/.vim" "$HOME/.vim"
+ln -s "$HOME/.dotfiles/.vimrc" "$HOME/.vimrc"
+ln -s "$HOME/.dotfiles/.zshrc" "$HOME/.zshrc"
+ln -sf "$HOME/.dotfiles/.eslintrc.yml" "$HOME/.eslintrc.yml"
+ln -sf "$HOME/.dotfiles/.oh-my-zsh" "$HOME/.oh-my-zsh"
+ln -sf "$HOME/.dotfiles/.texrc" "$HOME/.texrc"
+ln -sf "$HOME/.dotfiles/.config/texstudio" "$HOME/.config/texstudio"
+cp "$HOME/.dotfiles/.latexmkrc" "$HOME/.latexmkrc"
+
+case $OS in 
+	1)
+		mkdir -p "$HOME/Library/Application Support/Code/User"
+		mkdir -p "$HOME/Library/Application Support/Code - Insiders/User"
+		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindinds.json"
+		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code - Insiders/User/settings.json"
+		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code - Insiders/User/keybindinds.json"
+		;;
+esac
+
+# Install Fish
+binaryExists fish 
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y fish
+			;;
+	esac
+fi
+
+# Install Bash
+binaryExists bash
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y bash
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install tmux
+binaryExists tmux
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y tmux
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install CURL
+binaryExists curl
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y curl
+			;;
+		3)
+			;;
+
+		4)
+			;;
+	esac
+fi
+
+# Install wget
+binaryExists wget
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y wget
+			;;
+		3)
+			;;
+
+		4)
+			;;
+	esac
+fi
+
+# Install NodeJS
+binaryExists node
+if test $? -ne 0; then 
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y node
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install NPM (Node Package Manager)
+binaryExists npm 
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y www/npm
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install Vim
+binaryExists vim
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y vim 
+			sudo ln -s `which vim` /usr/local/bin/vi
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install ffmpeg
+binaryExists ffmpeg
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y ffmpeg
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# HandBrakeCLI Installation
+binaryExists HandBrakeCLI
+if test $? -ne 0; then 
+	echo "Installing HandBrakeCLI"
+	cd "$INSTALLDIR"
+	case $OS in
+		1)
+			git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
+			scripts/mac-toolchain-build /usr/local
+			./configure --launch-jobs=$(sysctl -n hw.ncpu) --launch
+			sudo make --directory=build install
+			;;
+		2)
+			;;
+		3)
+			sudo pkg install autoconf automake bash bzip2 cmake flac fontconfig freetype2 fribidi git gcc lzma m4 gmake patch gtar harfbuzz jansson libass libiconv libogg libsamplerate libtheora libtool libvorbis libx264 libxml2 nasm opus pkgconf python speex yasm libvpx intltool gettext
+			sudo portsnap fetch
+			sudo portsnap extract
+			sudo portsnap update
+			LASTDIR="`pwd`"
+			cd /usr/ports/audio/lame
+			sudo make install
+			cd "LASTDIR"
+			git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
+			./configure --launch-jobs=$(sysctl -n hw.ncpu) --launch --disable-numa
+			# ./configure --launch-jobs=$(sysctl -n hw.ncpu) --launch --disable-numa --disable-gtk
+			read -p "Please verify that ./configure completed successfully. If not, press ^C and try again."
+			sudo gmake --directory=build install
+			ln -sf `which ghb` /usr/local/bin/HandBrakeGUI
+			;;
+	esac
+fi
+
+# Install Node and NPM
+
+
+# Install common Node packages
+binaryExists coffee || npm i -g coffeescript 
+binaryExists tsc || npm i -g typescript
+binaryExists eslint || npm i -g eslint
+binaryExists gatsby || npm i -g gatsby gatsby-cli
+
