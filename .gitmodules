@@ -88,3 +88,6 @@
 [submodule "wm/tinywm"]
 	path = wm/tinywm
 	url = https://github.com/mackstann/tinywm
+[submodule ".vim/bundle/vimtex"]
+	path = .vim/bundle/vimtex
+	url = https://github.com/lervag/vimtex
