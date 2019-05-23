@@ -6,3 +6,4 @@
 .config/fish/fish_history
 .config/fish/fishd.*
 .DS_Store
+.texrc/install-tl-20190521/
