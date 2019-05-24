@@ -6,8 +6,6 @@ set -q XDG_DATA_HOME
 # Load Oh My Fish configuration.
 source $OMF_PATH/init.fish
 
-alias gvim='/Applications/MacVim.app/Contents/MacOS/MacVim'
-
 set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
