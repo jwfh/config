@@ -373,6 +373,7 @@ if test $? -ne 0; then
 				py36-pep8 \
 				py36-pep8-naming \
 				py36-pygments \
+				py36-caffeine-ng \
 
 			;;
 		3)
