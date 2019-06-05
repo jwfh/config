@@ -636,21 +636,15 @@ if test $? -ne 0; then
 	esac
 fi
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Install pidof (required for betterlockscreen)
+binaryExists pidof
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y pidof
+			;;
+	esac
+fi
 
 # HandBrakeCLI Installation
 binaryExists HandBrakeCLI
