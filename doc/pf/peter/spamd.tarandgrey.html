@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>List of black and grey, and the sticky tarpit</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Giving spammers a hard time"
+HREF="spamd.html"><LINK
+REL="PREVIOUS"
+TITLE="Giving spammers a hard time"
+HREF="spamd.html"><LINK
+REL="NEXT"
+TITLE="Setting up spamd"
+HREF="spamd.setup.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="spamd.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Giving spammers a hard time</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="spamd.setup.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SPAMD.TARANDGREY"
+>List of black and grey, and the sticky tarpit</A
+></H1
+><P
+>What <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> does to SMTP connections from
+addresses in the blacklist is to present its banner and immediately
+switch to a mode where it answers SMTP traffic 1 byte at the time.
+This technique, which is intended to waste as much time as possible on
+the sending end while costing the receiver pretty much nothing, is
+called <I
+CLASS="FIRSTTERM"
+>tarpitting</I
+>.  The specific implementation
+with 1 byte SMTP replies is often referred to as
+<I
+CLASS="FIRSTTERM"
+>stuttering</I
+>.</P
+><P
+><SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> also supports
+<I
+CLASS="FIRSTTERM"
+>greylisting</I
+>, which works by rejecting messages
+from unknown hosts temporarily with 45n codes, letting messages from
+hosts which try again within a reasonable time through.  Traffic from
+well behaved hosts, that is, senders which are set up to behave within
+the limits set up in the relevant RFCs<A
+NAME="AEN1637"
+HREF="#FTN.AEN1637"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>, will be let through. </P
+><P
+>Greylisting as a technique was presented in a 2003 paper by Evan
+Harris<A
+NAME="AEN1640"
+HREF="#FTN.AEN1640"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+>, and a number of implementations followed over
+the next few months.  OpenBSD's <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+>
+aquired its ability to greylist in version OpenBSD 3.5, which was
+released in May 2004.  Starting with OpenBSD 4.1,
+<SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> by default runs in greylisting mode.</P
+><P
+>The most amazing thing about greylisting, apart from its simplicity, is
+that it still works.  Spammers and malware writers have been very slow
+to adapt. We will see a few examples later.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1637"
+HREF="spamd.tarandgrey.html#AEN1637"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>The relevant RFCs are mainly RFC1123 and RFC2821.  If you choose to join us greylisting pedants, you will need to read these, if only for proper RFC-style background information.  Remember, temporary rejection is in fact an SMTP fault tolerance feature.</P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1640"
+HREF="spamd.tarandgrey.html#AEN1640"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>The original Harris paper and a number of other
+useful articles and resources can be found at the <A
+HREF="http://www.greylisting.org/"
+TARGET="_top"
+>greylisting.org</A
+> web
+site.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="spamd.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="spamd.setup.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Giving spammers a hard time</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="spamd.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Setting up <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+></TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

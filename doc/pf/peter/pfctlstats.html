@@ -1,0 +1,247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Statistics from pfctl</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Slightly stricter"
+HREF="stricter.html"><LINK
+REL="NEXT"
+TITLE="A simple gateway, NAT if you need it"
+HREF="basicgw.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="stricter.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="basicgw.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="PFCTLSTATS"
+></A
+>Statistics from <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+></H1
+><P
+>You may want to check that PF is actually running, and perhaps at the
+same time look at some statistics.  The
+<SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+> program offers a number of different
+types of information if you use
+<KBD
+CLASS="USERINPUT"
+><SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+> -s</KBD
+>, adding the
+type of information you want to display.  The following example is
+taken from my home gateway while I was preparing an earlier version of
+this lecture:</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas pfctl -s info</KBD
+>
+<SAMP
+CLASS="COMPUTEROUTPUT"
+>Status: Enabled for 17 days 00:24:58          Debug: Urgent
+
+Interface Stats for ep0               IPv4             IPv6
+  Bytes In                      9257508558                0
+  Bytes Out                      551145119              352
+  Packets In
+    Passed                         7004355                0
+    Blocked                          18975                0
+  Packets Out
+    Passed                         5222502                3
+    Blocked                             65                2
+
+State Table                          Total             Rate
+  current entries                       15               
+  searches                        19620603           13.3/s
+  inserts                           173104            0.1/s
+  removals                          173089            0.1/s
+Counters
+  match                             196723            0.1/s
+  bad-offset                             0            0.0/s
+  fragment                              22            0.0/s
+  short                                  0            0.0/s
+  normalize                              0            0.0/s
+  memory                                 0            0.0/s
+  bad-timestamp                          0            0.0/s
+  congestion                             0            0.0/s
+  ip-option                             28            0.0/s
+  proto-cksum                          325            0.0/s
+  state-mismatch                       983            0.0/s
+  state-insert                           0            0.0/s
+  state-limit                            0            0.0/s
+  src-limit                             26            0.0/s
+  synproxy                               0            0.0/s</SAMP
+></PRE
+><P
+>The first line here indicates that PF is enabled and has been running
+for for a little more than two weeks, which is equal to the time since I 
+upgraded to what was then the latest snapshot.  
+<KBD
+CLASS="USERINPUT"
+><SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+> -s all</KBD
+> provides highly detailed information.  Try it and have a look, and while there, look into some of the other <SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/pfctl"
+TARGET="_top"
+>pfctl</A
+></SPAN
+> options.
+<KBD
+CLASS="USERINPUT"
+>man 8 pfctl</KBD
+> (or clicking the man page link in this paragraph) gives you full information.</P
+><P
+>At this point you have a single machine which should be able to
+communicate reasonably well with other internet connected machines.
+And while the rule set is very basic, it serves as an excellent
+starting point for staying in control of your network.</P
+><P
+>This is a very basic rule set and a few things are still missing.  For
+example, you probably want to let at least some ICMP and UDP traffic
+through, if nothing else for your own troubleshooting needs.</P
+><P
+>And even though more modern and more secure options are available, you
+will probably be required to handle the <SPAN
+CLASS="APPLICATION"
+>ftp</SPAN
+> service. </P
+><P
+>We will return to these items shortly.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="stricter.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="basicgw.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Slightly stricter</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>A simple gateway, NAT if you need it</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

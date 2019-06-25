@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Taking a Peek With tcpdump</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Logging"
+HREF="logging.html"><LINK
+REL="NEXT"
+TITLE="tcpdump Is Your Friend"
+HREF="tcpdumpfriend.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='tcpdumpfriend.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='logging.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='logging.html';}
+     else
+     {window.location.href='tcpdumpfriend.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='tcpdumpfriend.html';break;
+      case 66:
+      case 80:window.location.href='logging.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='logging.html';}
+       else
+       {window.location.href='tcpdumpfriend.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="logging.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="tcpdumpfriend.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="TCPDUMPEX"
+></A
+>Taking a Peek With <SPAN
+CLASS="APPLICATION"
+>tcpdump</SPAN
+></H1
+><P
+>PF logs via the <SAMP
+CLASS="COMPUTEROUTPUT"
+>pflogN</SAMP
+>
+interfaces, <SPAN
+CLASS="APPLICATION"
+>pflogd</SPAN
+> collects data, stores in <TT
+CLASS="FILENAME"
+>/var/log/pflog</TT
+>.</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>peter@skapet:~$ sudo tcpdump -n -e -ttt -i pflog0
+tcpdump: WARNING: pflog0: no IPv4 address assigned
+tcpdump: listening on pflog0, link-type PFLOG
+Feb 16 16:43:20.152187 rule 0/(match) block in on ep0: 194.54.59.189.2559 &#62; 
+194.54.107.19.139: [|tcp] (DF)
+Feb 16 16:48:26.073244 rule 27/(match) pass in on ep0: 61.213.167.236 &#62; 
+194.54.107.19: icmp: echo request
+Feb 16 16:49:09.563448 rule 0/(match) block in on ep0: 61.152.249.148.80 &#62; 
+194.54.107.19.55609: [|tcp]
+Feb 16 16:49:14.601022 rule 0/(match) block in on ep0: 194.54.59.189.3056 &#62; 
+194.54.107.19.139: [|tcp] (DF)
+Feb 16 16:53:10.110110 rule 0/(match) block in on ep0: 68.194.177.173 &#62; 
+194.54.107.19: [|icmp]
+Feb 16 16:55:54.818549 rule 27/(match) pass in on ep0: 61.213.167.237 &#62; 
+194.54.107.19: icmp: echo request
+Feb 16 16:57:55.577782 rule 27/(match) pass in on ep0: 202.43.202.16 &#62; 
+194.54.107.19: icmp: echo request</SAMP
+></PRE
+></DIV
+></BODY
+></HTML
+>

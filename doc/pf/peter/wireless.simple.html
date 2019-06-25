@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Wireless networks made simple</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="CARP and pfsync"
+HREF="carp.html"><LINK
+REL="NEXT"
+TITLE="Setting up a simple wireless network"
+HREF="wireless.simple.setup.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="carp.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="wireless.simple.setup.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="WIRELESS.SIMPLE"
+></A
+>Wireless networks made simple</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="wireless.simple.html#WIFIBACKGROUND"
+>A little IEEE 802.11 background</A
+></DT
+><DT
+><A
+HREF="wireless.simple.setup.html"
+>Setting up a simple wireless network</A
+></DT
+></DL
+></DIV
+><P
+>It is rather tempting to say that on BSD, and on OpenBSD in particular,
+there's no need to 'make wireless networking simple', because it
+already is.  Getting a wireless network running is basically not very
+different from getting a wired one up and running, but then of course
+there are some issues which turn up simply because we are dealing with
+radio waves and not wires. We will look briefly at some of the issues
+before moving on to the practical steps involved in creating a usable setup.</P
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="WIFIBACKGROUND"
+>A little IEEE 802.11 background</A
+></H1
+><P
+>Moving to wireless networks provides an opportunity to view security
+at various level in the networking stack from a new perspective.  We
+look briefly at two of the basic IEEE 802.11 security mechanisms
+below.</P
+><P
+>It goes almost without saying that you will need further security
+measures, such as SSH or SSL encryption, to maintain any significant
+level of confidentiality for your data stream.</P
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="WEP"
+>WEP (Wired Equivalent Privacy)</A
+></H2
+><P
+>One consequence of using radio waves instead of wires is that it is
+comparatively easy for outsiders to capture your data in transit.  The
+designers of the 802.11 family of wireless network standards seem to
+have been aware of this fact, and came up with a solution which they
+marketed under the name <I
+CLASS="FIRSTTERM"
+>Wired Equivalent
+Privacy</I
+>, or <I
+CLASS="FIRSTTERM"
+>WEP</I
+>.  </P
+><P
+>WEP is a link level encryption scheme which is considered a pretty
+primitive homebrew among cryptography professionals.  It was no great
+surprise that WEP encryption was reverse-engineered and cracked within
+a few months after the first products were released.  Even though you
+can download tools for free to descramble WEP encoded traffic in a
+matter of minutes, for a variety of reasons it is still widely
+supported and used.  You should consider network traffic protected
+only by WEP to be only marginally more secure than data broadcast in
+the clear.  Then again, the token effort needed to crack into a WEP
+network may be sufficient to deter lazy and unsophisticated attackers.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="WPA"
+>WPA (WiFi Protected Access)</A
+></H2
+><P
+>It dawned fairly quickly on the 802.11 designers that their Wired
+Equivalent Privacy system was not quite what it was cracked up to be,
+and they came up with a revised and slightly more comprehensive
+solution which was dubbed <I
+CLASS="FIRSTTERM"
+>WiFi Protected
+Access</I
+>, or <I
+CLASS="FIRSTTERM"
+>WPA</I
+>.</P
+><P
+>WPA looks better than WEP, at least on paper, but the specification is
+complicated enough that it is not nearly as widely supported or
+implemented as its designers intended, but support finally arrived in OpenBSD 4.4.  In addition WPA has also
+attracted its share of criticism over design issues and bugs.
+Combined with the familiar issues of access to documentation and
+hardware, free software support varies.  If your project specification
+includes WPA, look carefully at your operating system and driver
+documentation.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="carp.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="wireless.simple.setup.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>CARP and pfsync</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Setting up a simple wireless network</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

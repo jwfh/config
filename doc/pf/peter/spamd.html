@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Giving spammers a hard time</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Using expiretable to tidy your tables"
+HREF="expiretable.html"><LINK
+REL="NEXT"
+TITLE="List of black and grey, and the sticky tarpit"
+HREF="spamd.tarandgrey.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="expiretable.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="spamd.tarandgrey.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="SPAMD"
+></A
+>Giving spammers a hard time</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="spamd.html#SPAMD.NOTALONE"
+>Remember, you are not alone: blacklisting</A
+></DT
+><DT
+><A
+HREF="spamd.tarandgrey.html"
+>List of black and grey, and the sticky tarpit</A
+></DT
+><DT
+><A
+HREF="spamd.setup.html"
+>Setting up <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+></A
+></DT
+><DT
+><A
+HREF="spamd.experience.html"
+>Some early highlights of our <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> experience</A
+></DT
+><DT
+><A
+HREF="spamd.greytrapping.html"
+>Beating'em up some more: <SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+> and greytrapping</A
+></DT
+><DT
+><A
+HREF="spamd.conclusion.html"
+>Conclusions from our <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> experience</A
+></DT
+></DL
+></DIV
+><P
+>At this point we've covered quite some ground, and I'm more than happy
+to present something really useful: PF as a means to make spammers'
+lives harder.  Based on our recent exposure to PF rulesets,
+understanding the following <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+> parts
+should be straightforward:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>table &lt;spamd-white&gt; persist
+table &lt;nospamd&gt; persist file "/etc/mail/nospamd"
+pass in on egress proto tcp to any port smtp divert-to 127.0.0.1 port 8025
+pass in on egress proto tcp from &lt;nospamd&gt; to any port smtp
+pass in log on egress proto tcp from &lt;spamd-white&gt; to any port smtp
+pass out log on egress proto tcp to any port smtp</PRE
+><P
+>or in pre-OpenBSD 4.7 syntax:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>table &lt;spamd-white&gt; persist
+table &lt;nospamd&gt; persist file "/etc/mail/nospamd"
+rdr pass in on egress proto tcp to any port smtp -&gt; 127.0.0.1 port 8025
+pass in on egress proto tcp from &lt;nospamd&gt; to any port smtp
+pass in log on egress proto tcp from &lt;spamd-white&gt; to any port smtp
+pass out log on egress proto tcp to any port smtp</PRE
+><P
+>We have two tables, for now it's sufficient to note their names and the
+fact that these names have a special meaning in this context.  SMTP
+traffic will be redirected to daemon listening on port 8025 unless the source addresses are to be found in one of the tables.</P
+><P
+>The application which uses these tables,
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/spamd"
+TARGET="_top"
+>spamd</A
+></SPAN
+>, is a fake SMTP daemon, designed to
+waste spammers' time and keep their traffic off our net.  That's what
+lives at port 8025, and the last part of our session here will be
+centered around how to make good use of that software.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>This is about the OpenBSD spam deferral daemon <A
+HREF="http://man.openbsd.org/spamd"
+TARGET="_top"
+>spamd(8)</A
+>, not the Spamassassin component</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Please note that this text describes the OpenBSD spam deferral daemon <A
+HREF="http://man.openbsd.org/spamd"
+TARGET="_top"
+>spamd(8)</A
+>, not the similarly named program that is part of the Apache project's SpamAssassin content filtering system. The spam deferral daemon and the content filtering system complement each other well and can even coexist on the same system (the binaries install to different paths unless you've done something you shouldn't have). If you're primarily interested in the content filterling system, please head over to <A
+HREF="http://spamassassin.apache.org/"
+TARGET="_top"
+>spamassassin.apache.org</A
+> for information on that system.
+  </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SPAMD.NOTALONE"
+>Remember, you are not alone: blacklisting</A
+></H1
+><P
+>The main point underlying the <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> design
+is the fact that spammers send a large number of messages, and the
+probability that you are the first person receiving a particular
+message is incredibly small.  In addition, spam is mainly sent via a
+few spammer friendly networks and a large number of hijacked machines.
+Both the individual messages and the machines will be reported to
+blacklists fairly quickly, and this is the data which eventually
+ends up in the first table in our example.</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="expiretable.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="spamd.tarandgrey.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Using <SPAN
+CLASS="APPLICATION"
+>expiretable</SPAN
+> to tidy your tables</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>List of black and grey, and the sticky tarpit</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,411 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>That sad old FTP thing</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Setting up"
+HREF="gwsimplesetup.html"><LINK
+REL="NEXT"
+TITLE="Historical FTP proxies: do not use"
+HREF="historical-deprecated.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="gwsimplesetup.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="historical-deprecated.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="FTPPROBLEM"
+></A
+>That sad old FTP thing</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="ftpproblem.html#FRESH-FTP-PROXY"
+>If We Have To: ftp-proxy With Divert or Redirection</A
+></DT
+><DT
+><A
+HREF="historical-deprecated.html"
+>Historical FTP proxies: do not use</A
+></DT
+></DL
+></DIV
+><P
+>The short list of real life TCP ports we looked at a few moments back
+contained, among other things, FTP. FTP is a sad old thing and a
+problem child, emphatically so for anyone trying to combine FTP and firewalls. 
+FTP is an old and weird protocol, with a lot to not like.  The most common
+points against it, are</P
+><P
+></P
+><UL
+><LI
+><P
+>Passwords are transferred in the clear</P
+></LI
+><LI
+><P
+>The protocol demands the use of at least two TCP connections (control 
+and data) on separate ports</P
+></LI
+><LI
+><P
+>When a session is established, data is communicated via ports selected
+at random</P
+></LI
+></UL
+><P
+>All of these points make for challenges security-wise, even before
+considering any potential weaknesses in client or server software
+which may lead to security issues.  These things have tended to happen.</P
+><P
+>Under any circumstances, other more modern and more secure options
+for file transfer exist, such as <SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/sftp"
+TARGET="_top"
+>sftp</A
+></SPAN
+> or
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/scp"
+TARGET="_top"
+>scp</A
+></SPAN
+>, which feature both authentication
+and data transfer via encrypted connections.  Competent IT 
+professionals should have a preference for some other form of file
+transfer than FTP.</P
+><P
+>Regardless of our professionalism and preferences, we are all too
+aware that at times we will need to handle things we would prefer not
+to.  In the case of FTP through firewalls, the main part of our
+handling consists of redirecting the traffic to a small program which
+is written specifically for this purpose.</P
+><P
+>Depending on your configuration, which operating system you are using
+as the platform for your PF firewall and how you count them, three or
+four different options are available for this particular task.  </P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If your configuration is based on a PF version that is old enough to warrant using any FTP proxy other than the first one here, I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> urge you to upgrade to a more recent system.</P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="FRESH-FTP-PROXY"
+>If We Have To: ftp-proxy With Divert or Redirection</A
+></H1
+><P
+>Enabling FTP transfers through your gateway is amazingly simple, thanks to the FTP proxy program included in the OpenBSD base system. The program is called, you guessed it, <KBD
+CLASS="USERINPUT"
+><A
+HREF="http://man.openbsd.org/ftp-proxy"
+TARGET="_top"
+>ftp-proxy</A
+></KBD
+>.</P
+><P
+>  The FTP protocol being what it is, the proxy needs to dynamically insert rules in your rule set. <KBD
+CLASS="USERINPUT"
+>ftp-proxy</KBD
+> interacts with your configuration via an <I
+CLASS="FIRSTTERM"
+>anchor</I
+>
+  where the proxy inserts and deletes the rules it constructs to handle your FTP traffic.</P
+><P
+>To enable <KBD
+CLASS="USERINPUT"
+>ftp-proxy</KBD
+>, you need to add this line to your <TT
+CLASS="FILENAME"
+>/etc/rc.conf.local</TT
+> file:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>ftpproxy_flags=""</PRE
+><P
+>Or, if you want to keep text file editing to a minimum and you're running a recent-ish version of  OpenBSD, you can use <SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/rcctl"
+TARGET="_top"
+>rcctl</A
+></SPAN
+>to enable and start the daemon:
+      </P
+><PRE
+CLASS="SCREEN"
+>$ doas rcctl enable ftpproxy	
+$ doas rcctl start ftpproxy	
+      </PRE
+><P
+>If you want to start the proxy in IPv6 mode, you enable and start the <KBD
+CLASS="USERINPUT"
+>ftpproxy6</KBD
+> service in the same manner.
+      </P
+><P
+>On FreeBSD, you also need to add</P
+><PRE
+CLASS="PROGRAMLISTING"
+>ftpproxy_enable="YES"</PRE
+><P
+>You can start the proxy manually by running <KBD
+CLASS="USERINPUT"
+>/usr/sbin/ftp-proxy</KBD
+> if you like, and you may in fact want to in order to check that the changes to the PF configuration we are about to do have the effect we want. </P
+><P
+>For a basic configuration, you only need to add three elements to your <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+>. First, the anchor:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>anchor "ftp-proxy/*"</PRE
+><P
+>In pre-OpenBSD 4.7 based versions, two anchors were needed:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>nat-anchor "ftp-proxy/*"
+rdr-anchor "ftp-proxy/*"</PRE
+><P
+>The proxy will insert the rules it generates for the FTP sessions here. Then you also need a pass rule to let ftp traffic in to the proxy.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in quick inet proto tcp to port ftp divert-to 127.0.0.1 port 8021</PRE
+><P
+>Note the <KBD
+CLASS="USERINPUT"
+>divert-to</KBD
+> part. This diverts the traffic to the local port where the proxy listens. Also make sure both the anchor and the divert rule are placed before any match rules for NAT.</P
+><P
+>Pre-<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.0</I
+></SPAN
+> proxies, used <KBD
+CLASS="USERINPUT"
+>rdr-to</KBD
+>:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in quick proto tcp to port ftp rdr-to 127.0.0.1 port 8021
+pass in quick inet6 proto tcp to port ftp rdr-to ::1 port 8021</PRE
+><P
+>And finally, the pre-OpenBSD 4.7 version of this rule is</P
+><PRE
+CLASS="PROGRAMLISTING"
+>rdr pass on $int_if proto tcp from any to any port ftp -&#62; 127.0.0.1 \
+         port 8021</PRE
+><P
+>(IPv4 only here to encourage you to upgrade to something modern.) Finally, add a <KBD
+CLASS="USERINPUT"
+>pass</KBD
+> rule to let the packets pass from the proxy to the rest of the world:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass out proto tcp from $proxy to any port ftp </PRE
+><P
+>where <KBD
+CLASS="USERINPUT"
+>$proxy</KBD
+> expands to the address the proxy daemon is bound to.</P
+><P
+>Reload your PF configuration, </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas pfctl -f /etc/pf.conf</KBD
+></PRE
+><P
+>and before you know it, your users will thank you for making FTP work.</P
+><P
+>This example covers a basic setup where the clients in your local net need to contact FTP servers elsewhere. The basic configuration here should work well with most combinations of FTP clients and servers. As you will notice from looking at the man page, you can change the proxy's behavior in various ways by adding options to the <KBD
+CLASS="USERINPUT"
+>ftpproxy_flags=</KBD
+> line. You may bump into clients or servers with specific quirks that you need to compensate for in your configuration, or you may want to integrate the proxy in your setup in specific ways such as assigning FTP traffic to a specific queue. For these and other finer points of <KBD
+CLASS="USERINPUT"
+>ftp-proxy</KBD
+> configuration, your best bet is to start by studying the man page.</P
+><P
+>If you are looking for ways to run an FTP server protected by PF and <KBD
+CLASS="USERINPUT"
+>ftp-proxy</KBD
+>, you could look into running a separate <KBD
+CLASS="USERINPUT"
+>ftp-proxy</KBD
+> in reverse mode (using the <KBD
+CLASS="USERINPUT"
+>-R</KBD
+> option), on a separate port with its own redirecting pass rule.</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="gwsimplesetup.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="historical-deprecated.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Setting up</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Historical FTP proxies: do not use</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

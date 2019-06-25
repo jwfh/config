@@ -1,0 +1,467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Setting up</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="A simple gateway, NAT if you need it"
+HREF="basicgw.html"><LINK
+REL="PREVIOUS"
+TITLE="What is your local network, anyway?"
+HREF="whatsyourlocalnet.html"><LINK
+REL="NEXT"
+TITLE="That sad old FTP thing"
+HREF="ftpproblem.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="whatsyourlocalnet.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>A simple gateway, NAT if you need it</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="ftpproblem.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="GWSIMPLESETUP"
+>Setting up</A
+></H1
+><P
+>We assume that the machine has acquired another network card or at any
+rate you have set up a network connection from your local network, via
+PPP or other means.  We will not consider the specific interface
+configurations. </P
+><P
+>For the discussion and examples below, only the interface names will
+differ between a PPP setup and an Ethernet one, and we will do our
+best to get rid of the actual interface names as quickly as possible.</P
+><P
+>First, we need to turn on gatewaying in order to let the machine forward
+the network traffic it receives on one interface to other networks via
+a separate interface.  Initially we will do this on the command line with
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/pfctl"
+TARGET="_top"
+>sysctl</A
+></SPAN
+>, for traditional <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IP version four</I
+></SPAN
+> </P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>#</SAMP
+> <KBD
+CLASS="USERINPUT"
+>sysctl net.inet.ip.forwarding=1</KBD
+></PRE
+><P
+>and if we need to forward <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IP version six</I
+></SPAN
+> traffic, the command is</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>#</SAMP
+> <KBD
+CLASS="USERINPUT"
+>sysctl net.inet6.ip6.forwarding=1</KBD
+></PRE
+><P
+>In order for this to work once you reboot the computer at some time in the future,
+you need to enter these settings into the relevant configuration files.</P
+><P
+>In OpenBSD and NetBSD, you do this by editing <TT
+CLASS="FILENAME"
+>/etc/sysctl.conf</TT
+>, by changing
+the lines you need, like this</P
+><PRE
+CLASS="PROGRAMLISTING"
+>net.inet.ip.forwarding=1
+net.inet6.ip6.forwarding=1</PRE
+><P
+>On FreeBSD, you conventionally do the corresponding change by putting these
+lines in your <TT
+CLASS="FILENAME"
+>/etc/rc.conf</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>gateway_enable="YES" #for ipv4
+ipv6_gateway_enable="YES" #for ipv6</PRE
+><P
+>The net effect is identical, the FreeBSD <SPAN
+CLASS="APPLICATION"
+>rc</SPAN
+> script sets the two
+values via the <SPAN
+CLASS="APPLICATION"
+>sysctl</SPAN
+> command. However, a larger part of
+the FreeBSD configuration is centralized into the <TT
+CLASS="FILENAME"
+>rc.conf</TT
+> file. </P
+><P
+>Are both of the interfaces you intend to use up and running? Use
+<KBD
+CLASS="USERINPUT"
+>ifconfig -a</KBD
+>, or <KBD
+CLASS="USERINPUT"
+>ifconfig</KBD
+> 
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>interface_name</I
+></SPAN
+> to find out.</P
+><P
+>If you still intend to allow any traffic initiated by machines on the
+inside, your <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+> could look roughly like
+this<A
+NAME="AEN707"
+HREF="#FTN.AEN707"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>ext_if = "ep0" # macro for external interface - use tun0 for PPPoE
+int_if = "ep1"  # macro for internal interface
+localnet = $int_if:network
+# ext_if IP address could be dynamic, hence ($ext_if)
+match out on $ext_if from $localnet nat-to ($ext_if)
+block all
+pass inet proto tcp from { self, $localnet } </PRE
+><P
+>or if you are running a pre-OpenBSD 4.7 version:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>ext_if = "ep0" # macro for external interface - use tun0 for PPPoE
+int_if = "ep1"  # macro for internal interface
+localnet = $int_if:network
+# ext_if IP address could be dynamic, hence ($ext_if)
+nat on $ext_if from $localnet to any -&gt; ($ext_if) 
+block all
+pass inet proto tcp from { self, $localnet } </PRE
+><P
+>Note the use of macros to assign logical names to the network interfaces.
+Here 3Com cards are used, but this is the last time during this lecture
+we will find this of any interest whatsoever. In truly simple setups like
+this one, we may not gain very much by using macros like these, but once
+the rule sets grow somewhat larger, you will learn to appreciate the 
+readability this adds to the rule sets</P
+><P
+>Also note the rules where the network address translations happens.
+<KBD
+CLASS="USERINPUT"
+>match</KBD
+> rules were introduced in OpenBSD 4.6 as a
+way to apply actions without affecting the
+<KBD
+CLASS="USERINPUT"
+>block</KBD
+> or <KBD
+CLASS="USERINPUT"
+>pass</KBD
+> status.
+In OpenBSD 4.7, <KBD
+CLASS="USERINPUT"
+>nat</KBD
+> was demoted to
+<KBD
+CLASS="USERINPUT"
+>nat-to</KBD
+>, one of several possible actions on
+<KBD
+CLASS="USERINPUT"
+>match</KBD
+> or <KBD
+CLASS="USERINPUT"
+>pass</KBD
+> rules. In
+both cases this is where we handle the network address translation
+from the non-routable address inside your local net to the sole
+official address we assume has been assigned to you.</P
+><P
+>The parentheses surrounding the last part of the nat rule
+<KBD
+CLASS="USERINPUT"
+>($ext_if)</KBD
+> serve to compensate for the
+possibility that the IP address of the external interface may be
+dynamically assigned. This detail will ensure that your network
+traffic runs without serious interruptions even if the external IP
+address changes.</P
+><P
+>On the other hand, this rule set probably allows more traffic than
+what you actually want to pass out of your network. In one network where I have done a fair bit of work over the years, 
+the equivalent macro is</P
+><PRE
+CLASS="PROGRAMLISTING"
+>client_out = "{ ftp-data, ftp, ssh, domain, pop3, auth, nntp, http,\
+                https, 446, cvspserver, 2628, 5999, 8000, 8080 }"</PRE
+><P
+>with the rule</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass inet proto tcp from $localnet to port $client_out</PRE
+><P
+>This may be a somewhat peculiar selection of ports, but it's exactly
+what the users in that network need.  Some of the numbered ports were
+needed for specific applications.  Your needs probably differ in some
+specifics, but this should cover at least some of the more useful
+services.</P
+><P
+>In addition, we have a few other pass rules.  We will be returning to some
+of the more interesting ones rather soon.  One pass rule which is useful
+to those of us who want the ability to administer our machines from 
+elsewhere is</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in inet proto tcp to port ssh</PRE
+><P
+>or for that matter</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in inet proto tcp to $ext_if port ssh</PRE
+><P
+>whichever you like.  Lastly we need to make the name service and time
+keeping work for our clients</P
+><PRE
+CLASS="PROGRAMLISTING"
+>udp_services = "{ domain, ntp }"</PRE
+><P
+>supplemented with a rule which passes the traffic we want through our firewall:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass quick inet proto { tcp, udp } to port $udp_services keep state</PRE
+><P
+>Note the <B
+CLASS="COMMAND"
+>quick</B
+> keyword in this rule.  We have
+started writing rule sets which consist of several rules, and it is
+time to take a look at the relationships between the rules in a rule
+set.  The rules are evaluated from top to bottom, in the sequence they
+are written in the configuration file.  For each packet or
+connection evaluated by PF, <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>the last matching rule</I
+></SPAN
+> in
+the rule set is the one which is applied.  The
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>quick</I
+></SPAN
+> keyword offers an escape from the ordinary
+sequence.  When a packet matches a <KBD
+CLASS="USERINPUT"
+>quick</KBD
+> rule, the packet is treated
+according to the present rule.  The rule processing stops without
+considering any further rules which might have matched the packet.
+Quite handy when you need a few isolated exceptions to your general
+rules.</P
+><P
+>It is worth noting that we used one rule for both the domain name
+service (<KBD
+CLASS="USERINPUT"
+>domain</KBD
+> and time synchronization
+(<KBD
+CLASS="USERINPUT"
+>ntp</KBD
+>).  The most important reason for this is
+that both protocols under certain circumstances communicate alternately
+over TCP and UDP.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN707"
+HREF="gwsimplesetup.html#AEN707"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>For dialup users who conventionally use some
+variant of PPP for their Internet connections, the external interface
+is the <TT
+CLASS="FILENAME"
+>tun0</TT
+> pseudo-device.  Broadband users such
+as ADSL subscribers tend to have an Ethernet interface to play with,
+however for a significant subset of ADSL users, specifically those
+using PPP over Ethernet (PPPoE), the correct external interface will
+be the <TT
+CLASS="FILENAME"
+>tun0</TT
+> pseudo-device, not the physical
+Ethernet interface.  </P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="whatsyourlocalnet.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="ftpproblem.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>What is your local network, anyway?</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="basicgw.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>That sad old FTP thing</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

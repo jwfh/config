@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>If We Have To: ftp-proxy With divert-to (Or Redirection)</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="That Sad, Old FTP Thing"
+HREF="ftpproblem.html"><LINK
+REL="NEXT"
+TITLE="ftp-proxy, Pre-4.7"
+HREF="ftpnewproxypre47.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='ftpnewproxypre47.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='ftpproblem.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='ftpproblem.html';}
+     else
+     {window.location.href='ftpnewproxypre47.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='ftpnewproxypre47.html';break;
+      case 66:
+      case 80:window.location.href='ftpproblem.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='ftpproblem.html';}
+       else
+       {window.location.href='ftpnewproxypre47.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="ftpproblem.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="ftpnewproxypre47.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="FTPNEWPROXY"
+></A
+>If We Have To: <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> With <KBD
+CLASS="USERINPUT"
+>divert-to</KBD
+> (Or Redirection)</H1
+><P
+>In the base system, load the daemon if you need it</P
+><P
+><TT
+CLASS="FILENAME"
+>/etc/rc.conf[.local]</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>ftpproxy_flags=""</PRE
+><P
+>FreeBSD also needs</P
+><PRE
+CLASS="PROGRAMLISTING"
+>ftpproxy_enable="YES"</PRE
+><P
+><TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+></P
+><P
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>anchor "ftp-proxy/*"</PRE
+><P
+>the redirection </P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in quick inet proto tcp to port ftp divert-to 127.0.0.1 port 8021</PRE
+><P
+>Pre-<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.0</I
+></SPAN
+>, proxies used <KBD
+CLASS="USERINPUT"
+>rdr-to</KBD
+>:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in quick inet proto tcp to port ftp rdr-to 127.0.0.1 port 8021</PRE
+><PRE
+CLASS="PROGRAMLISTING"
+>pass out proto tcp from $proxy to port ftp</PRE
+><P
+>The proxy can also run in IPv6 mode (-6), but do you want to?</P
+></DIV
+></BODY
+></HTML
+>

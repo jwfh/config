@@ -1,0 +1,15 @@
+table <clients> { 192.168.103/24, !192.168.103.14, 192.168.19.12 }
+backupserver = "192.0.2.227"
+bacula_ports = "9101:9103"
+tcp_ports = "{ 22, ftp, domain, ntp, whois, www, https, auth, nntp, imaps, rtsp, submission 8080:8082 }"
+udp_ports = "{ domain, ntp }"
+ext_if = "iwn0"
+int_if = "re0"	
+
+set skip on { lo, $int_if }
+
+match out on $ext_if from <clients> nat-to ($ext_if)
+block
+pass inet proto tcp from <clients> to port $tcp_ports
+pass inet proto udp from <clients> to port $udp_ports
+pass inet proto tcp from $backupserver to <clients> port $bacula_ports

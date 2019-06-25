@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Packet filter? Firewall? </TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="PF?"
+HREF="intro.html"><LINK
+REL="NEXT"
+TITLE="NAT?"
+HREF="nat.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="intro.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="nat.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="CONCEPTS"
+></A
+>Packet filter? Firewall? </H1
+><P
+>By now I have already used some terms and concepts before I've
+bothered to explain them, and I'll correct that oversight shortly.  PF
+is a <I
+CLASS="FIRSTTERM"
+>packet filter</I
+>, that is, code which
+inspects network packets at the protocol and port level, and decides
+what to do with them.  In PF's case this code for the most part
+operates in kernel space, inside the network code.</P
+><P
+>PF operates in a world which consists of packets, protocols,
+connections and ports.</P
+><P
+>Based on where a packet is coming from or where it's going, which
+protocol, connection or port it is designated for, PF is able to
+determine where to lead the packet, or decide if it is to be let
+through at all.</P
+><P
+>It's equally possible to direct network traffic based on packet
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>contents</I
+></SPAN
+>, usually referred to as application
+level filtering, but this is not the kind of thing PF does. We will
+come back later to some cases where PF will hand off these kinds of
+tasks to other software, but first let us deal with some basics.</P
+><P
+>We've already mentioned the firewall concept. One important feature of
+PF and similar software, perhaps the most important feature, is that it
+is able to identify and block traffic which you do not want to let
+into your local network or let out to the world outside. At some point
+the term '<I
+CLASS="FIRSTTERM"
+>firewall</I
+>' was coined.</P
+><P
+>While blocking &quot;bad&quot; traffic and denying access can be
+quite important, I tend to emphasize the somewhat wider and more
+general perspective that the packet filter is a very flexible tool
+which is extremely useful when you want to <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>take
+control</I
+></SPAN
+> of what happens in your network.</P
+><P
+>Taking control means you get to make informed decisions, and that, in
+my opinion, is when the fun part of being a network administrator
+starts.  And you should be forewarned, staying in control is a
+recurring theme in this session.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="intro.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="nat.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>PF?</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>NAT?</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

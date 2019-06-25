@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Wireless Networks Made Easy (cont'd)</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Wireless Networks: WPA Setup"
+HREF="wpasetup.html"><LINK
+REL="NEXT"
+TITLE="Wireless Networks Made Easy (cont'd)"
+HREF="wireless.simple.firewall.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='wireless.simple.firewall.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='wpasetup.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='wpasetup.html';}
+     else
+     {window.location.href='wireless.simple.firewall.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='wireless.simple.firewall.html';break;
+      case 66:
+      case 80:window.location.href='wpasetup.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='wpasetup.html';}
+       else
+       {window.location.href='wireless.simple.firewall.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="wpasetup.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="wireless.simple.firewall.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="WIRELESS.SIMPLE.CLIENT"
+></A
+>Wireless Networks Made Easy (cont'd)</H1
+><P
+>Client:</P
+><PRE
+CLASS="SCREEN"
+>$ sudo ifconfig ath0 up mode 11b chan 11 nwid unwiredbsd nwkey 0x1deadbeef9
+$ sudo dhclient ath0
+DHCPREQUEST on ath0 to 255.255.255.255 port 67
+DHCPREQUEST on ath0 to 255.255.255.255 port 67
+DHCPACK from 10.50.90.1
+bound to 10.50.90.11 -- renewal in 1800 seconds.</PRE
+><P
+>Make permanent with <TT
+CLASS="FILENAME"
+>/etc/hostname.ath0</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>up media autoselect mode 11b chan 6 nwid unwiredbsd nwkey 0x1deadbeef9
+dhcp</PRE
+><P
+>WPA pre-shared</P
+><PRE
+CLASS="PROGRAMLISTING"
+>up media autoselect mode 11b chan 6 nwid unwiredbsd \ 
+wpakey mylongpassphrase</PRE
+></DIV
+></BODY
+></HTML
+>

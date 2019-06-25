@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Helping traceroute</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Making your network troubleshooting friendly"
+HREF="troubleshoot.html"><LINK
+REL="PREVIOUS"
+TITLE="Letting ping through"
+HREF="letpingthru.html"><LINK
+REL="NEXT"
+TITLE="Path MTU discovery"
+HREF="pathmtudisc.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="letpingthru.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Making your network troubleshooting friendly</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="pathmtudisc.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="HELPTRACEROUTE"
+>Helping <SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+></A
+></H1
+><P
+><SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/traceroute"
+TARGET="_top"
+>traceroute</A
+></SPAN
+> is another command which is
+quite useful when your users claim that the Internet isn't working.
+By default, Unix <SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+> uses UDP
+connections according to a set formula based on destination.  The rule
+below works with the <SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+> command on
+all unixes I've had access to, including GNU/Linux:</P
+><PRE
+CLASS="PROGRAMLISTING"
+># allow out the default range for traceroute(8):
+# "base+nhops*nqueries-1" (33434+64*3-1)
+pass out on $ext_if inet proto udp to port 33433 &gt;&lt; 33626</PRE
+><P
+>Experience so far indicates that <SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+>
+implementations on other operating systems work roughly the
+same. Except, of course, Microsoft Windows.  On that platform,
+<TT
+CLASS="FILENAME"
+>TRACERT.EXE</TT
+> uses ICMP ECHO for this purpose. So
+if you want to let Windows traceroutes through, you only need the
+first rule. Unix <SPAN
+CLASS="APPLICATION"
+>traceroutes</SPAN
+> can be
+instructed to use other protocols as well, and will behave remarkably
+like its Microsoft counterpart if you use its
+<KBD
+CLASS="USERINPUT"
+>-I</KBD
+> command line option.  You can check the
+<SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+> man page (or its source code,
+for that matter) for all the details.</P
+><P
+>Under any circumstances, this solution was lifted from an openbsd-misc
+post.  I've found that list, and the searchable list archives
+(accessible among other places from
+<A
+HREF="http://marc.info/"
+TARGET="_top"
+>http://marc.info/</A
+>),
+to be a very valuable resource whenever you need OpenBSD or PF related
+information.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="letpingthru.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="pathmtudisc.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Letting <SPAN
+CLASS="APPLICATION"
+>ping</SPAN
+> through</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="troubleshoot.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Path MTU discovery</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

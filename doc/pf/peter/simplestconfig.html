@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Simplest possible setup (OpenBSD)</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="BSD vs Linux - Configuration"
+HREF="bsdvslinux.html"><LINK
+REL="NEXT"
+TITLE="Simplest possible setup (FreeBSD)"
+HREF="simplestfreebsd.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="bsdvslinux.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="simplestfreebsd.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="SIMPLESTCONFIG"
+></A
+>Simplest possible setup (OpenBSD)</H1
+><P
+>This brings us, finally, to the practical point of actually configuring
+PF in the simplest possible setup. We'll deal with a single machine
+which will communicate with a network which may very well be the Internet.</P
+><P
+>In order to start PF, as previously mentioned, you need to tell the
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/rc"
+TARGET="_top"
+>rc</A
+></SPAN
+> system that you want the service to
+start.  That is, in OpenBSD 4.6 and newer, you don't have to do this
+yourself: PF with a very minimalistic rule set is enabled by default.
+In OpenBSD versions earlier than 4.6, you enable PF by editing or
+creating the file <TT
+CLASS="FILENAME"
+>/etc/rc.conf.local</TT
+>, and adding
+the magical line</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pf=YES                # enable PF</PRE
+><P
+>quite simply.  In addition, you may if you like specify the file where
+PF will find its rules. </P
+><PRE
+CLASS="PROGRAMLISTING"
+>pf_rules=/etc/pf.conf # specify which file contains your rules</PRE
+><P
+>The default value is the one given here, <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+>.  
+At the next startup, PF will be enabled.  You can verify this by
+looking for the message <SAMP
+CLASS="COMPUTEROUTPUT"
+>PF enabled</SAMP
+> on
+the console.  The <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+> which comes out of
+a normal install of OpenBSD or NetBSD contains a number of
+useful suggestions, but they're all commented out. On FreeBSD, you will need to create a <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+> file yourself.</P
+><P
+>Then again, you really do not need to restart your machine in order to
+enable PF.  You can do this just as easily by using
+<SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+>.  We really do not want to reboot for
+no good reason, so we type the command</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas pfctl -ef /etc/pf.conf</KBD
+></PRE
+><P
+>which enables PF and loads your rule set.<A
+NAME="AEN469"
+HREF="#FTN.AEN469"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+><A
+NAME="AEN475"
+HREF="#FTN.AEN475"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+>. At this point
+we do not have a rule set (unless you are running with the OpenBSD
+default), which means that PF does not actually do anything, just
+passes packets.</P
+><P
+>It is probably worth noting that if you reboot your machine at this
+point, the rc script on OpenBSD at least will enable a default rule
+set, which is in fact loaded <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>before</I
+></SPAN
+> any of the
+network interfaces are enabled. </P
+><P
+>This default rule set is designed as a safety measure in case your
+gateway boots with an invalid configuration.  It lets you log in and
+clean up whichever syntax error caused your rule set not to load. The
+default rule set allows a basic set of services: <SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/ssh"
+TARGET="_top"
+>ssh</A
+></SPAN
+> from anywhere,
+basic name resolution and NFS mounts.  </P
+><P
+>Some early versions of PF ports elsewhere appear to have neglected to
+bring the default rules with them.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN469"
+HREF="simplestconfig.html#AEN469"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+> As a
+footnoted aside, on OpenBSD, I tend to use
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/doas"
+TARGET="_top"
+>doas</A
+></SPAN
+> (which replaced the venerable
+<SPAN
+CLASS="APPLICATION"
+>sudo</SPAN
+> in the base system in OpenBSD
+5.8) when I need to do something which requires extra privileges.  <SPAN
+CLASS="APPLICATION"
+>doas</SPAN
+> is in the OpenBSD base system, while its somewhat more complicated predecessor is available via the package system on OpenBSD and is within easy reach as a port or package
+elsewhere.  If you have not started using doas or sudo yet, you should.  Then
+you'll avoid shooting your own foot simply because you forgot you were
+root in that terminal window.  For the simple cases like the samples in this document, the two commands are essentially interchangeable, but the samples from this point on will use doas to show some OpenBSD bias. </P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN475"
+HREF="simplestconfig.html#AEN475"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>For
+convenience if you want it - <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+> is able
+to handle several operations on a single command line. You can, for
+example, enable PF and load the rule set with the command
+<KBD
+CLASS="USERINPUT"
+>doas pfctl -ef /etc/pf.conf</KBD
+>, and bunch on
+several other options if you like.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="bsdvslinux.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="simplestfreebsd.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>BSD vs Linux - Configuration</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Simplest possible setup (FreeBSD)</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

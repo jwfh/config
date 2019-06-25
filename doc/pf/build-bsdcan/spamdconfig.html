@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Setting Up spamd: spamd.conf</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Giving Spammers a Hard Time: The Rules"
+HREF="spamd.html"><LINK
+REL="NEXT"
+TITLE="Setting Up spamd - FreeBSD, NetBSD"
+HREF="spamdconfig.freebsd.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='spamdconfig.freebsd.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='spamd.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='spamd.html';}
+     else
+     {window.location.href='spamdconfig.freebsd.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='spamdconfig.freebsd.html';break;
+      case 66:
+      case 80:window.location.href='spamd.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='spamd.html';}
+       else
+       {window.location.href='spamdconfig.freebsd.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="spamd.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="spamdconfig.freebsd.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="SPAMDCONFIG"
+></A
+>Setting Up spamd: spamd.conf</H1
+><P
+>Edit <TT
+CLASS="FILENAME"
+>spamd.conf</TT
+> to specify blacklists and whitelists</P
+><PRE
+CLASS="PROGRAMLISTING"
+>all:\
+:uatraps:whitelist:bsdly:whitelist:nixspam:whitelist:</PRE
+><PRE
+CLASS="PROGRAMLISTING"
+>uatraps:\
+        :black:\
+        :msg="SPAM. Your address %A has sent spam within the last 24 hours":\
+        :method=http:\
+        :file=www.openbsd.org/spamd/traplist.gz
+bsdly:\
+        :black:\
+        :msg="SPAM.  Your Address %A has sent spam within the last 24 hours.  See http://www.bsdly.net/~peter/nameandshame.html for details.":\
+        :method=http:\
+        :file=www.bsdly.net/~peter/bsdly.net.traplist
+
+# Nixspam recent sources list.
+# Mirrored from http://www.heise.de/ix/nixspam
+nixspam:\
+        :black:\
+        :msg="Your address %A is in the nixspam list\n\
+        See http://www.heise.de/ix/nixspam/dnsbl_en/ for details":\
+        :method=http:\
+        :file=www.openbsd.org/spamd/nixspam.gz
+whitelist:\
+        :white:\
+        :method=file:\
+        :file=/etc/mail/whitelist.txt</PRE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>First rule set - single machine</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Simplest possible setup (NetBSD)"
+HREF="netbsdbasics.html"><LINK
+REL="NEXT"
+TITLE="Slightly stricter"
+HREF="stricter.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="netbsdbasics.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="stricter.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="MINIMAL-RULESET"
+></A
+>First rule set - single machine</H1
+><P
+>This is the simplest possible setup, for a single machine which will
+not run any services, and which will talk to one network which may be
+the Internet.  For now, we will use a <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+>
+which looks like this:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>block in all
+pass out all keep state</PRE
+><P
+>that is, deny any incoming traffic, allow traffic we make ourselves,
+and retain state information on our connections. Keeping state
+information allows return traffic for all connections we have
+initiated to pass back to us.  It is worth noting that from OpenBSD
+4.1 onwards, the default for pass rules is to keep state
+information<A
+NAME="AEN563"
+HREF="#FTN.AEN563"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>, so the equivalent
+rule set in the new OpenBSD 4.1 style is even simpler,</P
+><PRE
+CLASS="PROGRAMLISTING"
+># minimal rule set, OpenBSD 4.1 and newer keeps state by default
+block in all
+pass out all</PRE
+><P
+>It goes pretty much without saying that passing all traffic generated
+by a specific host implies a great deal of trust that the host in
+question is, in fact, trustworthy.  This is something you do if and
+only if this is a machine you know you can trust.  If you are ready to
+use the rule set, you load it with</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+><SPAN
+CLASS="APPLICATION"
+>doas</SPAN
+> <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+> -ef <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+></KBD
+></PRE
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN563"
+HREF="minimal-ruleset.html#AEN563"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>In fact the new default corresponds to
+<KBD
+CLASS="USERINPUT"
+>keep state flags S/SA</KBD
+>, ensuring that only
+initial SYN packets during connection setup create state, eliminating
+some puzzling error scenarios</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="netbsdbasics.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="stricter.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Simplest possible setup (NetBSD)</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Slightly stricter</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

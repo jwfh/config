@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Tables make your life easier</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="A web server and a mail server on the inside"
+HREF="rdr2servers.html"><LINK
+REL="NEXT"
+TITLE="Logging"
+HREF="logging.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="rdr2servers.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="logging.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="TABLES"
+></A
+>Tables make your life easier</H1
+><P
+>By this time you may be thinking that this gets awfully static and
+rigid.  There will after all be some kinds of data which are relevant
+to filtering and redirection at a given time, but do not deserve to be
+put into a configuration file!  Quite right, and PF offers mechanisms
+for handling these situations as well.  Tables are one such feature,
+mainly useful as lists of IP addresses which can be manipulated
+without needing to reload the entire rule set, and where fast lookups
+are desirable.  Table names are always enclosed in angle brackets, ie
+&lt; &gt;, like this:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>table &lt;clients&gt; { 192.168.2.0/24, !192.168.2.5 }</PRE
+><P
+>here, the network <KBD
+CLASS="USERINPUT"
+>192.168.2.0/24</KBD
+> is part of the table,
+except the address <KBD
+CLASS="USERINPUT"
+>192.168.2.5</KBD
+>, which is excluded
+using the ! operator (logical NOT). It is also possible to load tables from
+files where each item is on a separate line, such as the file <TT
+CLASS="FILENAME"
+>/etc/clients</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>192.168.2.0/24
+!192.168.2.5</PRE
+><P
+>which in turn is used to initialize the table in <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+>:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>table &lt;clients&gt; persist file "/etc/clients"</PRE
+><P
+>Then, for example, you can change one of our earlier rules to read</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass inet proto tcp from &lt;clients&gt; to any port $client_out \
+         flags S/SA keep state</PRE
+><P
+>to manage outgoing traffic from your client computers. With this in hand, you can 
+manipulate the table's contents live, such as</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas pfctl -t clients -T add 192.168.1/16</KBD
+></PRE
+><P
+>Note that this changes the in-memory copy of the table only, meaning
+that the change will not survive a power failure or other reboot
+unless you arrange to store your changes.</P
+><P
+>You might opt to maintain the on-disk copy of the table using a cron
+job which dumps the table content to disk at regular intervals, using
+a command such as <KBD
+CLASS="USERINPUT"
+>pfctl -t clients -T show 
+&gt;/etc/clients</KBD
+>.  Alternatively, you could edit the
+<TT
+CLASS="FILENAME"
+>/etc/clients</TT
+> file and replace the in-memory table
+contents with the file data:</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas pfctl -t clients -T replace -f /etc/clients</KBD
+></PRE
+><P
+>For operations you will be performing frequently, you will sooner or
+later end up writing shell scripts for tasks such as inserting or
+removing items or replacing table contents. The only real limitations
+lie in your own needs and your creativity.<A
+NAME="AEN1149"
+HREF="#FTN.AEN1149"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></P
+><P
+>We will be returning to some handy uses of tables shortly, including a
+few programs which interact with tables in useful ways.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1149"
+HREF="tables.html#AEN1149"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>One improvement you could consider is rewriting the <KBD
+CLASS="USERINPUT"
+>martians</KBD
+> macro from <A
+HREF="unrouteables.html"
+>the Section called <I
+>Handling non-routable addresses from elsewhere</I
+> in the Chapter called <I
+>Network hygiene: Blocking, scrubbing and so on</I
+></A
+> as a table</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="rdr2servers.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="logging.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>A web server and a mail server on the inside</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Logging</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

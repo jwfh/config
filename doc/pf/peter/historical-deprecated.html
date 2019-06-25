@@ -1,0 +1,835 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Historical FTP proxies: do not use</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="That sad old FTP thing"
+HREF="ftpproblem.html"><LINK
+REL="PREVIOUS"
+TITLE="That sad old FTP thing"
+HREF="ftpproblem.html"><LINK
+REL="NEXT"
+TITLE="Making your network troubleshooting friendly"
+HREF="troubleshoot.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="ftpproblem.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>That sad old FTP thing</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="troubleshoot.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="HISTORICAL-DEPRECATED"
+>Historical FTP proxies: do not use</A
+></H1
+><P
+>Various older PF versions still linger in some systems. The content that follows is <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>not</I
+></SPAN
+> recommended, 
+but is kept here mainly because any attempt at removing it has produced requests to bring it back.</P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If your configuration is based on a PF version that is old enough to warrant using any of the FTP proxies described in the following paragraphs, 
+I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> urge you to upgrade to a more recent system.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>We will present the antiquated solutions in roughly chronological order according to their
+ages.  The original FTP proxy for PF is described below in <A
+HREF="historical-deprecated.html#FTP-PROXY"
+>the Section called <I
+>Ancient FTP through NAT: <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+></I
+></A
+>.  We then move on to two newer, intermediate
+solutions developed by Camiel Dobbelaar in <A
+HREF="historical-deprecated.html#FTPSESAME"
+>the Section called <I
+>Ancient: FTP, PF and routable addresses: <SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+>, <SPAN
+CLASS="APPLICATION"
+>pftpx</SPAN
+> and <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>!</I
+></A
+>
+before finally moving on to the modern FTP proxy which was introduced
+in OpenBSD 3.9 in <A
+HREF="historical-deprecated.html#NEWFTPPROXY"
+>the Section called <I
+><SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, slightly new style</I
+></A
+>. </P
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="FTP-PROXY"
+>Ancient FTP through NAT: <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+></A
+></H2
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If your configuration is based on a PF version that is old enough to warrant using this FTP proxy, I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> urge you to upgrade to a more recent system.</P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>OpenBSD 3.8 or earlier <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>equivalents</I
+></SPAN
+> only</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>This section is headed for <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>purely historical</I
+></SPAN
+>
+status when the last PF port to other systems has caught up.  In
+November 2005, the old <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>
+(<TT
+CLASS="FILENAME"
+>/usr/libexec/ftp-proxy</TT
+>) was replaced in
+OpenBSD-current with the new <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>,
+which lives in <TT
+CLASS="FILENAME"
+>/usr/sbin</TT
+>. This is the software
+which is included in OpenBSD 3.9 onwards and what you will be using on
+modern PF versions. See <A
+HREF="historical-deprecated.html#NEWFTPPROXY"
+>the Section called <I
+><SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, slightly new style</I
+></A
+> for details.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>The old style <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> which is a part of
+the base system on systems which offer a PF version based on
+OpenBSD3.8 or earlier is usually called via the
+<SPAN
+CLASS="APPLICATION"
+>inetd</SPAN
+> "super server" via an appropriate
+<TT
+CLASS="FILENAME"
+>/etc/inetd.conf</TT
+> entry.<A
+NAME="AEN852"
+HREF="#FTN.AEN852"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></P
+><P
+>The line quoted here specifies that
+<SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> runs in NAT mode on the loopback
+interface, <TT
+CLASS="FILENAME"
+>lo0</TT
+>:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>127.0.0.1:8021 stream tcp nowait root /usr/libexec/ftp-proxy \
+  ftp-proxy -n</PRE
+><P
+>This line is by default in your <TT
+CLASS="FILENAME"
+>inetd.conf</TT
+>, commented out
+with a <KBD
+CLASS="USERINPUT"
+>#</KBD
+> character at the beginning of the line.
+To enable your change, you restart inetd. </P
+><P
+>On FreeBSD, NetBSD and other rcNG based BSDs you do this with the
+command</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>FreeBSD$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas /etc/rc.d/inetd restart</KBD
+></PRE
+><P
+>or equivalent.  Consult man 8 inetd if you are unsure.  At this
+point <SPAN
+CLASS="APPLICATION"
+>inetd</SPAN
+> is running with your new
+settings loaded.</P
+><P
+>Now for the actual redirection.  Redirection rules and NAT rules fall
+into the same rule class.  These rules may be referenced directly by
+other rules, and filtering rules may depend on these rules.  Logically,
+rdr and nat rules need to be defined before the filtering rules.</P
+><P
+>We insert our rdr rule immediately after the nat rule in our <TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>rdr on $int_if proto tcp from any to any port ftp -&gt; 127.0.0.1 \
+         port 8021</PRE
+><P
+>In addition, the redirected traffic must be allowed to pass. We achive this with</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in on $ext_if inet proto tcp from port ftp-data to ($ext_if) \
+    user proxy flags S/SA keep state</PRE
+><P
+>Save <TT
+CLASS="FILENAME"
+>pf.conf</TT
+>, then load the new rules with</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>doas pfctl -f /etc/pf.conf</KBD
+></PRE
+><P
+>At this point you will probably have users noticing that FTP works before 
+you get around to telling them what you've done. </P
+><P
+>This example assumes you are using NAT on a gateway with non routable 
+addresses on the inside.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="FTPSESAME"
+>Ancient: FTP, PF and routable addresses: <SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+>, <SPAN
+CLASS="APPLICATION"
+>pftpx</SPAN
+> and <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>!</A
+></H2
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If your configuration is based on a PF version that is old enough to warrant using any of the following FTP proxy programs, I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> urge you to upgrade to a more recent system.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>In cases where the local network uses official, routable address
+inside the firewall, I must confess I've had trouble making
+<SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> work properly.  When I'd already
+spent too much time on the problem, I was rather relieved to find a
+solution to this specific problen offered by a friendly Dutchman
+called Camiel Dobbelaar in the form of a daemon called
+<SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+>.</P
+><P
+>Local networks using official addresses inside a firewall are
+apparently rare enough that I'll skip over any further treatment. If
+you need this and you are running OpenBSD 3.8 or earlier or one of the
+other PF enabled operating systems, you could do worse than installing
+<SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+>.</P
+><P
+>On FreeBSD, <SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+> is available through
+the ports system as <TT
+CLASS="FILENAME"
+>ftp/ftpsesame</TT
+>.
+Alternatively you can download <SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+>
+from Sentia at <A
+HREF="http://www.sentia.org/projects/ftpsesame/"
+TARGET="_top"
+>http://www.sentia.org/projects/ftpsesame/</A
+>.</P
+><P
+>Once installed and running, <SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+> hooks
+into your rule set via an anchor, a named sub-ruleset. The
+documentation consists of a man page with examples which you can more
+likely than not simply copy and paste.</P
+><P
+><SPAN
+CLASS="APPLICATION"
+>ftpsesame</SPAN
+> never made it into the base
+system, and Camiel went on to write a new solution to the same set of
+problems. </P
+><P
+>The new program, at first called <SPAN
+CLASS="APPLICATION"
+>pftpx</SPAN
+>, is
+available from <A
+HREF="http://www.sentia.org/downloads/pftpx-0.8.tar.gz"
+TARGET="_top"
+>http://www.sentia.org/downloads/pftpx-0.8.tar.gz</A
+>
+and through the FreeBSD ports system as
+<TT
+CLASS="FILENAME"
+>ftp/pftpx</TT
+>.  <SPAN
+CLASS="APPLICATION"
+>pftpx</SPAN
+> comes with a fairly complete and well written man page to get you started.</P
+><P
+>A further developed version, suitably renamed as the new
+<SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, became a part of the the OpenBSD
+base system in time for the OpenBSD 3.9.  The new program,
+<TT
+CLASS="FILENAME"
+>/usr/sbin/ftp-proxy</TT
+>, and how to set it up, is
+described in <A
+HREF="historical-deprecated.html#NEWFTPPROXY"
+>the Section called <I
+><SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, slightly new style</I
+></A
+> below.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="NEWFTPPROXY"
+><SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, slightly new style</A
+></H2
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If your configuration is based on a PF version that is old enough to warrant using the FTP proxy described here, I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> urge you to upgrade to a more recent system.</P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>Ancient: For OpenBSD 3.9 and newer</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If you are upgrading to OpenBSD 3.9 or newer equivalents or working
+from a fresh OpenBSD install, this is the
+<SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> version to use.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Just like its predecessor, the <SPAN
+CLASS="APPLICATION"
+>pftpx</SPAN
+>
+successor <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> configuration is mainly
+a matter of cut and paste from the man page.</P
+><P
+>If you are upgrading to the new <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>
+from an earlier version, you need to remove the
+<SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> line from your
+<TT
+CLASS="FILENAME"
+>inetd.conf</TT
+> file and restart
+<SPAN
+CLASS="APPLICATION"
+>inetd</SPAN
+> or disable it altogether if your
+setup does not require a running <SPAN
+CLASS="APPLICATION"
+>inetd</SPAN
+>.</P
+><P
+>Next, enable <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> by adding the following line to
+your <TT
+CLASS="FILENAME"
+>/etc/rc.conf.local</TT
+> or <TT
+CLASS="FILENAME"
+>/etc/rc.conf</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>ftpproxy_flags=""</PRE
+><P
+>You can start the proxy manually by running
+<KBD
+CLASS="USERINPUT"
+>/usr/sbin/ftp-proxy</KBD
+> if you like.</P
+><P
+>Moving on to the <TT
+CLASS="FILENAME"
+>pf.conf</TT
+> file, you need two
+anchor definitions in the NAT section:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>nat-anchor "ftp-proxy/*"
+rdr-anchor "ftp-proxy/*"</PRE
+><P
+>Both are needed, even if your setup does not use NAT.  If you are
+migrating from a previous version, your rule set probably contains the
+appropriate redirection already.  If it does not, you add it:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>rdr pass on $int_if proto tcp from any to any port ftp -&gt; 127.0.0.1 \
+         port 8021</PRE
+><P
+>Moving on down to the filtering rules, you add an anchor for the proxy to fill in,</P
+><PRE
+CLASS="PROGRAMLISTING"
+>anchor "ftp-proxy/*"</PRE
+><P
+>and finally a pass rule to let the packets pass from the proxy to the rest of the world</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass out proto tcp from $proxy to any port 21 keep state</PRE
+><P
+>where <KBD
+CLASS="USERINPUT"
+>$proxy</KBD
+> expands to the address the proxy
+daemon is bound to.</P
+><P
+>This example covers the simple setup with clients who need to contact
+FTP servers elsewhere.  For other variations and more complicated
+setups, see the <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> man page.</P
+><P
+>If you are looking for ways to run an FTP server protected by PF and
+<SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, you could look into running a
+separate <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> in reverse mode (using
+the <KBD
+CLASS="USERINPUT"
+>-R</KBD
+> option).</P
+></DIV
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN852"
+HREF="historical-deprecated.html#AEN852"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>You may
+need to enable <SPAN
+CLASS="APPLICATION"
+>inetd</SPAN
+> by adding a
+<KBD
+CLASS="USERINPUT"
+>inetd_enable="YES"</KBD
+> line to your
+<TT
+CLASS="FILENAME"
+>rc.conf</TT
+> and possibly adjust other
+<SPAN
+CLASS="APPLICATION"
+>inetd</SPAN
+> related configuration
+settings.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="ftpproblem.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="troubleshoot.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>That sad old FTP thing</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="ftpproblem.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Making your network troubleshooting friendly</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

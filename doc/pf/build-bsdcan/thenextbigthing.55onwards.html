@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>The Next Big Thing(s): newqueue, MPsafe</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Post-OpenBSD 4.7 improvements"
+HREF="post47.html"><LINK
+REL="NEXT"
+TITLE="Who Uses PF Today"
+HREF="whohasit.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='whohasit.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='post47.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='post47.html';}
+     else
+     {window.location.href='whohasit.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='whohasit.html';break;
+      case 66:
+      case 80:window.location.href='post47.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='post47.html';}
+       else
+       {window.location.href='whohasit.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="post47.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="whohasit.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="THENEXTBIGTHING.55ONWARDS"
+></A
+>The Next Big Thing(s): newqueue, MPsafe</H1
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.5</I
+></SPAN
+>: The new traffic shaping system (to replace ALTQ, which goes away totally in 5.6) with a new, friendlier syntax. Filtering with <KBD
+CLASS="USERINPUT"
+>received-on any</KBD
+> now possible. The <KBD
+CLASS="USERINPUT"
+>block policy</KBD
+> in the default <TT
+CLASS="FILENAME"
+>pf.conf</TT
+> is now <KBD
+CLASS="USERINPUT"
+>block return</KBD
+>.</P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.6</I
+></SPAN
+>: ALTQ <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>removed</I
+></SPAN
+> from OpenBSD (even the <KBD
+CLASS="USERINPUT"
+>oldqueue</KBD
+> transition trick). </P
+><P
+>(Also, OpenBSD IPv6 configuration defaults changed: -inet6 is the default, IPv6 addresses (including link-local) set only when explicitly enabled, global accept_rtadv sysctl removed. No PF syntax change needed though.)</P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.7</I
+></SPAN
+>: <A
+HREF="http://www.openbsd.org/cgi-bin/man.cgi?amp;query=carp&#38;sektion=4"
+TARGET="_top"
+>carp(4)</A
+> configuration now requires explicit <KBD
+CLASS="USERINPUT"
+>carpdev</KBD
+></P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.8</I
+></SPAN
+>: <A
+HREF="http://www.openbsd.org/cgi-bin/man.cgi?amp;query=spamd&#38;sektion=8"
+TARGET="_top"
+>spamd(8)</A
+> now uses <KBD
+CLASS="USERINPUT"
+>divert-to</KBD
+> (local only, faster), we got <KBD
+CLASS="USERINPUT"
+>divert-reply</KBD
+> option for raw sockets, misc bug fixes</P
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.9</I
+></SPAN
+>: General MPsafe movement in pf and the network stack, misc bugfixes, support for old-style <KBD
+CLASS="USERINPUT"
+>set debug</KBD
+> statements, see <A
+HREF="http://www.openbsd.org/faq/upgrade59.html"
+TARGET="_top"
+>the upgrade guide</A
+>.</P
+></DIV
+></BODY
+></HTML
+>

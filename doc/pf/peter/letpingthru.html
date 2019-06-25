@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Letting ping through</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Making your network troubleshooting friendly"
+HREF="troubleshoot.html"><LINK
+REL="PREVIOUS"
+TITLE="The easy way out: The buck stops here"
+HREF="icmpstopatgw.html"><LINK
+REL="NEXT"
+TITLE="Helping traceroute"
+HREF="helptraceroute.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="icmpstopatgw.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Making your network troubleshooting friendly</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="helptraceroute.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="LETPINGTHRU"
+>Letting <SPAN
+CLASS="APPLICATION"
+>ping</SPAN
+> through</A
+></H1
+><P
+>The rule set we have developed so far has one clear disadvantage:
+common troubleshooting commands such as
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/ping"
+TARGET="_top"
+>ping</A
+></SPAN
+> and
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/traceroute"
+TARGET="_top"
+>traceroute</A
+></SPAN
+> will not work. That may not
+matter too much to your users, and since it was the
+<SPAN
+CLASS="APPLICATION"
+>ping</SPAN
+> command which scared people into
+filtering or blocking ICMP traffic in the first place, there are
+apparently some people who feel we are better off without it. If you
+are in my perceived target audience, you will be rather fond of having
+those troubleshooting tools available.  With a couple of small
+additions to the rule set, they will be.
+<SPAN
+CLASS="APPLICATION"
+>ping</SPAN
+> uses ICMP, and in order to keep our
+rule set tidy, we start by defining another macro:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>icmp_types = "echoreq"</PRE
+><P
+>and a rule which uses the definition,</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass inet proto icmp all icmp-type $icmp_types </PRE
+><P
+>You may need more or other types of ICMP packets to go through,
+and you can then expand <KBD
+CLASS="USERINPUT"
+>icmp_types</KBD
+> to a list of
+those packet types you want to allow.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="icmpstopatgw.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="helptraceroute.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>The easy way out: The buck stops here</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="troubleshoot.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Helping <SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+></TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

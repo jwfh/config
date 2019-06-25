@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>PF?</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Before we start"
+HREF="preface.html"><LINK
+REL="NEXT"
+TITLE="Packet filter? Firewall? "
+HREF="concepts.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="preface.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="concepts.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="INTRO"
+></A
+>PF?</H1
+><P
+>What, then is PF?  Let us start by looking briefly at the project's
+history to put things in their proper context.</P
+><P
+>OpenBSD's Packet Filter subsystem, which most people refer to simply
+by using the abbreviated form 'PF', was originally written in an
+effort of extremely rapid development during the northern hemisphere
+summer and autumn months of 2001 by Daniel Hartmeier and a number of
+OpenBSD developers, and was launched as a default part of the OpenBSD
+3.0 base system in December of 2001.</P
+><P
+>The need for a new firewalling software subsystem for OpenBSD arose
+when Darren Reed announced to the world that IPFilter, which at that
+point had been rather intimately integrated in OpenBSD, was not after
+all BSD licensed.  In fact quite to the contrary.  The license itself
+was almost a word by word copy of the BSD license, omitting only the
+right to make changes to the code and distribute the result.  The
+OpenBSD version of IPFilter contained quite a number of changes and
+customizations, which it turned out were not allowed according to the
+license. IPFilter was removed from the OpenBSD source tree on May
+29th, 2001, and for a few weeks OpenBSD-current did not contain any
+firewalling software.</P
+><P
+>Fortunately, in Switzerland Daniel Hartmeier was already doing some
+limited experiments involving kernel hacking in the networking code. </P
+><P
+>His starting point was hooking a small function of his own into the
+networking stack, making packets pass through it, and after a while he
+had started thinking about filtering.  Then the license crisis happened.</P
+><P
+>IPFilter was pruned from the source tree on May 29th. The first commit
+of the PF code happened Sunday, June 24 2001 at 19:48:58 UTC.<A
+NAME="AEN352"
+HREF="#FTN.AEN352"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></P
+><P
+>A few months of rather intense activity followed, and the version of
+PF that was released with OpenBSD 3.0 contained a rather complete
+implementation of packet filtering, including network address
+translation.</P
+><P
+>From the looks of it, Daniel Hartmeier and the other PF developers
+made good use of their experience with the IPFilter code. Under any
+circumstances Daniel presented a USENIX 2002 paper with performance
+tests which show that the OpenBSD 3.1 PF performed equally well as or
+better under stress than IPFilter on the same platform or iptables on
+Linux.</P
+><P
+>In addition, some tests were run on the original PF from OpenBSD 3.0.
+These tests showed mainly that the code had gained in efficiency from
+version 3.0 to version 3.1. The article which provides the details
+is available from Daniel Hartmeier's web, see <A
+HREF="http://www.benzedrine.ch/pf-paper.html"
+TARGET="_top"
+><I
+CLASS="CITETITLE"
+>http://www.benzedrine.ch/pf-paper.html</I
+></A
+>.</P
+><P
+>I have not seen comparable tests performed recently, but in my own
+experience and that of others, the PF filtering overhead is pretty
+much negligible.  As one data point, the machine which gateways
+between one of the networks where I've done a bit of work and the
+world is a Pentium III 450MHz with 384MB of RAM. When I've remembered
+to check, I've never seen the machine at less than 96 percent 'idle'
+according to <SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/top"
+TARGET="_top"
+>top</A
+></SPAN
+>.</P
+><P
+>It is however worth noting that various optimisations have been
+introduced to OpenBSD's PF code during recent releases (mainly by the
+current main PF developers Henning Brauer and Ryan McBride with
+contributions from others), making each release from 4.4 through 5.6
+perform better than its predecessors.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN352"
+HREF="intro.html#AEN352"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>It is worth noting that the IPFilter copyright episode spurred the
+OpenBSD team to perform a <I
+CLASS="FIRSTTERM"
+>license audit</I
+> of the
+entire source tree and ports in order to avoid similar situations in
+the future.  A number of potential problems were uncovered and
+resolved over the months that followed, removing a number of potential
+license pitfalls for everyone involved in free software development.
+Theo de Raadt summed up the effort in a message to the openbsd-misc
+mailing list on February 20th, 2003, available among others from
+<A
+HREF="http://marc.info/?l=openbsd-misc&#38;m=104570938124454&#38;w=2"
+TARGET="_top"
+>the
+MARC mailing list archives</A
+>.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="preface.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="concepts.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Before we start</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Packet filter? Firewall?</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

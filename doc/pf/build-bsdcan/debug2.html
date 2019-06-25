@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Debugging some more</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Debugging your setup"
+HREF="debugging.html"><LINK
+REL="NEXT"
+TITLE="Debug - use tcpdump"
+HREF="debug3.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='debug3.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='debugging.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='debugging.html';}
+     else
+     {window.location.href='debug3.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='debug3.html';break;
+      case 66:
+      case 80:window.location.href='debugging.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='debugging.html';}
+       else
+       {window.location.href='debug3.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="debugging.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="debug3.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="DEBUG2"
+></A
+>Debugging some more</H1
+><P
+>Get working with <KBD
+CLASS="USERINPUT"
+>pfctl -vvsr</KBD
+> output</P
+><PRE
+CLASS="SCREEN"
+>$ sudo pfctl -vvsr
+@0 block return log all
+  [ Evaluations: 2414      Packets: 443       Bytes: 28447       States: 0     ]
+  [ Inserted: uid 0 pid 24129 State Creations: 0     ]
+@1 block return log quick from &lt;abusive_hosts:4&gt; to any
+  [ Evaluations: 2414      Packets: 0         Bytes: 0           States: 0     ]
+  [ Inserted: uid 0 pid 24129 State Creations: 0     ]
+@2 match in all scrub (no-df max-mss 1440)
+  [ Evaluations: 2414      Packets: 7253      Bytes: 864340      States: 41    ]
+  [ Inserted: uid 0 pid 24129 State Creations: 1244  ]
+@3 anchor "ftp-proxy/*" all</PRE
+><P
+>Trace your packet's path through the logic in the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>loaded</I
+></SPAN
+> rule set.</P
+><P
+>What's the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>last</I
+></SPAN
+> matching rule? Any <KBD
+CLASS="USERINPUT"
+>quick</KBD
+> rules to watch for?</P
+></DIV
+></BODY
+></HTML
+>
