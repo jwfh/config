@@ -11,6 +11,7 @@ set -g CXX /usr/bin/clang++
 
 set -gx PATH $HOME/.cargo/bin $HOME/bin /usr/local/go/bin /opt/tools/anaconda3/bin $HOME/.dotfiles/bin /usr/local/bin $PATH
 
+set -x LESSOPEN '| lesspipe %s'
 
 set -gx PKG_CONFIG_PATH "/usr/local/opt/libffi/lib/pkgconfig" $PKG_CONFIG_PATH 
 
