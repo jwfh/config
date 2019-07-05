@@ -1,6 +1,6 @@
 execute pathogen#infect()
-syntax on
 filetype plugin indent on
+syntax on
 
 set number relativenumber
 nnoremap <silent> <C-n> :set relativenumber!<cr>
