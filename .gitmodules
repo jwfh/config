@@ -76,9 +76,6 @@
 [submodule "iTerm/gruvbox-contrib"]
 	path = iTerm/gruvbox-contrib
 	url = https://github.com/morhetz/gruvbox-contrib.git
-[submodule "x/tinywm"]
-	path = x/tinywm
-	url = https://github.com/mackstann/tinywm
 [submodule "wm/aphelia"]
 	path = wm/aphelia
 	url = https://github.com/vardy/aphelia
