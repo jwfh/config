@@ -79,9 +79,6 @@
 [submodule "wm/tinywm"]
 	path = wm/tinywm
 	url = https://github.com/mackstann/tinywm
-[submodule "texmf/tex/latex/memorial-latex"]
-	path = texmf/tex/latex/memorial-latex
-	url = https://github.com/trombonehero/memorial-latex
 [submodule ".vim/bundle/vimtex"]
 	path = .vim/bundle/vimtex
 	url = https://github.com/lervag/vimtex
@@ -100,3 +97,6 @@
 [submodule "term/gruvbox-contrib"]
 	path = term/gruvbox-contrib
 	url = https://github.com/morhetz/gruvbox-contrib.git
+[submodule "texmf/tex/latex/memorial-latex"]
+	path = texmf/tex/latex/memorial-latex
+	url = https://github.com/jwfh/memorial-latex
