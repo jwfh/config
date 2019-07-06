@@ -97,3 +97,6 @@
 [submodule "wm/betterlockscreen"]
 	path = wm/betterlockscreen
 	url = https://github.com/pavanjadhaw/betterlockscreen
+[submodule "term/gruvbox-contrib"]
+	path = term/gruvbox-contrib
+	url = https://github.com/morhetz/gruvbox-contrib.git
