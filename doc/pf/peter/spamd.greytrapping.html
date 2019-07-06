@@ -1,0 +1,720 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Beating'em up some more: spamdb and greytrapping</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Giving spammers a hard time"
+HREF="spamd.html"><LINK
+REL="PREVIOUS"
+TITLE="Some early highlights of our spamd experience"
+HREF="spamd.experience.html"><LINK
+REL="NEXT"
+TITLE="Conclusions from our spamd experience"
+HREF="spamd.conclusion.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="spamd.experience.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Giving spammers a hard time</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="spamd.conclusion.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SPAMD.GREYTRAPPING"
+>Beating'em up some more: <SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+> and greytrapping</A
+></H1
+><P
+>Behind the scenes, rarely mentioned and barely documented are two of
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/spamd"
+TARGET="_top"
+>spamd</A
+></SPAN
+>'s helpers, the
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/spamdb"
+TARGET="_top"
+>spamdb</A
+></SPAN
+> database tool and the
+<SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/spamlogd"
+TARGET="_top"
+>spamlogd</A
+></SPAN
+> whitelist updater, which both
+perform essential functions for the greylisting feature.  Of the two
+<SPAN
+CLASS="APPLICATION"
+>spamlogd</SPAN
+> works quietly in the background,
+while <SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+> has been developed to offer
+some interesting features.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>Restart <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> to enable greylisting</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If you followed all steps in the tutorial exactly up to this point,
+<SPAN
+CLASS="APPLICATION"
+>spamlogd</SPAN
+> has been started automatically
+already.  However, if your initial <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+>
+configuration did not include greylisting,
+<SPAN
+CLASS="APPLICATION"
+>spamlogd</SPAN
+> may not have been started, and you
+may experience strange symptoms, such as your greylists and whitelist
+not getting updated properly.</P
+><P
+>Under normal circumstances, you should not have to start
+<SPAN
+CLASS="APPLICATION"
+>spamlogd</SPAN
+> by hand.  Restarting
+<SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> after you have enabled greylisting
+ensures <SPAN
+CLASS="APPLICATION"
+>spamlogd</SPAN
+> is loaded and available
+too.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+><SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+> is the administrator's main interface
+to managing the black, grey and white lists via the contents of the
+<TT
+CLASS="FILENAME"
+>/var/db/spamdb</TT
+> database.</P
+><P
+>Early versions of <SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+> simply offered
+options to add whitelist entries to the database or update existing
+ones (<KBD
+CLASS="USERINPUT"
+>spamdb -a nn.mm.nn.mm </KBD
+>) and to delete
+whitelist entries (<KBD
+CLASS="USERINPUT"
+>spamdb -d nn.mm.nn.mm</KBD
+>) to
+compensate for shortcomings in either the blacklists used or the
+effects of the greylisting algorithms.</P
+><P
+>By the time the development cycle for OpenBSD 3.8 started during the
+first half of 2005, <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> users and
+developers had accumulated significant amounts of data and experience
+on spammer behaviour and spammer reactions to countermeasures.</P
+><P
+>We already know that spam senders rarely use a fully compliant SMTP
+implementation to send their messages.  That's why greylisting works.
+Also, as we noted earlier, not only do spammers send large numbers of
+messages, they rarely check that the addresses they feed to their
+hijacked machines are actually deliverable.  Combine these facts, and
+you see that if a greylisted machine tries to send a message to an
+invalid address in your domain, there is a significant probability
+that the message is a spam, or for that matter, malware.</P
+><P
+></P
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="SPAMD.GREYTRAPPING.WHY"
+>Enter greytrapping</A
+></H2
+><P
+>Consequently, <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> had to learn
+<I
+CLASS="FIRSTTERM"
+>greytrapping</I
+>.  Greytrapping as implemented in
+<SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> puts offenders in a temporary
+blacklist, dubbed <TT
+CLASS="FILENAME"
+>spamd-greytrap</TT
+>, for 24 hours.
+Twenty-four hours is short enough to not cause serious disruption of
+legitimate traffic, since real SMTP implementations will keep trying to
+deliver for a few days at least.  Experience from large scale
+implementations of the technique shows that it rarely if ever produces
+false positives<A
+NAME="AEN1795"
+HREF="#FTN.AEN1795"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>
+.  Machines which continue spamming after 24 hours will
+make it back to the tarpit soon enough.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="SPAMD.GREYTRAPPING.HOW"
+>Your own traplist</A
+></H2
+><P
+>To set up your own traplist, you use
+<SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+>'s <KBD
+CLASS="USERINPUT"
+>-T</KBD
+> option.
+In my case, the strange address I mentioned earlier<A
+NAME="AEN1804"
+HREF="#FTN.AEN1804"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+> was a natural candidate for inclusion:</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>$</SAMP
+><KBD
+CLASS="USERINPUT"
+> spamdb -T -a wkitp98zpu.fsf@datadok.no</KBD
+></PRE
+><P
+>Sure enough, the spammers thought this was just as usable as almost two years ago:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Nov  6 09:50:25 delilah spamd[23576]: 210.214.12.57: connected (1/0)
+Nov  6 09:50:32 delilah spamd[23576]: 210.214.12.57: connected (2/0)
+Nov  6 09:50:40 delilah spamd[23576]: (GREY) 210.214.12.57: 
+&lt;gilbert@keyholes.net&gt; -&gt; &lt;wkitp98zpu.fsf@datadok.no&gt;
+Nov  6 09:50:40 delilah spamd[23576]: 210.214.12.57: disconnected 
+after 15 seconds.
+Nov  6 09:50:42 delilah spamd[23576]: 210.214.12.57: connected (2/0)
+Nov  6 09:50:45 delilah spamd[23576]: (GREY) 210.214.12.57: 
+&lt;bounce-3C7E40A4B3@branch15.summer-bargainz.com&gt; -&gt; 
+&lt;adm@dataped.no&gt;
+Nov  6 09:50:45 delilah spamd[23576]: 210.214.12.57: disconnected 
+after 13 seconds.
+Nov  6 09:50:50 delilah spamd[23576]: 210.214.12.57: connected (2/0)
+Nov  6 09:51:00 delilah spamd[23576]: (GREY) 210.214.12.57: 
+&lt;gilbert@keyholes.net&gt; -&gt; &lt;wkitp98zpu.fsf@datadok.no&gt;
+Nov  6 09:51:00 delilah spamd[23576]: 210.214.12.57: disconnected 
+after 18 seconds.
+Nov  6 09:51:02 delilah spamd[23576]: 210.214.12.57: connected (2/0)
+Nov  6 09:51:02 delilah spamd[23576]: 210.214.12.57: disconnected 
+after 12 seconds.
+Nov  6 09:51:02 delilah spamd[23576]: 210.214.12.57: connected (2/0)
+Nov  6 09:51:18 delilah spamd[23576]: (GREY) 210.214.12.57: 
+&lt;gilbert@keyholes.net&gt; -&gt; &lt;wkitp98zpu.fsf@datadok.no&gt;
+Nov  6 09:51:18 delilah spamd[23576]: 210.214.12.57: disconnected 
+after 16 seconds.
+Nov  6 09:51:18 delilah spamd[23576]: (GREY) 210.214.12.57: 
+&lt;bounce-3C7E40A4B3@branch15.summer-bargainz.com&gt; -&gt; 
+&lt;adm@dataped.no&gt;
+Nov  6 09:51:18 delilah spamd[23576]: 210.214.12.57: disconnected 
+after 16 seconds.
+Nov  6 09:51:20 delilah spamd[23576]: 210.214.12.57: connected (1/1), 
+lists: spamd-greytrap
+Nov  6 09:51:23 delilah spamd[23576]: 210.214.12.57: connected (2/2), 
+lists: spamd-greytrap
+Nov  6 09:55:33 delilah spamd[23576]: (BLACK) 210.214.12.57: 
+&lt;gilbert@keyholes.net&gt; -&gt; &lt;wkitp98zpu.fsf@datadok.no&gt;
+Nov  6 09:55:34 delilah spamd[23576]: (BLACK) 210.214.12.57: 
+&lt;bounce-3C7E40A4B3@branch15.summer-bargainz.com&gt; -&gt; 
+&lt;adm@dataped.no&gt;</PRE
+><P
+>This log fragment shows how the spammer's machine is greylisted at
+first contact, and then clumsily tries to deliver messages to my
+greytrap address, only to end up in the
+<TT
+CLASS="FILENAME"
+>spamd-greytrap</TT
+> blacklist after a few minutes.  By
+now we all know what it will be doing for the next twenty-odd hours.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="SPAMD.GREYTRAPPING.MISC"
+>Deleting, handling trapped entries</A
+></H2
+><P
+><SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+> offers a few more options you should
+be aware of.  The <KBD
+CLASS="USERINPUT"
+>-T</KBD
+> option combined with
+<KBD
+CLASS="USERINPUT"
+>-d</KBD
+> lets you delete traplist mail address
+entries, while the <KBD
+CLASS="USERINPUT"
+>-t</KBD
+> (lowercase) option
+combined with <KBD
+CLASS="USERINPUT"
+>-a</KBD
+> or <KBD
+CLASS="USERINPUT"
+>-d</KBD
+>
+lets you add or delete trapped IP address entries from the database.</P
+><P
+>Exporting your list of currently trapped addresses can be as simple as
+putting together a simple one-liner with
+<SPAN
+CLASS="APPLICATION"
+>spamdb</SPAN
+>, <SPAN
+CLASS="APPLICATION"
+>grep</SPAN
+> and
+a little imagination.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="DOWNSIDE-WHITELISTING"
+>The downside: some people really do not get it</A
+></H2
+><P
+>We have already learned that the main reason why greylisting works is
+that any standards compliant mail setup is required to retry delivery
+after some &ldquo;reasonable&rdquo; amount of time.  However as Murphy
+will be all too happy to tell you, life is not always that simple.  </P
+><P
+>For one thing, the first email message sent from any site which has
+not contacted you for as long as the greylister keeps its data around
+will be delayed for some random amount of time which depends mainly on
+the sender's retry interval.  There are some circumstances where
+avoiding even a minimal delay is desirable.  If you for example have
+some infrequent customers who always demand your immediate and urgent
+attention to their business when they do contact you, an initial
+delivery delay of what could be several hours may not be optimal.</P
+><P
+>In addition, you are bound to encounter misconfigured mail servers
+which either do not retry at all or retry too quickly, perhaps
+stopping delivery retries after a few attempts.  As luck would have
+it, in your case one of these is likely to be at an important
+customer's site, run by an incompetent who will not listen to reason
+or possibly a site owned and operated by your boss' boyfriend.</P
+><P
+>Finally, there are some sites which are large enough to have several
+outgoing SMTP servers, and not play well with greylisting since they
+are not guaranteed to retry delivery of any given message from the
+same IP address as the last delivery attempt for that message.  Even
+though those sites can sincerely claim to comply with the retry
+requirements, since the RFCs do no state that the new delivery
+attempts <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>have to</I
+></SPAN
+> come from the same IP address,
+it's fairly obvious that this is one of the few remaining downsides of
+greylisting.</P
+><P
+>If you need to compensate for such things in your setup, it is fairly
+easy to do.  One useful approach is to define a table for a local
+whitelist, to be fed from a file in case of reboots:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>table &lt;localwhite&gt; file "/etc/mail/whitelist.txt"</PRE
+><P
+>To make sure SMTP traffic from the addresses in the table is not fed
+to spamd, you add a <KBD
+CLASS="USERINPUT"
+>no rdr</KBD
+> rule at the top of
+your redirection block:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>no rdr proto tcp from &lt;localwhite&gt; to $mailservers port smtp</PRE
+><P
+>Once you have these changes added to your rule set, you enter the
+addresses you need to protect from redirection into the
+<TT
+CLASS="FILENAME"
+>whitelist.txt</TT
+> file, then reload your rule set
+using <KBD
+CLASS="USERINPUT"
+>pfctl -f</KBD
+>.  You can then use all the
+expected table tricks on the <KBD
+CLASS="USERINPUT"
+>&lt;localwhite&gt;</KBD
+>
+table, including replacing its content after editing the
+<TT
+CLASS="FILENAME"
+>whitelist.txt</TT
+> file.  See <A
+HREF="tables.html"
+>the Chapter called <I
+>Tables make your life easier</I
+></A
+>
+or <KBD
+CLASS="USERINPUT"
+>man pfctl</KBD
+> for a few pointers.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>Even better: copy rules from the man page and use <TT
+CLASS="FILENAME"
+>nospamd</TT
+></B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>    Recent-ish versions of the <A
+HREF="http://man.openbsd.org/spamd"
+TARGET="_top"
+>spamd(8)</A
+> man page have <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>exactly</I
+></SPAN
+> the rules you need, including the <KBD
+CLASS="USERINPUT"
+>nospamd</KBD
+> table:
+  </P
+><PRE
+CLASS="SCREEN"
+>table &lt;spamd-white&gt; persist
+table &lt;nospamd&gt; persist file "/etc/mail/nospamd"
+pass in on egress proto tcp to any port smtp divert-to 127.0.0.1 port spamd
+pass in on egress proto tcp from &lt;nospamd&gt; to any port smtp
+pass in log on egress proto tcp from &lt;spamd-white&gt; to any port smtp
+pass out log on egress proto tcp to any port smtp
+  </PRE
+><P
+>Please stick to exactly those rules unless you have a very good reason to introduce local variations. If you need some initial content for your <KBD
+CLASS="USERINPUT"
+>nospamd</KBD
+> file, you can fetch mine (which is based on sediments of extracted <A
+HREF="https://en.wikipedia.org/wiki/Sender_Policy_Framework"
+TARGET="_top"
+>SPF</A
+>records from various domains over the years) from <A
+HREF="https://home.nuug.no/~peter/nospamd"
+TARGET="_top"
+>here</A
+> or use Aaron Poffenbergers excellent <A
+HREF="https://github.com/akpoff/spf_fetch"
+TARGET="_top"
+>spf_fetch</A
+> which intends to automate fetching of SPF records for a list of domains.
+  </P
+></TD
+></TR
+></TABLE
+></DIV
+></DIV
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1795"
+HREF="spamd.greytrapping.html#AEN1795"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>One prime example was Bob Beck's "ghosts of usenet postings past" based
+traplist, which rarely contained less than 20,000+ entries.  The number
+of hosts varies widely and has been as high as roughly 670,000.  At the
+time of writing (mid November 2010), the list typically contained
+around 55,000 entries.  While still officially in testing, the list
+was made publicly available on January 30th, 2006.  The list, which to my
+knowledge never did produce any false positives and was available from
+<A
+HREF="http://www.openbsd.org/spamd/traplist.gz"
+TARGET="_top"
+>http://www.openbsd.org/spamd/traplist.gz</A
+>
+for your <TT
+CLASS="FILENAME"
+>spamd.conf</TT
+>, was however retired from service in May 2016 and is no longer available.</P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1804"
+HREF="spamd.greytrapping.html#AEN1804"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>That address is completely bogus.  It is probably based on a
+GNUS message-ID, which in turn was probably lifted from a news spool
+or some unfortunate malware victim's mailbox.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="spamd.experience.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="spamd.conclusion.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Some early highlights of our <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> experience</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="spamd.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Conclusions from our <SPAN
+CLASS="APPLICATION"
+>spamd</SPAN
+> experience</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

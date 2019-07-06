@@ -1,0 +1,435 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Before we start</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="NEXT"
+TITLE="PF?"
+HREF="intro.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="index.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="intro.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="PREFACE"
+></A
+>Before we start</H1
+><P
+>This lecture<A
+NAME="AEN302"
+HREF="#FTN.AEN302"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>
+ will be about firewalls and related functions, starting
+from <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>a little</I
+></SPAN
+> theory along with a number of
+examples of filtering and other network traffic directing. As in any
+number of other endeavors, the things I discuss can be done
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>in more than one way</I
+></SPAN
+>.  </P
+><DIV
+CLASS="NOTE"
+><A
+NAME="BOOKOFPF-FIRST"
+></A
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>More information: The Book of PF, training, consulting</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Most of the topics we touch on here is covered in more detail in <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>The Book of
+PF</A
+>, which was written by the same author and published by No Starch Press at
+the end of 2007, with a revised and updated <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>second edition</I
+></SPAN
+> published in November 2010, followed <A
+HREF="http://bsdly.blogspot.no/2014/10/the-book-of-pf-3rd-edition-is-here.html"
+TARGET="_top"
+>in October 2014</A
+> by the now-current third edition.  The book is an expanded and extensively rewritten followup to this tutorial, and covers a range of advanced topics in
+addition to those covered here.</P
+><P
+>This document is now in minimal maintenance mode after 10 years as a 'work in progress', based on a
+manuscript prepared for a lecture at the BLUG (see <A
+HREF="http://www.blug.linux.no/"
+TARGET="_top"
+>http://www.blug.linux.no/</A
+>) meeting of
+January 27th, 2005. Along the way it has spawned several conference tutorials as well as <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>The Book of PF</A
+> (third edition, No Starch Press 2014), which expands on all topics mentioned in this document presents several topics that are only hinted at here. While this document has been a useful starting point for number of people, I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> suggest that you get the book.</P
+><P
+>This tutorial is in minimal-maintainence mode (after 10 years as a work in progress), in that I'll occasionally make an effort to keep the information in it up to date, but it will not expand in scope. For more in-depth information or topics not covered here, check <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>the book</A
+>, the <A
+HREF="http://home.nuug.no/~peter/pf/newest/"
+TARGET="_top"
+>slides</A
+> 
+matching the latest tutorial session, 
+the <A
+HREF="http://www.openbsd.org/faq/pf/"
+TARGET="_top"
+>PF User Guide</A
+> (also known as <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>The PF FAQ</I
+></SPAN
+>) or the relevant <KBD
+CLASS="USERINPUT"
+>man</KBD
+> pages. </P
+><P
+>If you're aiming to use PF on FreeBSD, it's worth looking up the FreeBSD Handbook's <A
+HREF="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/firewalls-pf.html"
+TARGET="_top"
+>PF Firewall</A
+> chapter, which is based on an earlier version of this tutorial with various edits by FreeBSD documentation maintainers.</P
+><P
+>If you need PF related consulting or training, please contact me for further details.  You may want to read my <A
+HREF="http://www.bsdly.net/~peter/rentageek.html"
+TARGET="_top"
+>Rent-a-geek</A
+> writeup too. </P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Under any circumstances I
+will urge you to interrupt me when you need to. That is, if you will
+permit me to use what I learn from your comments later, either in
+revised versions of this lecture or in practice at a later time.  But first,</P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>This is not a HOWTO</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>This document is not intended as a pre-cooked recipe for cutting and pasting.</P
+><P
+>Just to hammer this in, please repeat after me </P
+><PRE
+CLASS="SCREEN"
+>The Pledge of the Network Admin
+
+This is my network. 
+
+It is mine 
+or technically my employer's, 
+it is my responsibility 
+and I care for it with all my heart
+
+there are many other networks a lot like mine,
+
+but none are just like it.
+
+I solemnly swear 
+
+that I will not mindlessly paste from HOWTOs.</PRE
+><P
+>The point is, while the rules and configurations I show you do work, I have tested them
+and they are in some way related to what has been put into production,
+they may very well be overly simplistic and are almost certain to 
+be at least a little off and possibly quite wrong for <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>your</I
+></SPAN
+> network.</P
+><P
+>Please keep in mind that this document is intended to show you a few useful 
+things and inspire you to achieve good things.  </P
+><P
+>Please strive to understand your network and what you need to do to make it better. </P
+><P
+>Please do not paste blindly from this document or any other.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Now, with that out of the way, we can go on to the meat of the matter.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN302"
+HREF="preface.html#AEN302"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>This document is now in minimal maintenance mode after 10 years as a 'work in progress', and is a slightly further developed version of 
+a manuscript prepared for a lecture which was announced as (translated from Norwegian):
+  "This lecture is about firewalls and related functions, with examples from
+   real life with the OpenBSD project's PF (Packet Filter). PF offers
+   firewalling, NAT, traffic control and bandwidth management in a single,
+   flexible and sysadmin friendly system. Peter hopes that the lecture
+   will give you some ideas about how to control your network traffic 
+   the way you want - keeping some things outside your network, directing
+   traffic to specified hosts or services, and of course, giving spammers
+   a hard time." </P
+><P
+>   People who have offered significant and useful input regarding this
+   manuscript include Eystein Roll Aarseth, David Snyder, Peter
+   Postma, Henrik Kramshøj, Vegard Engen, Greg Lehey, Ian Darwin,
+   Daniel Hartmeier, Mark Uemura, Hallvor Engen and probably a few
+   who will remain lost in my mail archive until I can
+   <SPAN
+CLASS="APPLICATION"
+>grep</SPAN
+> them out of there.
+   </P
+><P
+>   I would like to thank the following organizations for their kind
+   support: The NUUG Foundation for a travel grant which partly
+   financed my AUUG2005 appearance; The AUUG, BLUG, BSD-DK, NUUG, UKUUG, SANE, BSDCan,
+   EuroBSDCon and AsiaBSDCon organizations for inviting me to their
+   conferences or other events; the FreeBSD Foundation for sponsoring my
+   trips to BSDCan 2006 and EuroBSDCon 2006 and finally my 
+   former collegues at FreeCode AS for letting me allocate some time for
+   conferences and writing during 2009 and early 2010.
+   </P
+><P
+>   The main point in making this version available is to offer an update 
+   with OpenBSD 4.7 syntax, a secondary consideration is to introduce the 
+   reader to the somewhat more comprehensive treatment of all topics by
+   referring to <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>The Book of PF</A
+> 
+   (now in its third edition) when relevant. The last pre-OpenBSD 4.7 version of this document has 
+   been preserved at <A
+HREF="../en.old/"
+TARGET="_top"
+>this location</A
+>.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="intro.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Firewalling with OpenBSD's PF packet filter</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>PF?</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

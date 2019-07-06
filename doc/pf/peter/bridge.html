@@ -1,0 +1,331 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Invisible gateway - bridge</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Keeping an eye on things with pftop"
+HREF="pftop.html"><LINK
+REL="NEXT"
+TITLE="Directing traffic with ALTQ"
+HREF="altqintro.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="pftop.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="altqintro.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="BRIDGE"
+></A
+>Invisible gateway - bridge</H1
+><P
+>  A <I
+CLASS="FIRSTTERM"
+><A
+HREF="http://man.openbsd.org/bridge"
+TARGET="_top"
+>bridge</A
+>
+  </I
+> in our context is a machine with
+two or more network interfaces, located in between the Internet and
+one or more internal networks, and the network interfaces are not
+assigned IP addresses.  If the machine in question runs OpenBSD 
+or a similarly capable operating system, it is still able to filter 
+and redirect traffic.  The advantage of such a setup is that attacking
+the firewall itself is more difficult.  The disadvantage is that all
+admin tasks must be performed at the firewall's console, unless you
+configure a network interface which is reachable via a secured network 
+of some kind, or even a serial console.</P
+><P
+>The exact method for configuring bridges differs in some details between 
+the operating systems. Below is a short recipe for use on OpenBSD, which
+for good measure blocks all non-Internet protocol traffic.  
+<DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./warning.jpg"
+HSPACE="5"
+ALT="Warning"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Please note</I
+></SPAN
+> that this example is <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>not</I
+></SPAN
+> a complete, working configuration.  You will need to study your local requirements and adapt the configuration accordingly.  As stated earlier in <A
+HREF="preface.html"
+>the Chapter called <I
+>Before we start</I
+></A
+>, neither this example nor any other part of this document should be pasted into your configuration without modification.  Also see the <A
+HREF="http://bsdly.blogspot.com/2011/01/i-will-not-mindlessly-paste-from-howtos.html"
+TARGET="_top"
+>I will not mindlessly paste from HOWTOs</A
+> blog post on a related incident.</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+Setting up a bridge with two interfaces:</P
+><P
+><TT
+CLASS="FILENAME"
+>/etc/hostname.ep0</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>up</PRE
+><P
+><TT
+CLASS="FILENAME"
+>/etc/hostname.ep1</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>up</PRE
+><P
+><TT
+CLASS="FILENAME"
+>/etc/hostname.bridge0</TT
+> (on pre-OpenBSD 4.7 setups:<TT
+CLASS="FILENAME"
+>/etc/bridgename.bridge0</TT
+>)</P
+><PRE
+CLASS="PROGRAMLISTING"
+>  add ep0 add ep1 blocknonip ep0 blocknonip ep1 up</PRE
+><P
+><TT
+CLASS="FILENAME"
+>/etc/pf.conf</TT
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>ext_if = ep0
+int_if  = ep1
+interesting-traffic = { ... }
+block all
+pass quick on $ext_if all
+pass log on $int_if from $int_if to any port $interesting-traffic \
+     keep state</PRE
+><P
+>Significantly more complicated setups are possible.  Experienced
+bridgers recommend picking one of the interfaces to perform all
+filtering and redirection.  All packets pass through PF's view twice,
+making for potentially extremely complicated rules.</P
+><P
+>In addition, on OpenBSD the <SPAN
+CLASS="APPLICATION"
+>ifconfig</SPAN
+> command offers its own set of
+filtering options in addition to other configuration options  (<SPAN
+CLASS="APPLICATION"
+>brconfig</SPAN
+>'s functionality was merged into <SPAN
+CLASS="APPLICATION"
+>ifconfig</SPAN
+> for OpenBSD 4.7). The 
+bridge(4) and ifconfig(8) man pages offer further information.  A slightly more thorough treatment is available in <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+><A
+HREF="http://nostarch.com/pf2.htm"
+TARGET="_top"
+>The Book of PF</A
+></I
+></SPAN
+>, available from <A
+HREF="http://nostarch.com/"
+TARGET="_top"
+>No Starch Press</A
+>.</P
+><P
+>FreeBSD uses a slightly different set of commands to configure bridges,
+while the NetBSD PF implementation supports bridging only with a slightly customized kernel<A
+NAME="AEN1281"
+HREF="#FTN.AEN1281"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>
+.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1281"
+HREF="bridge.html#AEN1281"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>See <A
+HREF="http://www.netbsd.org/Documentation/network/pf.html"
+TARGET="_top"
+>The NetBSD PF documentation</A
+> for details.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="pftop.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="altqintro.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Keeping an eye on things with pftop</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Directing traffic with ALTQ</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

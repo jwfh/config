@@ -1,0 +1,1400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Building The Network You Need With PF, The OpenBSD Packet Filter</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="NEXT"
+TITLE="Where to find these slides online"
+HREF="webhome.html"><META
+NAME="KEYWORD"
+CONTENT="firewall"><META
+NAME="KEYWORD"
+CONTENT="firewalls"><META
+NAME="KEYWORD"
+CONTENT="firewalling"><META
+NAME="KEYWORD"
+CONTENT="OpenBSD"><META
+NAME="KEYWORD"
+CONTENT="firewalling"><META
+NAME="KEYWORD"
+CONTENT="packet filter"><META
+NAME="KEYWORD"
+CONTENT="PF"><META
+NAME="KEYWORD"
+CONTENT="network"><META
+NAME="KEYWORD"
+CONTENT="networking"><META
+NAME="KEYWORD"
+CONTENT="network management"><META
+NAME="KEYWORD"
+CONTENT="network firewall"><META
+NAME="KEYWORD"
+CONTENT="network firewalling"><META
+NAME="KEYWORD"
+CONTENT="network security"><META
+NAME="KEYWORD"
+CONTENT="internet firewall"><META
+NAME="KEYWORD"
+CONTENT="internet protocol"><META
+NAME="KEYWORD"
+CONTENT="internet security"><META
+NAME="KEYWORD"
+CONTENT="internet protocol version four"><META
+NAME="KEYWORD"
+CONTENT="IPv4"><META
+NAME="KEYWORD"
+CONTENT="internet protocol version six"><META
+NAME="KEYWORD"
+CONTENT="IPv6"><META
+NAME="KEYWORD"
+CONTENT="NAT64"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='webhome.html';break;
+      case 8:
+      case 98:
+      case 112:break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {}
+     else
+     {window.location.href='webhome.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='webhome.html';break;
+      case 66:
+      case 80:break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {}
+       else
+       {window.location.href='webhome.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="BOOK"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Building The Network You Need With PF, The OpenBSD Packet Filter</A
+></H1
+><H2
+CLASS="SUBTITLE"
+>BSDCan 2016, Ottawa, Canada, June 8th 2016</H2
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN27"
+></A
+>Peter N. M. Hansteen</H3
+><DIV
+CLASS="AFFILIATION"
+><SPAN
+CLASS="ORGNAME"
+>BSDly.net<BR></SPAN
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+><CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:peter@bsdly.net"
+>peter@bsdly.net</A
+>&#62;</CODE
+></P
+></DIV
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+><CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:peter.hansteen@evry.com"
+>peter.hansteen@evry.com</A
+>&#62;</CODE
+></P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+><A
+HREF="legalnotice.html"
+>Copyright</A
+> &copy; 2005 - 2016 Peter N. M. Hansteen</P
+><HR></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="webhome.html"
+>Where to find these slides online</A
+></DT
+><DT
+><A
+HREF="unhowto.html"
+>This Is Not a HOWTO</A
+></DT
+><DT
+><A
+HREF="start.html"
+>It All Started With a Copyright Violation</A
+></DT
+><DT
+><A
+HREF="design-evolution.html"
+>PF: Design Goals, Evolution</A
+></DT
+><DT
+><A
+HREF="designgoals2.html"
+>PF: Design Goals, Evolution</A
+></DT
+><DT
+><A
+HREF="design-evolution1.html"
+>PF: Design Goals, Evolution</A
+></DT
+><DT
+><A
+HREF="design-evolution2.html"
+>PF: Design Goals, Evolution</A
+></DT
+><DT
+><A
+HREF="design-evolution3.html"
+>PF: Design Goals, Evolution</A
+></DT
+><DT
+><A
+HREF="newsyntax.html"
+>4.7: Henning's Monster Diff</A
+></DT
+><DT
+><A
+HREF="post47.html"
+>Post-OpenBSD 4.7 improvements</A
+></DT
+><DT
+><A
+HREF="thenextbigthing.55onwards.html"
+>The Next Big Thing(s): newqueue, MPsafe</A
+></DT
+><DT
+><A
+HREF="whohasit.html"
+>Who Uses PF Today</A
+></DT
+><DT
+><A
+HREF="pfhaiku.html"
+>PF - Haiku</A
+></DT
+><DT
+><A
+HREF="concepts.html"
+>Packet Filter? Firewall?</A
+></DT
+><DT
+><A
+HREF="enable.html"
+>How To Enable?</A
+></DT
+><DT
+><A
+HREF="simplestfreebsd.html"
+>How To Enable (FreeBSD)</A
+></DT
+><DT
+><A
+HREF="simplestfreebsd2.html"
+>How To Enable (FreeBSD)</A
+></DT
+><DT
+><A
+HREF="netbsdbasics.html"
+>How To Enable (NetBSD)</A
+></DT
+><DT
+><A
+HREF="netbsdbasics2.html"
+>How To Enable (NetBSD)</A
+></DT
+><DT
+><A
+HREF="simplest.html"
+>Simplest Rule Set</A
+></DT
+><DT
+><A
+HREF="simplest-secure.html"
+>Simplest Secure Rule Set</A
+></DT
+><DT
+><A
+HREF="rules-eval.html"
+>More Than One Rule: Evaluation</A
+></DT
+><DT
+><A
+HREF="quickescape.html"
+>The quick Escape</A
+></DT
+><DT
+><A
+HREF="stateful.html"
+>Stateful By Default</A
+></DT
+><DT
+><A
+HREF="failure-modes.html"
+>Failure modes, aka PEBKAC</A
+></DT
+><DT
+><A
+HREF="macros.html"
+>Readability: Macros</A
+></DT
+><DT
+><A
+HREF="portrange.html"
+>Readability: Port Ranges</A
+></DT
+><DT
+><A
+HREF="lists.html"
+>Readability: Lists And Names</A
+></DT
+><DT
+><A
+HREF="test.rules.1.html"
+>Testing Your First Rule Set</A
+></DT
+><DT
+><A
+HREF="stricter.html"
+>A Variation; Slightly Stricter</A
+></DT
+><DT
+><A
+HREF="test.rules.2.html"
+>Testing Your Rule Set</A
+></DT
+><DT
+><A
+HREF="pfctlstats.html"
+>Statistics From pfctl</A
+></DT
+><DT
+><A
+HREF="matchnat.html"
+>match (in OpenBSD since 4.6)</A
+></DT
+><DT
+><A
+HREF="setskip.html"
+>Useful Tip #1: set skip</A
+></DT
+><DT
+><A
+HREF="gwpitfalls.html"
+>A Gateway - And The Pitfalls</A
+></DT
+><DT
+><A
+HREF="gwpitfalls2.html"
+>Pitfalls: in, out, on</A
+></DT
+><DT
+><A
+HREF="whatsyourlocalnet.html"
+>Keep It Simple: What Is Your Local Network, Anyway?</A
+></DT
+><DT
+><A
+HREF="basicgw.html"
+>Simple Gateway (With NAT If You Need To)</A
+></DT
+><DT
+><A
+HREF="natvsipv6.html"
+>NAT vs IPv6</A
+></DT
+><DT
+><A
+HREF="addressfamilies.html"
+>Address families: <KBD
+CLASS="USERINPUT"
+>inet</KBD
+> vs <KBD
+CLASS="USERINPUT"
+>inet6</KBD
+></A
+></DT
+><DT
+><A
+HREF="basicgw2.html"
+>Simple Gateway</A
+></DT
+><DT
+><A
+HREF="basicgw2b.47new.html"
+>Simple Gateway With NAT: 4.7 And Newer</A
+></DT
+><DT
+><A
+HREF="matchrules.html"
+>OpenBSD 4.6 Alert: match Rules</A
+></DT
+><DT
+><A
+HREF="basicgw2b.old.html"
+>Simple Gateway With NAT: Pre-4.7 Version</A
+></DT
+><DT
+><A
+HREF="basicgw3.html"
+>Simple Gateway With NAT</A
+></DT
+><DT
+><A
+HREF="test.rules.basicgateway.html"
+>Testing Your Rule Set</A
+></DT
+><DT
+><A
+HREF="hostsanddomains.html"
+>Domain Names And Host Names?</A
+></DT
+><DT
+><A
+HREF="ftpproblem.html"
+>That Sad, Old FTP Thing</A
+></DT
+><DT
+><A
+HREF="ftpnewproxy.html"
+>If We Have To: <SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+> With <KBD
+CLASS="USERINPUT"
+>divert-to</KBD
+> (Or Redirection)</A
+></DT
+><DT
+><A
+HREF="ftpnewproxypre47.html"
+><SPAN
+CLASS="APPLICATION"
+>ftp-proxy</SPAN
+>, Pre-4.7</A
+></DT
+><DT
+><A
+HREF="tables.html"
+>Tables Make Your Life Easier</A
+></DT
+><DT
+><A
+HREF="tablescommands.html"
+>Table Operations Commands</A
+></DT
+><DT
+><A
+HREF="troubleshoot.html"
+>Making Your Network Troubleshooting Friendly</A
+></DT
+><DT
+><A
+HREF="dowepass.html"
+>Then, Do We Let It All Through?</A
+></DT
+><DT
+><A
+HREF="icmpstopatgw.html"
+>The Easy Way Out: The Buck Stops Here</A
+></DT
+><DT
+><A
+HREF="letpingthru.html"
+>Letting <SPAN
+CLASS="APPLICATION"
+>ping</SPAN
+> Through</A
+></DT
+><DT
+><A
+HREF="helptraceroute.html"
+>Helping <SPAN
+CLASS="APPLICATION"
+>traceroute</SPAN
+></A
+></DT
+><DT
+><A
+HREF="pathmtudisc.html"
+>Path MTU Discovery</A
+></DT
+><DT
+><A
+HREF="pathmtudisc2.html"
+>Path MTU Discovery (cont'd)</A
+></DT
+><DT
+><A
+HREF="icmp6.html"
+>Some icmp6 sample rules</A
+></DT
+><DT
+><A
+HREF="nat64.html"
+>The other NAT: NAT-six-four</A
+></DT
+><DT
+><A
+HREF="filter4services.html"
+>Filtering For Services</A
+></DT
+><DT
+><A
+HREF="filter4services2.html"
+>Filtering For Services (cont)</A
+></DT
+><DT
+><A
+HREF="bruteforce.html"
+>Turning Away The Brutes</A
+></DT
+><DT
+><A
+HREF="bruteforcerules.html"
+>Turning Away The Brutes: The Rules</A
+></DT
+><DT
+><A
+HREF="bruteforcetoo.html"
+>Turning Away The Brutes (cont'd)</A
+></DT
+><DT
+><A
+HREF="bruteforcethree.html"
+>Turning Away The Brutes (cont'd)</A
+></DT
+><DT
+><A
+HREF="expire-pfctl.html"
+>Expiring Table Entries With <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+></A
+></DT
+><DT
+><A
+HREF="advanced.statetracking.html"
+>Advanced State Tracking</A
+></DT
+><DT
+><A
+HREF="advanced.statetracking.floods.html"
+>Advanced State Tracking (cont)</A
+></DT
+><DT
+><A
+HREF="unrouteables.html"
+>Handling Non-Routable Addresses From Elsewhere</A
+></DT
+><DT
+><A
+HREF="spamd.sentiment.html"
+>spamd - The Real Reason We Need It</A
+></DT
+><DT
+><A
+HREF="spamdprep.html"
+>But Really: Giving Spammers a Hard Time</A
+></DT
+><DT
+><A
+HREF="spamdmore.html"
+>Giving Spammers a Hard Time (cont'd)</A
+></DT
+><DT
+><A
+HREF="spamd.greylist.html"
+>Greylisting: See The RFC</A
+></DT
+><DT
+><A
+HREF="spamd.greylist2.html"
+>Greylisting: My Admin Told Me Not To Talk To Strangers</A
+></DT
+><DT
+><A
+HREF="spamd.html"
+>Giving Spammers a Hard Time: The Rules</A
+></DT
+><DT
+><A
+HREF="spamdconfig.html"
+>Setting Up spamd: spamd.conf</A
+></DT
+><DT
+><A
+HREF="spamdconfig.freebsd.html"
+>Setting Up spamd - FreeBSD, NetBSD</A
+></DT
+><DT
+><A
+HREF="spamdconfig.rcconf.html"
+>Setting Up spamd: rc.conf Parameters</A
+></DT
+><DT
+><A
+HREF="spamdconfig.spamlogd.html"
+>Track Real SMTP Connections: spamdlogd</A
+></DT
+><DT
+><A
+HREF="spamdmore2.html"
+>Giving Spammers a Hard Time (cont'd)</A
+></DT
+><DT
+><A
+HREF="spamdbest.html"
+>Giving Spammers a Hard Time (cont'd)</A
+></DT
+><DT
+><A
+HREF="spamdbest2.html"
+>Giving Spammers a Hard Time (cont'd)</A
+></DT
+><DT
+><A
+HREF="spamd.greytrapping.html"
+>Beating'em up Some More: spamdb and Greytrapping</A
+></DT
+><DT
+><A
+HREF="spamd.greytrapping.practice.html"
+>spamdb and Greytrapping</A
+></DT
+><DT
+><A
+HREF="spamd.greytrapping.practice.result.html"
+>Greytrapping - The Result</A
+></DT
+><DT
+><A
+HREF="spamdsync.html"
+>Keeping Several spamds In Sync</A
+></DT
+><DT
+><A
+HREF="downsides-compensate.html"
+>Some People Really Do Not Get It</A
+></DT
+><DT
+><A
+HREF="spamdsum.html"
+>Giving Spammers a Hard Time: Conclusion</A
+></DT
+><DT
+><A
+HREF="filterwithdmz.html"
+>Physical Separation: The DMZ</A
+></DT
+><DT
+><A
+HREF="filterwithdmz2.html"
+>DMZ Rule Set</A
+></DT
+><DT
+><A
+HREF="filterwithdmz3.html"
+>DMZ Rule Set: Tighten</A
+></DT
+><DT
+><A
+HREF="poweroftags.html"
+>The Power Of Tags</A
+></DT
+><DT
+><A
+HREF="tags-variables.html"
+>Tag based on variables</A
+></DT
+><DT
+><A
+HREF="anchors-intro.html"
+>Anchors</A
+></DT
+><DT
+><A
+HREF="anchors-intro1.html"
+>Anchors: Commands</A
+></DT
+><DT
+><A
+HREF="anchors-ruleset.html"
+>Anchors: Rule Set</A
+></DT
+><DT
+><A
+HREF="anchors-structure.html"
+>Anchors: Alternative Structure</A
+></DT
+><DT
+><A
+HREF="anchors-structure1.html"
+>Anchors - common criteria 2</A
+></DT
+><DT
+><A
+HREF="anchors-structure2.html"
+>Anchors - tag and quick</A
+></DT
+><DT
+><A
+HREF="include-file.html"
+>Including Files</A
+></DT
+><DT
+><A
+HREF="wireless.background.html"
+>Wireless Networks: Background</A
+></DT
+><DT
+><A
+HREF="wireless.simple.html"
+>Wireless Networks Made Easy</A
+></DT
+><DT
+><A
+HREF="wpasetup.html"
+>Wireless Networks: WPA Setup</A
+></DT
+><DT
+><A
+HREF="wireless.simple.client.html"
+>Wireless Networks Made Easy (cont'd)</A
+></DT
+><DT
+><A
+HREF="wireless.simple.firewall.html"
+>Wireless Networks Made Easy (cont'd)</A
+></DT
+><DT
+><A
+HREF="authpf.html"
+><SPAN
+CLASS="APPLICATION"
+>authpf</SPAN
+>: Per User Rules</A
+></DT
+><DT
+><A
+HREF="authpf.simple.html"
+>Basic authpf Setup</A
+></DT
+><DT
+><A
+HREF="authpf.simple2.html"
+>Basic authpf Setup (cont)</A
+></DT
+><DT
+><A
+HREF="authpf.simple3.html"
+>Basic authpf Setup (cont)</A
+></DT
+><DT
+><A
+HREF="authpf.simple4.html"
+>Per User Rules</A
+></DT
+><DT
+><A
+HREF="authpf.open.shut.html"
+>Wide Open But Actually Shut</A
+></DT
+><DT
+><A
+HREF="vegard.authpf.pf.conf.html"
+>Open But Shut: pf.conf</A
+></DT
+><DT
+><A
+HREF="vegard.authpf.pf.conf.pre47.html"
+>Open But Shut: pf.conf (pre-4.7)</A
+></DT
+><DT
+><A
+HREF="addresspools.html"
+>Sharing The Load: Address Pools</A
+></DT
+><DT
+><A
+HREF="relayd.html"
+>relayd</A
+></DT
+><DT
+><A
+HREF="hostated.simpleconfig.html"
+>Basic relayd Config</A
+></DT
+><DT
+><A
+HREF="relayd.simpleconfig2.html"
+>Basic relayd Config (cont)</A
+></DT
+><DT
+><A
+HREF="relayd.simpleconfig3.html"
+>Basic relayd Config (cont)</A
+></DT
+><DT
+><A
+HREF="relayctl.html"
+>relayctl</A
+></DT
+><DT
+><A
+HREF="relayd.relays.html"
+>Relays aka application layer (layer 7) proxies</A
+></DT
+><DT
+><A
+HREF="httpssl.html"
+>relayd For TLS (SSL) Load Balancing example</A
+></DT
+><DT
+><A
+HREF="backtosimplenat.html"
+>Filtering For Services, NAT Version</A
+></DT
+><DT
+><A
+HREF="rdr2servers.html"
+>Back To The Single NATed Network</A
+></DT
+><DT
+><A
+HREF="rdr2servers4localnet.html"
+>Single NAT, Web &amp; Mail Server On The Inside: From The Inside</A
+></DT
+><DT
+><A
+HREF="rdr2servers4localnetrulesnew.html"
+>Single NAT, Web &amp; Mail Server On The Inside: From The Inside</A
+></DT
+><DT
+><A
+HREF="rdr2servers4localnetrulespre47.html"
+>Single NAT, Web &amp; Mail Server On The Inside: From The Inside</A
+></DT
+><DT
+><A
+HREF="ifgroups.html"
+>Filtering On Interface Groups</A
+></DT
+><DT
+><A
+HREF="vpn-enc0.html"
+>VPNs And Tunneling</A
+></DT
+><DT
+><A
+HREF="vpn-enc1.html"
+>VPNs: The enc Interface</A
+></DT
+><DT
+><A
+HREF="vpn-keyexc.html"
+>VPNs: Key Exchange, Misc</A
+></DT
+><DT
+><A
+HREF="bridge.html"
+>The Filtering Bridge</A
+></DT
+><DT
+><A
+HREF="bridgefig.html"
+>Where Does It Go?</A
+></DT
+><DT
+><A
+HREF="bridge.basic.config.html"
+>OpenBSD Bridge Setup</A
+></DT
+><DT
+><A
+HREF="bridge-freebsd.html"
+>FreeBSD Bridge Setup</A
+></DT
+><DT
+><A
+HREF="bridge2.html"
+>Bridge PF Filtering Config</A
+></DT
+><DT
+><A
+HREF="shaping.queues.prio.html"
+>Traffic Shaping with Queues and Priorities</A
+></DT
+><DT
+><A
+HREF="prio.html"
+>Per Rule Priority - prio</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.syntax.html"
+>Queues For Bandwidth Allocation: Syntax</A
+></DT
+><DT
+><A
+HREF="queues.usable.bandwidth.html"
+>What Is Your Usable Bandwidth?</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.fixed.html"
+>Splitting your bandwidth into fixed-size chunks</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.fixed.match.html"
+>Fixed-size allocations - match assignment</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.fixed.upperlowerburst.html"
+>Upper and Lower Bounds, with Bursts</A
+></DT
+><DT
+><A
+HREF="systatqueues.html"
+>systat queues</A
+></DT
+><DT
+><A
+HREF="detailedmonitoring-pfctl-vvsq.html"
+>Detailed Monitoring With pfctl -vvsq</A
+></DT
+><DT
+><A
+HREF="queues.queuedmz0.html"
+>Queueing For a DMZ</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.dmz.html"
+>Queues for DMZ: queue definitions</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.dmz.assign.traffic.html"
+>Queues for DMZ - assigning traffic</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.tinyq.html"
+>Sending undesirables to a slow-moving queue</A
+></DT
+><DT
+><A
+HREF="queues.bandwidth.fixed.osmatch.html"
+>Matching on operating system</A
+></DT
+><DT
+><A
+HREF="queues.transition.simple.html"
+>Transition from ALTQ to priorities and queues</A
+></DT
+><DT
+><A
+HREF="upgrading.oldqueue.html"
+>Upgrading: The oldqueue trick</A
+></DT
+><DT
+><A
+HREF="altqintro.html"
+>Directing Traffic With ALTQ</A
+></DT
+><DT
+><A
+HREF="altqsetup.openbsd.html"
+>Setting Up For ALTQ</A
+></DT
+><DT
+><A
+HREF="altqsetup.freebsd.html"
+>Setting Up For ALTQ: FreeBSD</A
+></DT
+><DT
+><A
+HREF="altqsetup.netbsd.html"
+>Setting Up For ALTQ: NetBSD</A
+></DT
+><DT
+><A
+HREF="altq.usable.bandwidth.html"
+>ALTQ - What Is Your Usable Bandwidth?</A
+></DT
+><DT
+><A
+HREF="altqackpri.html"
+>ALTQ - Prioritizing By Traffic Type</A
+></DT
+><DT
+><A
+HREF="matchqueueassign.html"
+>ALTQ - Queue Assignment With match Rule</A
+></DT
+><DT
+><A
+HREF="altqbypct.html"
+>ALTQ - Allocation By Percentage</A
+></DT
+><DT
+><A
+HREF="basic.hfsc.trafficshaper.html"
+>ALTQ - A Basic HFSC Traffic Shaper</A
+></DT
+><DT
+><A
+HREF="hfsc.systat.html"
+>ALTQ - HFSC systat queues View</A
+></DT
+><DT
+><A
+HREF="queuedmz0.html"
+>ALTQ - Queueing For a DMZ</A
+></DT
+><DT
+><A
+HREF="queuedmz1.html"
+>ALTQ - Queueing For a DMZ: Rules Part 1</A
+></DT
+><DT
+><A
+HREF="queuedmz2.html"
+>ALTQ - Queueing For a DMZ: Rules Part 2</A
+></DT
+><DT
+><A
+HREF="tinyq.html"
+>ALTQ - Overloading To a Tiny Queue</A
+></DT
+><DT
+><A
+HREF="altqsmtp.html"
+>ALTQ - Handling Unwanted Traffic</A
+></DT
+><DT
+><A
+HREF="carp.html"
+>CARP And pfsync</A
+></DT
+><DT
+><A
+HREF="carpsetup.spec.html"
+>CARP: project spec</A
+></DT
+><DT
+><A
+HREF="carpsetup.spec2.html"
+>CARP: Project Spec cont'd</A
+></DT
+><DT
+><A
+HREF="carpsetup.spec.txt.html"
+>CARP: Project Spec cont'd</A
+></DT
+><DT
+><A
+HREF="carpsetup.otheros.html"
+>Is Your System CARP Ready?</A
+></DT
+><DT
+><A
+HREF="carpsetup.param0.html"
+>Setting Up CARP</A
+></DT
+><DT
+><A
+HREF="carpsetup.param1.html"
+>CARP: ifconfig</A
+></DT
+><DT
+><A
+HREF="pfsync.html"
+>pfsync</A
+></DT
+><DT
+><A
+HREF="carp.ruleset.html"
+>What Happens To The Rule Set?</A
+></DT
+><DT
+><A
+HREF="carp-example.html"
+>CARP Config Example</A
+></DT
+><DT
+><A
+HREF="carp.ruleset.conf.html"
+>CARP Ruleset</A
+></DT
+><DT
+><A
+HREF="carploadbalance.html"
+>CARP Load Balancing</A
+></DT
+><DT
+><A
+HREF="loadbal-ifconfig.html"
+>Load Balancing CARP: ifconfig</A
+></DT
+><DT
+><A
+HREF="logging.html"
+>Logging</A
+></DT
+><DT
+><A
+HREF="tcpdumpex.html"
+>Taking a Peek With <SPAN
+CLASS="APPLICATION"
+>tcpdump</SPAN
+></A
+></DT
+><DT
+><A
+HREF="tcpdumpfriend.html"
+>tcpdump Is Your Friend</A
+></DT
+><DT
+><A
+HREF="logdata2rules.html"
+>Matching Log Data To Your Rule Set</A
+></DT
+><DT
+><A
+HREF="logdata2rules2.html"
+>Matching Log Data To Your Rule Set</A
+></DT
+><DT
+><A
+HREF="log.match.matches.html"
+>Trace packet's rule traversal: log (matches)</A
+></DT
+><DT
+><A
+HREF="log2syslog.html"
+>Log To Syslog</A
+></DT
+><DT
+><A
+HREF="labelstats.html"
+>Statistics Via Labels</A
+></DT
+><DT
+><A
+HREF="labelstats2.html"
+>Statistics Via Labels</A
+></DT
+><DT
+><A
+HREF="variable-labelnames.html"
+>$variable Label Names</A
+></DT
+><DT
+><A
+HREF="variable-labelnames-ex.html"
+>$variable Label Names: Example</A
+></DT
+><DT
+><A
+HREF="systat.and.pftop.html"
+>Keeping An Eye On Things With systat states</A
+></DT
+><DT
+><A
+HREF="pfstat.html"
+>Graph Your Traffic: pfstat</A
+></DT
+><DT
+><A
+HREF="pflow0.html"
+>New In 4.5: pflow(4) And pflow State Option</A
+></DT
+><DT
+><A
+HREF="pflow1.html"
+>pflow In Your Rule Set</A
+></DT
+><DT
+><A
+HREF="pflow2.html"
+>pflow: Config The Interface</A
+></DT
+><DT
+><A
+HREF="pflow3.html"
+>pflow: Set Up a Collector</A
+></DT
+><DT
+><A
+HREF="otherlogtools.html"
+>Other Log Tools You May Want To Look Into</A
+></DT
+><DT
+><A
+HREF="logsummary.html"
+>Good Logs For Good Debugging</A
+></DT
+><DT
+><A
+HREF="goodtweaks-badtweaks.html"
+>Getting Your Setup Just Right</A
+></DT
+><DT
+><A
+HREF="block-policy.html"
+>Block Policy</A
+></DT
+><DT
+><A
+HREF="skip.html"
+>Skip Steps</A
+></DT
+><DT
+><A
+HREF="state-policy.html"
+>State Policy</A
+></DT
+><DT
+><A
+HREF="state-defaults.html"
+>State Defaults (Since 4.5)</A
+></DT
+><DT
+><A
+HREF="timeout.html"
+>Timeouts</A
+></DT
+><DT
+><A
+HREF="limit.html"
+>Memory Limits</A
+></DT
+><DT
+><A
+HREF="debug.html"
+>Debug Levels</A
+></DT
+><DT
+><A
+HREF="ruleset-optimization.html"
+>Ruleset Optimization</A
+></DT
+><DT
+><A
+HREF="optimization.html"
+>Optimization</A
+></DT
+><DT
+><A
+HREF="reassemble.html"
+>Fragment Reassembly</A
+></DT
+><DT
+><A
+HREF="scrubstate.html"
+>Normalization: scrub</A
+></DT
+><DT
+><A
+HREF="antispoof.html"
+>antispoof</A
+></DT
+><DT
+><A
+HREF="testing.html"
+>Testing your setup</A
+></DT
+><DT
+><A
+HREF="testing.spec.html"
+>Specification (possibly incomplete)</A
+></DT
+><DT
+><A
+HREF="debugging.html"
+>Debugging your setup</A
+></DT
+><DT
+><A
+HREF="debug2.html"
+>Debugging some more</A
+></DT
+><DT
+><A
+HREF="debug3.html"
+>Debug - use tcpdump</A
+></DT
+><DT
+><A
+HREF="stayincontrol.html"
+>Have fun!</A
+></DT
+><DT
+><A
+HREF="suppporttheproject.html"
+>If you enjoyed this: Support OpenBSD!</A
+></DT
+><DT
+><A
+HREF="references.html"
+>References</A
+></DT
+><DT
+><A
+HREF="warmup-minifaq.html"
+>Appendix: You came from elsewhere and you're wondering ...</A
+></DT
+><DT
+><A
+HREF="runonlinux.html"
+>You're wondering ... Linux?</A
+></DT
+><DT
+><A
+HREF="learnbsd.html"
+>You're wondering ... Learn BSD?</A
+></DT
+><DT
+><A
+HREF="guitool.html"
+>You're wondering ... GUI tools?</A
+></DT
+><DT
+><A
+HREF="autoconvert.html"
+>You're wondering ... Automatic conversion?</A
+></DT
+><DT
+><A
+HREF="learnmore.html"
+>You're wondering ... More info?</A
+></DT
+><DT
+><A
+HREF="wep-freebsd.html"
+>Appendix: FreeBSD WEP Access Point</A
+></DT
+><DT
+><A
+HREF="wpa-freebsd.html"
+>Appendix: FreeBSD WPA Access Point</A
+></DT
+><DT
+><A
+HREF="spamd-connlengths.html"
+>Appendix: Connection Lengths</A
+></DT
+><DT
+><A
+HREF="authpf-noip.html"
+>Appendix: authpf-noip (Introduced in OpenBSD 4.3)</A
+></DT
+><DT
+><A
+HREF="relayd-dsr.html"
+>Relayd DSR support (4.4)</A
+></DT
+><DT
+><A
+HREF="oldscrub.html"
+>Appendix: scrub, pre-4.6 style</A
+></DT
+></DL
+></DIV
+></DIV
+></BODY
+></HTML
+>

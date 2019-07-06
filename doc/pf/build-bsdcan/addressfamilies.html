@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Address families: inet vs inet6</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="NAT vs IPv6"
+HREF="natvsipv6.html"><LINK
+REL="NEXT"
+TITLE="Simple Gateway"
+HREF="basicgw2.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='basicgw2.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='natvsipv6.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='natvsipv6.html';}
+     else
+     {window.location.href='basicgw2.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='basicgw2.html';break;
+      case 66:
+      case 80:window.location.href='natvsipv6.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='natvsipv6.html';}
+       else
+       {window.location.href='basicgw2.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="natvsipv6.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="basicgw2.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="ADDRESSFAMILIES"
+></A
+>Address families: <KBD
+CLASS="USERINPUT"
+>inet</KBD
+> vs <KBD
+CLASS="USERINPUT"
+>inet6</KBD
+></H1
+><P
+>We support IPv4 and IPv6 <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>address families</I
+></SPAN
+>, dual stack systems can filter on both</P
+><P
+><KBD
+CLASS="USERINPUT"
+>inet</KBD
+> denotes <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IPv4</I
+></SPAN
+> traffic</P
+><P
+><KBD
+CLASS="USERINPUT"
+>inet6</KBD
+> denotes <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>IPv6</I
+></SPAN
+> traffic</P
+><PRE
+CLASS="SCREEN"
+>    pass inet proto tcp port $ipv4services from $ipv4clients
+    pass inet6 proto tcp port $ipv6services from $ipv6clients</PRE
+><P
+>(add appropriate macro definitions)</P
+><P
+>Note: on dual-stack systems, rules with no <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>address family</I
+></SPAN
+> specified will match both AFs</P
+><P
+>In <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>OpenBSD 5.1</I
+></SPAN
+> onwards, we have <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>NAT64</I
+></SPAN
+> via <KBD
+CLASS="USERINPUT"
+>af-to</KBD
+></P
+></DIV
+></BODY
+></HTML
+>

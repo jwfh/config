@@ -1,0 +1,6 @@
+clients = "192.168.103/24"
+backupserver = "192.0.2.227"
+bacula_ports = "9101:9103"
+block
+pass from $clients
+pass inet proto tcp from $backupserver to $clients port $bacula_ports

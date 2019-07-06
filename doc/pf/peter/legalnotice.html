@@ -1,0 +1,1095 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="LEGALNOTICE"
+><P
+></P
+><A
+NAME="AEN52"
+></A
+><P
+>This document is &copy; Copyright 2005 - 2017, Peter N. M. Hansteen. All rights reserved.</P
+><P
+>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.</P
+></LI
+><LI
+><P
+>Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.</P
+></LI
+></OL
+><P
+>THIS DOCUMENTATION IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.</P
+><P
+>The document is now in minimal maintenance mode after 10 years as a 'work in progress', based on a
+manuscript prepared for a lecture at the BLUG (see <A
+HREF="http://www.blug.linux.no/"
+TARGET="_top"
+>http://www.blug.linux.no/</A
+>) meeting of
+January 27th, 2005. Along the way it has spawned several conference tutorials as well as <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>The Book of PF</A
+> (third edition, No Starch Press 2014), which expands on all topics mentioned in this document presents several topics that are only hinted at here. While this document has been a useful starting point for number of people, I <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>strongly</I
+></SPAN
+> suggest that you get the book.</P
+><P
+>I'm interested in comments of all kinds, and you may if you wish add web
+or other references to html or pdf versions of the manuscript.  If you do, I would
+like, but can not require, you to send me an email message that you've done it. 
+For communication regarding this document please use the address <CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:peter@bsdly.net"
+>peter@bsdly.net</A
+>&#62;</CODE
+> and preferably a recognizable subject line; <SAMP
+CLASS="COMPUTEROUTPUT"
+>$ </SAMP
+><KBD
+CLASS="USERINPUT"
+>whois bsdly.net</KBD
+> provides full contact information.</P
+><P
+></P
+></DIV
+><DIV
+CLASS="REVHISTORY"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.03e</TD
+><TD
+ALIGN="LEFT"
+>12 february 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>initial English version, based on Norwegian 0.03 version</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.04e</TD
+><TD
+ALIGN="LEFT"
+>15 february 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>expanded copyright message, added intro footnote, based on Norwegian 0.04 version</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.05e</TD
+><TD
+ALIGN="LEFT"
+>16 february 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>sudo footnote to first occurence, added some userinput tags, fixed typos. Thanks to: David Snyder</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.06e</TD
+><TD
+ALIGN="LEFT"
+>10 april 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Misc corrections/clarifications esp about tables, spamd. 
+Special thanks to: Eystein Roll Aarseth.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.07e</TD
+><TD
+ALIGN="LEFT"
+>10 april 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added NetBSD info (Thanks: Peter Postma), 
+Hygiene, keywordset for searchability</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.08e</TD
+><TD
+ALIGN="LEFT"
+>10 april 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>License is now BSD</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.081e</TD
+><TD
+ALIGN="LEFT"
+>14 april 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Phrase desillification, typo nuking.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.082e</TD
+><TD
+ALIGN="LEFT"
+>15 april 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>webserver example uses macro now</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09e</TD
+><TD
+ALIGN="LEFT"
+>02 october 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>AUUG2005 edition revision - pftpx info updated, 
+traceroute clarification (thanks to: Henrik Kramshøj)
+bruteforce protection, wireless basics and 
+Vegard's authpf (Thanks: Vegard Engen). 
+spamd part updated (new log format and new numbers).</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.091</TD
+><TD
+ALIGN="LEFT"
+>17 october 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>AUUG2005 version plus how to find info. Thanks: Stuart Henderson for pftpx in tree data.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.092</TD
+><TD
+ALIGN="LEFT"
+>28 november 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>simplified rdr rules.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.093e</TD
+><TD
+ALIGN="LEFT"
+>19 december 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>misc minor fixes, most discovered while working on the No version</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0931e</TD
+><TD
+ALIGN="LEFT"
+>27 december 2005</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>adjustments to bruteforce section, typo</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0945e</TD
+><TD
+ALIGN="LEFT"
+>22 february 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>UKUUG2006 edition w/restrict-to date (BSD license after $date)
+expanded icmp info, rdr w/'reflect', new ftp-proxy, altq restruct, more wifi, spamd update, logging update, conditionals online vs print</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0946e</TD
+><TD
+ALIGN="LEFT"
+>21 march 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>refreshed UKUUG2006 edition
+typo fixes; added 'if you enjoyed this, buy stuff'; added source link</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09461e</TD
+><TD
+ALIGN="LEFT"
+>25 march 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>refreshed UKUUG2006 edition minus a few typos</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0948e</TD
+><TD
+ALIGN="LEFT"
+>28 march 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>SANE 2006 edition; $int_if -&gt; $localnet and what's your local net section (thanks: UKUUG delegate whose name I did unfortunately did not catch, do send me that email message!) ; hint at ftp-proxy's -R mode; added expiretable tip to the bruteforce section; refer to 3.9 as current version</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09492e</TD
+><TD
+ALIGN="LEFT"
+>12 april 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Some clarification on ALTQ and authpf, more about expiretable, non-routables handling; changed order or ALTQ examples - explained why ACK prioritization works; turned expiretable tip into a section with a bit more motivation; added license audit footnote and slight rephrase in PF? intro; blackholing non-routable addresses in hygiene part, added some explanation in the authpf section</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.095e</TD
+><TD
+ALIGN="LEFT"
+>03 may 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>new spamd statistics;</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.095e</TD
+><TD
+ALIGN="LEFT"
+>10 may 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>spamd lists note- Bob Beck gave permission, mention his traplist in spamd section;</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0951e</TD
+><TD
+ALIGN="LEFT"
+>11 may 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>corrected FreeBSD wifi config- /etc/start_if.$ifname is really nice; thanks: Eric Bates</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0952e</TD
+><TD
+ALIGN="LEFT"
+>15 may 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>refresh for SANE appearance- localnet clarification wrt interface names</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0953e</TD
+><TD
+ALIGN="LEFT"
+>27 may 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>fix localnet definition + cvsup in examples. syntax errors are bad for you - cvsup is not in OpenBSD's services file</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0955e</TD
+><TD
+ALIGN="LEFT"
+>21 august 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>fix typos, note acx(4) now supports TI ACX1nn, greytrap footnote.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0956e</TD
+><TD
+ALIGN="LEFT"
+>27 august 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Cleanup from Eystein's notes.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0957e</TD
+><TD
+ALIGN="LEFT"
+>14 september 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>typo fix - thanks Dimitri Umnov- who pointed out a rather obvious error in the reflection part; strangely not present in either NO version or the slides.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0958e</TD
+><TD
+ALIGN="LEFT"
+>25 september 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>wrong url fixed - thanks Robby Cauwerts- who pointed out that what I thought all this time was a link to the archived haiku message was a link to something else entirely.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.096e</TD
+><TD
+ALIGN="LEFT"
+>7 november 2006</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>EuroBSDCon 2006 edition OpenBSD 4.0 is out; refreshed
+overload section mainly from Eystein's comments; greytrapping - spamd
+is way too much fun to just leave alone, sprinkling refreshes there
+and adding more spamd setup details; touch up ftp section with
+references to ftpsesame and pftpx ports on FreeBSD</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0955e</TD
+><TD
+ALIGN="LEFT"
+>14 february 2007</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>AsiaBSDCon 2007 edition OpenBSD 4.1 is very close, mention stateful filtering default; small adjustments in FreeBSD setup section; remove OpenBSD mention from pre-3.9 ftp-proxy sections;</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09651e</TD
+><TD
+ALIGN="LEFT"
+>27 april 2007</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>typokill edition OpenBSD 4.1 is out; marc.theaimsgroup.com is now called marc.info; spamd refresh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09655e</TD
+><TD
+ALIGN="LEFT"
+>13 may 2007</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>BSDCan 2007 edition complete the spamd refresh; minor tweaks elsewhere</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.096551e</TD
+><TD
+ALIGN="LEFT"
+>28 may 2007</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>typofix. Thanks: Austin Hook. While here, update references</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0966e</TD
+><TD
+ALIGN="LEFT"
+>11 sep 2007</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>EuroBSDCon 2007 edition 4.2 is close enough, minor edits and rephrasings</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0967e</TD
+><TD
+ALIGN="LEFT"
+>05 jan 2008</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Greytrapping correction + footnote. Thanks: Olli Hauer. <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>The Book of PF</I
+></SPAN
+> is out, refer to it with clickables.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968e</TD
+><TD
+ALIGN="LEFT"
+>13 oct 2008</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>SSH is TCP only. Thanks: Darren Tucker. Also, 4.4 is close enough to release that cranking the version reference makes sense.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0969e</TD
+><TD
+ALIGN="LEFT"
+>21 jan 2009</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>typo fixes + ICMP tweak. Thanks: Tom Van Looy.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09691e</TD
+><TD
+ALIGN="LEFT"
+>06 oct 2009</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>corrections to altq by percent example. Thanks: Pedro Caetano</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09692e</TD
+><TD
+ALIGN="LEFT"
+>03 jan 2010</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>minor 4.6 related fixes, push book, mention wpa</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0967e</TD
+><TD
+ALIGN="LEFT"
+>28 nov 2010</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>4.8 is out, intro new syntax examples, push book some more</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968e</TD
+><TD
+ALIGN="LEFT"
+>30 nov 2010</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Add warning that the bridge example is incomplete, not pasteworthy</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09685e</TD
+><TD
+ALIGN="LEFT"
+>09 feb 2011</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added inet vs inet6 language, hint of tutorial</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09686e</TD
+><TD
+ALIGN="LEFT"
+>24 apr 2011</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Moved slightly reworded note about the book up</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.09687e</TD
+><TD
+ALIGN="LEFT"
+>02 may 2011</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>expiretable removed from OpenBSD ports. Thanks: Rodolfo Gouveia. Also: we're at 4.9</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.096871e</TD
+><TD
+ALIGN="LEFT"
+>07 may 2011</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>in OpenBSD 4.9, ifconfig wpa syntax is simpler</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968711e</TD
+><TD
+ALIGN="LEFT"
+>05 jan 2012</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>-stable is 5.0, bump references where appropriate, rev latest year</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968712e</TD
+><TD
+ALIGN="LEFT"
+>12 sep 2012</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>-stable is 5.1, bump references where appropriate, typokill (thanks: Robert Frånberg)</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968713e</TD
+><TD
+ALIGN="LEFT"
+>24 jan 2013</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>-stable is 5.2, bump references where appropriate, update ftp-proxy example with divert-to</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968714e</TD
+><TD
+ALIGN="LEFT"
+>29 jun 2013</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>-stable is 5.3, bump references where appropriate, correct ICMP example (thanks: Warren Block  wblock at wonkity dot com)</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968715e</TD
+><TD
+ALIGN="LEFT"
+>27 jan 2014</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>-stable is 5.4, bump references where appropriate, add ftpproxy_enable="YES" for FreeBSD (thanks: Warren Block  wblock at wonkity dot com and Robert Simmons rsimmons0 at gmail dot com)</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968716e</TD
+><TD
+ALIGN="LEFT"
+>09 feb 2014</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>clarify that ftp-proxy anchor and divert rule needs to be before any NAT. Thanks: Nikola Gyurov</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968717e</TD
+><TD
+ALIGN="LEFT"
+>28 sep 2014</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Add refs to newest tutorial slides, update references</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968718e</TD
+><TD
+ALIGN="LEFT"
+>28 jan 2015</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>correct modern spamd rules, thanks wiggl3 via irc #OpenBSD; also update book link to third edition</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968719e</TD
+><TD
+ALIGN="LEFT"
+>23 dec 2015</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Update 'please look elsewhere for updates' note</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968720e</TD
+><TD
+ALIGN="LEFT"
+>24 dec 2015</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>The OpenBSD Bookstore as such does not exist anymore</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968721e</TD
+><TD
+ALIGN="LEFT"
+>03 oct 2016</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>It's 2016, OpenBSD base doesn't have sudo anymore. Recommend doas and the book, go back to sleep.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968722e</TD
+><TD
+ALIGN="LEFT"
+>09 dec 2016</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>It's 2016, and people still confuse the OpenBSD spamd with the Spamassassin one. Add appropriate note in two relevant places. While here, remove ref to now sadly defunct uatraps blacklist.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 0.0968723e</TD
+><TD
+ALIGN="LEFT"
+>28 may 2017</TD
+><TD
+ALIGN="LEFT"
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>It's 2017, and people still find this. Add note about nospamd and friends. While here note that OpenBSD-release is is 6.1, introduce man.openbsd.org links where appropriate, fix some broken links and edit out embarrasing brokenness.</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

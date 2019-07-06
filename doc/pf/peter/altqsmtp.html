@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>ALTQ - handling unwanted traffic</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Directing traffic with ALTQ"
+HREF="altqintro.html"><LINK
+REL="PREVIOUS"
+TITLE="ALTQ - allocation by percentage"
+HREF="altqbypct.html"><LINK
+REL="NEXT"
+TITLE="CARP and pfsync"
+HREF="carp.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="altqbypct.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Directing traffic with ALTQ</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="carp.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="ALTQSMTP"
+>ALTQ - handling unwanted traffic</A
+></H1
+><P
+>&#13;Our last altq example is one which surfaced around the time of one of
+the many spam or virus storms we've seen during the last few years.
+It's fairly common knowledge that the machines causing these bursts
+of email are practically all Windows machines. PF has a fairly reliable
+operating system fingerprinting mechanism which detects the operating
+system at the other end of a network connection. One OpenBSD user got
+sufficiently tired of all this meaningless traffic, and posted some
+selected bits of his <TT
+CLASS="FILENAME"
+>pf.conf</TT
+> on his blog:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>altq on $ext_if cbq queue { q_default q_web q_mail }
+
+   queue q_default cbq(default)
+   queue q_web (...) 
+
+    ## all mail limited to 1Mb/sec
+    queue q_mail bandwidth 1Mb { q_mail_windows }
+    ## windows mail limited to 56Kb/sec
+    queue q_mail_windows bandwidth 56Kb
+
+    pass in quick proto tcp from any os "Windows" to $ext_if port 25 \
+            keep state queue q_mail_windows
+    pass in quick proto tcp from any to $ext_if port 25 label "smtp" \
+            keep state queue q_mail</PRE
+><PRE
+CLASS="SCREEN"
+>" I can't believe I didn't see this earlier. Oh, how sweet. ... 
+  Already a huge difference in my load. Bwa ha ha. "</PRE
+><P
+>Randal L. Schwartz, 29. January 2004, <A
+HREF="http://use.perl.org/~merlyn/journal/17094"
+TARGET="_top"
+>http://use.perl.org/~merlyn/journal/17094</A
+></P
+><P
+>Here all email traffic is assigned one megabit worth of bandwidth, while
+email traffic originating at Windows hosts get to share a subqueue of 
+56 Kbit total. No wonder the total load went down and the blog post ends
+with what must be an evil chuckle.</P
+><P
+>I must confess this is something I've wanted very much to do myself, but
+I've never dared.  A few too many of our customers have for their own
+reasons chosen to run their mail service on Windows, and we do like to
+receive most of their mail. In a little while, we'll have a look at a
+different PF approach which may have achieved much of the same effect.</P
+><P
+>A somewhat more thorough treatment of ALTQ (including a basic HFSC traffic shaper configuration) can be found in <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>The Book of PF</A
+>.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="altqbypct.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="carp.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>ALTQ - allocation by percentage</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="altqintro.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>CARP and pfsync</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

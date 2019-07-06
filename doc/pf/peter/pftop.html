@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Keeping an eye on things with pftop</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Keeping an eye on things with systat"
+HREF="systat-states.html"><LINK
+REL="NEXT"
+TITLE="Invisible gateway - bridge"
+HREF="bridge.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="systat-states.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="bridge.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="PFTOP"
+></A
+>Keeping an eye on things with pftop</H1
+><P
+>If you're running a system where the local
+<SPAN
+CLASS="APPLICATION"
+>systat</SPAN
+> does not offer PF related views and
+you are interested in keeping an eye on what passes in to and out of
+your network, Can Erkin Acar's <SPAN
+CLASS="APPLICATION"
+>pftop</SPAN
+> is a
+very useful tool.  The name is a strong hint at what it does -
+<SPAN
+CLASS="APPLICATION"
+>pftop</SPAN
+> shows a running snapshot of your
+traffic in a format which is strongly inspired by
+<SPAN
+CLASS="APPLICATION"
+>top</SPAN
+>(1):</P
+><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>pfTop: Up State 1-21/67, View: default, Order: none, Cache: 10000       19:52:28
+
+PR   DIR SRC                  DEST                 STATE   AGE   EXP  PKTS BYTES
+tcp  Out 194.54.103.89:3847   216.193.211.2:25      9:9     28    67    29  3608
+tcp  In  207.182.140.5:44870  127.0.0.1:8025        4:4     15 86400    30  1594
+tcp  In  207.182.140.5:36469  127.0.0.1:8025       10:10   418    75   810 44675
+tcp  In  194.54.107.19:51593  194.54.103.65:22      4:4    146 86395   158 37326
+tcp  In  194.54.107.19:64926  194.54.103.65:22      4:4    193 86243   131 21186
+tcp  In  194.54.103.76:3010   64.136.25.171:80      9:9    154    59    11  1570
+tcp  In  194.54.103.76:3013   64.136.25.171:80      4:4      4 86397     6  1370
+tcp  In  194.54.103.66:3847   216.193.211.2:25      9:9     28    67    29  3608
+tcp  Out 194.54.103.76:3009   64.136.25.171:80      9:9    214     0     9  1490
+tcp  Out 194.54.103.76:3010   64.136.25.171:80      4:4     64 86337     7  1410
+udp  Out 194.54.107.18:41423  194.54.96.9:53        2:1     36     0     2   235
+udp  In  194.54.107.19:58732  194.54.103.66:53      1:2     36     0     2   219
+udp  In  194.54.107.19:54402  194.54.103.66:53      1:2     36     0     2   255
+udp  In  194.54.107.19:54681  194.54.103.66:53      1:2     36     0     2   271</SAMP
+></PRE
+><P
+>Your connections can be shown sorted by a number of different criteria,
+among others by PF rule, volume, age and so on.</P
+><P
+>This program is not in the base system itself, probably because it is
+possible to extract equivalent information using various
+<SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+>
+options. <SPAN
+CLASS="APPLICATION"
+>pftop</SPAN
+> is however available as a
+package, in ports on OpenBSD and FreeBSD both as
+<TT
+CLASS="FILENAME"
+>sysutils/pftop</TT
+>, on NetBSD via pkgsrc
+as <TT
+CLASS="FILENAME"
+>sysutils/pftop</TT
+>.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="systat-states.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="bridge.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Keeping an eye on things with systat</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Invisible gateway - bridge</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

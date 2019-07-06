@@ -91,3 +91,18 @@
 [submodule "texmf/tex/latex/memorial-latex"]
 	path = texmf/tex/latex/memorial-latex
 	url = https://github.com/trombonehero/memorial-latex
+[submodule ".vim/bundle/vimtex"]
+	path = .vim/bundle/vimtex
+	url = https://github.com/lervag/vimtex
+[submodule ".vim/bundle/vim-jsx"]
+	path = .vim/bundle/vim-jsx
+	url = https://github.com/mxw/vim-jsx
+[submodule ".vim/bundle/vim-javascript"]
+	path = .vim/bundle/vim-javascript
+	url = https://github.com/pangloss/vim-javascript
+[submodule "wm/i3lock-color"]
+	path = wm/i3lock-color
+	url = https://github.com/PandorasFox/i3lock-color
+[submodule "wm/betterlockscreen"]
+	path = wm/betterlockscreen
+	url = https://github.com/pavanjadhaw/betterlockscreen

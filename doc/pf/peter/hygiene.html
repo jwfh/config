@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Network hygiene: Blocking, scrubbing and so on</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Path MTU discovery"
+HREF="pathmtudisc.html"><LINK
+REL="NEXT"
+TITLE="scrub"
+HREF="scrub.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="pathmtudisc.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="scrub.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="HYGIENE"
+></A
+>Network hygiene: Blocking, scrubbing and so on</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="hygiene.html#BLOCKPOLICY"
+><KBD
+CLASS="USERINPUT"
+>block-policy</KBD
+></A
+></DT
+><DT
+><A
+HREF="scrub.html"
+><KBD
+CLASS="USERINPUT"
+>scrub</KBD
+></A
+></DT
+><DT
+><A
+HREF="antispoof.html"
+><KBD
+CLASS="USERINPUT"
+>antispoof</KBD
+></A
+></DT
+><DT
+><A
+HREF="unrouteables.html"
+>Handling non-routable addresses from elsewhere</A
+></DT
+></DL
+></DIV
+><P
+>Our gateway does not feel quite complete without a few more items in the
+configuration which will make it behave a bit more sanely towards hosts on
+the wide net and our local network. </P
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="BLOCKPOLICY"
+><KBD
+CLASS="USERINPUT"
+>block-policy</KBD
+></A
+></H1
+><P
+><KBD
+CLASS="USERINPUT"
+>block-policy</KBD
+> is an option which can be set in
+the <KBD
+CLASS="USERINPUT"
+>options</KBD
+> part of the ruleset, which precedes
+the redirection and filtering rules. This option determines which
+feedback, if any, PF will give to hosts which try to create connections
+which are subsequently blocked. The option has two possible values,
+<KBD
+CLASS="USERINPUT"
+>drop</KBD
+> which drops blocked packets with no
+feedback, and <KBD
+CLASS="USERINPUT"
+>return</KBD
+> which returns with status
+codes such as <SAMP
+CLASS="COMPUTEROUTPUT"
+>Connection refused</SAMP
+>
+or similar.</P
+><P
+>The correct strategy for block policies has been the subject of rather
+a lot of discussion.  We choose to play nicely and instruct our
+firewall to issue returns:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>set block-policy return</PRE
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="pathmtudisc.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="scrub.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Path MTU discovery</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><KBD
+CLASS="USERINPUT"
+>scrub</KBD
+></TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

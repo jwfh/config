@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>ALTQ - A Basic HFSC Traffic Shaper</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="ALTQ - Allocation By Percentage"
+HREF="altqbypct.html"><LINK
+REL="NEXT"
+TITLE="ALTQ - HFSC systat queues View"
+HREF="hfsc.systat.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='hfsc.systat.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='altqbypct.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='altqbypct.html';}
+     else
+     {window.location.href='hfsc.systat.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='hfsc.systat.html';break;
+      case 66:
+      case 80:window.location.href='altqbypct.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='altqbypct.html';}
+       else
+       {window.location.href='hfsc.systat.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="altqbypct.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="hfsc.systat.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="BASIC.HFSC.TRAFFICSHAPER"
+></A
+>ALTQ - A Basic HFSC Traffic Shaper</H1
+><P
+></P
+><PRE
+CLASS="PROGRAMLISTING"
+>altq on $ext_if bandwidth $ext_bw hfsc queue { main, spamd }
+       queue main bandwidth 99% priority 7 qlimit 100 hfsc (realtime 20%, linkshare 99%) \
+		{ q_pri, q_def, q_web, q_dns }
+          queue q_pri bandwidth 3% priority 7 hfsc (realtime 0, linkshare 3% red )
+          queue q_def bandwidth 47% priority 1 hfsc (default realtime 30% linkshare 47% red)
+          queue q_web bandwidth 47% priority 1 hfsc (realtime 30% linkshare 47% red)
+          queue q_dns bandwidth 3% priority 7 qlimit 100 hfsc (realtime (30Kb 3000 12Kb), linkshare 3%)
+       queue spamd bandwidth 0% priority 0 qlimit 300 hfsc (realtime 0, upperlimit 1%, linkshare 1%)
+
+match out on $ext_if from $air_if:network nat-to ($ext_if) queue (q_def, q_pri)
+match out on $ext_if from $int_if:network nat-to ($ext_if) queue (q_def, q_pri)
+match out on $ext_if proto tcp to port { www https } queue (q_web, q_pri)
+match out on $ext_if proto { tcp udp } to port domain queue (q_dns, q_pri)
+match out on $ext_if proto icmp queue (q_dns, q_pri)</PRE
+></DIV
+></BODY
+></HTML
+>

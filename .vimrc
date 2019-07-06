@@ -1,6 +1,6 @@
 execute pathogen#infect()
-syntax on
 filetype plugin indent on
+syntax on
 
 set number relativenumber
 nnoremap <silent> <C-n> :set relativenumber!<cr>
@@ -112,3 +112,8 @@ let g:syntastic_python_checkers=['flake8']
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 let g:syntastic_cpp_checkers = ['clang_check', 'gcc']
+
+" Remaps for easy copy and paste from clipboard in Gvim
+nmap <C-V> "+gP
+imap <C-V> <ESC><C-V>a 
+vmap <C-C> "+y

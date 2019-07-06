@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Single NAT, Web &#38; Mail Server On The Inside: From The Inside</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79 and dbslide HTML stylesheet Version 0.1"><LINK
+REL="HOME"
+TITLE="Building The Network You Need With PF, The OpenBSD Packet Filter"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Single NAT, Web &#38; Mail Server On The Inside: From The Inside"
+HREF="rdr2servers4localnetrulesnew.html"><LINK
+REL="NEXT"
+TITLE="Filtering On Interface Groups"
+HREF="ifgroups.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="dbslide.css"><SCRIPT
+LANGUAGE="JavaScript1.2"
+TYPE="text/JavaScript"
+>var Netscape = new Boolean();
+  if(navigator.appName == 'Netscape')  Netscape = true;  
+
+  function keypress(event)
+  {
+   if(Netscape)
+    { 
+      switch(event.which)
+      {
+      case 13:
+      case 32:
+      case 110:window.location.href='ifgroups.html';break;
+      case 8:
+      case 98:
+      case 112:window.location.href='rdr2servers4localnetrulesnew.html';break;
+      case 104:window.location.href='index.html';break;
+      }  
+      return true;
+    }
+  }
+  function mousepress(event)  
+  {
+   if(Netscape)
+   {
+     if (event.modifiers &#38; Event.ALT_MASK)
+     {window.location.href='index.html';}
+     else if (event.pageX &#60; 200)
+     {window.location.href='rdr2servers4localnetrulesnew.html';}
+     else
+     {window.location.href='ifgroups.html';}
+     return true;
+   }
+  }
+  document.onkeydown = keypress;
+  document.onmouseup = mousepress;</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onkeydown()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{ 
+      switch(window.event.keyCode)
+      {
+      case 13:
+      case 70:
+      case 78:window.location.href='ifgroups.html';break;
+      case 66:
+      case 80:window.location.href='rdr2servers4localnetrulesnew.html';break;
+      case 72:window.location.href='index.html';break;
+      }  
+      return true;}</SCRIPT
+><SCRIPT
+FOR="document"
+EVENT="onmouseup()"
+LANGUAGE="JScript"
+TYPE="text/JScript"
+>{
+     if (window.event.altKey)
+     {window.location.href='index.html';}
+     else
+     {
+       if (window.event.clientX &#60; 200) 
+       {window.location.href='rdr2servers4localnetrulesnew.html';}
+       else
+       {window.location.href='ifgroups.html';}
+     }
+     return true;}</SCRIPT
+></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Building The Network You Need With PF, The OpenBSD Packet Filter: BSDCan 2016, Ottawa, Canada, June 8th 2016</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="rdr2servers4localnetrulesnew.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="ifgroups.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="RDR2SERVERS4LOCALNETRULESPRE47"
+></A
+>Single NAT, Web &amp; Mail Server On The Inside: From The Inside</H1
+><P
+>Pre-4.7:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>rdr on $int_if proto tcp from $int_if:network to $ext_if \
+       port $webports -&gt; $webserver
+rdr on $int_if proto tcp from $int_if:network to $ext_if \
+       port $email -&gt; $emailserver
+no nat on $int_if proto tcp from $int_if to $int_if:network
+nat on $int_if proto tcp from $int_if:network to $webserver \
+       port $webports -&gt; $int_if 
+nat on $int_if proto tcp from $int_if:network to $emailserver \
+       port $email -&gt; $int_if </PRE
+><P
+></P
+></DIV
+></BODY
+></HTML
+>

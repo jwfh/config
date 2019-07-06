@@ -1,0 +1,556 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Turning away the brutes</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="An open, yet tightly guarded wireless network with authpf"
+HREF="vegard.authpf.html"><LINK
+REL="NEXT"
+TITLE="Using expiretable to tidy your tables"
+HREF="expiretable.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="vegard.authpf.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="expiretable.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="BRUTEFORCE"
+></A
+>Turning away the brutes</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="bruteforce.html#EXPIRE"
+>expiring table entries with <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+></A
+></DT
+><DT
+><A
+HREF="expiretable.html"
+>Using <SPAN
+CLASS="APPLICATION"
+>expiretable</SPAN
+> to tidy your tables</A
+></DT
+></DL
+></DIV
+><P
+>If you run a Secure Shell login service anywhere which is accessible
+from the Internet, I'm sure you've seen things like these in your
+authentication logs:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>Sep 26 03:12:34 skapet sshd[25771]: Failed password for root from 
+200.72.41.31 port 40992 ssh2
+Sep 26 03:12:34 skapet sshd[5279]: Failed password for root from 
+200.72.41.31 port 40992 ssh2
+Sep 26 03:12:35 skapet sshd[5279]: Received disconnect from 
+200.72.41.31: 11: Bye Bye
+Sep 26 03:12:44 skapet sshd[29635]: Invalid user admin from 
+200.72.41.31
+Sep 26 03:12:44 skapet sshd[24703]: input_userauth_request: 
+invalid user admin
+Sep 26 03:12:44 skapet sshd[24703]: Failed password for invalid user 
+admin from 200.72.41.31 port 41484 ssh2
+Sep 26 03:12:44 skapet sshd[29635]: Failed password for invalid user 
+admin from 200.72.41.31 port 41484 ssh2
+Sep 26 03:12:45 skapet sshd[24703]: Connection closed by 200.72.41.31
+Sep 26 03:13:10 skapet sshd[11459]: Failed password for root from 
+200.72.41.31 port 43344 ssh2
+Sep 26 03:13:10 skapet sshd[7635]: Failed password for root from 
+200.72.41.31 port 43344 ssh2
+Sep 26 03:13:10 skapet sshd[11459]: Received disconnect from 
+200.72.41.31: 11: Bye Bye
+Sep 26 03:13:15 skapet sshd[31357]: Invalid user admin from 200.72.41.31
+Sep 26 03:13:15 skapet sshd[10543]: input_userauth_request: invalid 
+user admin
+Sep 26 03:13:15 skapet sshd[10543]: Failed password for invalid user 
+admin from 200.72.41.31 port 43811 ssh2
+Sep 26 03:13:15 skapet sshd[31357]: Failed password for invalid user 
+admin from 200.72.41.31 port 43811 ssh2
+Sep 26 03:13:15 skapet sshd[10543]: Received disconnect from 
+200.72.41.31: 11: Bye Bye
+Sep 26 03:13:25 skapet sshd[6526]: Connection closed by 200.72.41.31</PRE
+><P
+>It gets repetitive after that.  This is what a brute force attack
+looks like.  Essentially somebody, or more likely, a cracked computer
+somewhere, is trying by brute force to find a combination of user name
+and password which will let them into your system.</P
+><P
+>The simplest response would be to write a <TT
+CLASS="FILENAME"
+>pf.conf</TT
+>
+rule which blocks all access.  This leads to another class of
+problems, including what you do in order to let people with legitimate
+business on your system access it anyway.  You might consider moving
+the service to some other port, but then again, the ones flooding you
+on port 22 would probably be able to scan their way to port 22222 for
+a repeat performance.<A
+NAME="AEN1522"
+HREF="#FTN.AEN1522"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></P
+><P
+>Since OpenBSD 3.7<A
+NAME="AEN1526"
+HREF="#FTN.AEN1526"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+>, PF has offered a slightly more elegant
+solution.  You can write your pass rules so they maintain certain
+limits on what connecting hosts can do.  For good measure, you can
+banish violators to a table of addresses which you deny some or all
+access.  You can even choose to drop all existing connections from
+machines which overreach your limits, if you like.  Here's how it's
+done:</P
+><P
+>Now first set up the table. In your tables section, add</P
+><PRE
+CLASS="PROGRAMLISTING"
+>table &lt;bruteforce&gt; persist</PRE
+><P
+>Then somewhere fairly early in your rule set you set up to block from
+the bruteforcers</P
+><PRE
+CLASS="PROGRAMLISTING"
+>block quick from &lt;bruteforce&gt;</PRE
+><P
+>And finally, your pass rule.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass inet proto tcp from any to $localnet port $tcp_services \
+        flags S/SA keep state \
+	(max-src-conn 100, max-src-conn-rate 15/5, \
+         overload &lt;bruteforce&gt; flush global)</PRE
+><P
+>This is rather similar to what we've seen before, isn't it? In fact,
+the first part is identical to the one we constructed earlier. The
+part in brackets is the new stuff which will ease your network load
+even further.</P
+><P
+><I
+CLASS="FIRSTTERM"
+>max-src-conn</I
+> is the number of simultaneous
+connections you allow from one host.  In this example, I've set it at
+100, in your setup you may want a slightly higher or lower
+value.</P
+><P
+><I
+CLASS="FIRSTTERM"
+>max-src-conn-rate</I
+> is the rate of new
+connections allowed from any single host, here 15 connections per 5
+seconds. Again, you are the one to judge what suits your setup.</P
+><P
+><I
+CLASS="FIRSTTERM"
+>overload</I
+>
+<SAMP
+CLASS="COMPUTEROUTPUT"
+>&lt;bruteforce&gt;</SAMP
+> means that any
+host which exceeds these limits gets its address added to the table
+<SAMP
+CLASS="COMPUTEROUTPUT"
+>bruteforce</SAMP
+>. Our rule set blocks all
+traffic from addresses in the bruteforce table.</P
+><P
+>finally, <I
+CLASS="FIRSTTERM"
+>flush</I
+> <I
+CLASS="FIRSTTERM"
+>global</I
+>
+says that when a host reaches the limit, that host's connections will
+be terminated (flushed). The global part says that for good measure,
+this applies to connections which match other pass rules too.</P
+><P
+>The effect is dramatic.  My bruteforcers more often than not end up
+with <SAMP
+CLASS="COMPUTEROUTPUT"
+>&quot;Fatal: timeout before authentication&quot;</SAMP
+> 
+messages, which is exactly what we want.</P
+><P
+>Once again, please keep in mind that this example rule is intended mainly as an
+illustration.  It is not unlikely that your network's needs are better served by
+rather different rules or combinations of rules.</P
+><P
+>If, for example, you want to allow a generous number of connections in
+general, but would like to be a little more tight fisted when it comes
+to <SPAN
+CLASS="APPLICATION"
+>ssh</SPAN
+>, you could supplement the rule above
+with something like the one below, early on in your rule set:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass quick proto tcp from any to any port ssh \
+        flags S/SA keep state \
+        (max-src-conn 15, max-src-conn-rate 5/3, \
+        overload &lt;bruteforce&gt; flush global)</PRE
+><P
+>Despite what it likely says in your <TT
+CLASS="FILENAME"
+>/etc/services</TT
+>
+file, existing <SPAN
+CLASS="APPLICATION"
+>ssh</SPAN
+> implementations use TCP
+only, as specified in RFC4253.  You should be able to find the set of
+parameters which is just right for your situation by reading the
+relevant man pages and the <A
+HREF="http://www.openbsd.org/faq/pf/"
+TARGET="_top"
+>PF User Guide</A
+>, and
+perhaps a bit of experimentation.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./note.jpg"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><B
+>You may not need to <KBD
+CLASS="USERINPUT"
+>block</KBD
+> all of your <KBD
+CLASS="USERINPUT"
+>overload</KBD
+>ers</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>It is probably worth noting at this point that the
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>overload</I
+></SPAN
+> mechanism is a general technique which
+does not have to apply exclusively to the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>ssh</I
+></SPAN
+>
+service, and it is not necessarily always optimal to block all traffic
+from offenders entirely.  </P
+><P
+>You could for example use an overload rule to protect a mail service
+or a web service, and you could use the overload table in a rule to
+assign offenders to a queue with a minimal bandwidth allocation (see
+<A
+HREF="altqsmtp.html"
+>the Section called <I
+>ALTQ - handling unwanted traffic</I
+> in the Chapter called <I
+>Directing traffic with ALTQ</I
+></A
+>) or, in the web case, to redirect to a
+specific web page (much like in the <SPAN
+CLASS="APPLICATION"
+>authpf</SPAN
+>
+example in <A
+HREF="vegard.authpf.html"
+>the Chapter called <I
+>An open, yet tightly guarded wireless network with <SPAN
+CLASS="APPLICATION"
+>authpf</SPAN
+></I
+></A
+>).</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>It is worth noting that this technique does not stop the slow bruteforcers commonly known as <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+><A
+HREF="http://home.nuug.no/~peter/hailmary2013/"
+TARGET="_top"
+>The Hail Mary Cloud</A
+></I
+></SPAN
+> (also see the article <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+><A
+HREF="http://bsdly.blogspot.com/2013/10/the-hail-mary-cloud-and-lessons-learned.html"
+TARGET="_top"
+>The Hail Mary Cloud And The Lessons Learned</A
+></I
+></SPAN
+>, which likely was (or is) a deliberate attempt at avoiding this kind of measure. See the referenced overview article for more material.</P
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="EXPIRE"
+>expiring table entries with <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+></A
+></H1
+><P
+>At this point, we have tables which will be filled by our
+<KBD
+CLASS="USERINPUT"
+>overload</KBD
+> rules, and since we could reasonably
+expect our gateways to have months of uptime, the tables will grow
+incrementally, taking up more memory as time goes by.</P
+><P
+>You could also find that an IP address you blocked last week due to a
+brute force attack was in fact a dynamically assigned one, which is
+now assigned to a different ISP customer who has a legitimate reason
+to try communicating with hosts in your network.</P
+><P
+>Situations like these were what caused Henning Brauer to add to <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+> 
+the ability to expire table entries not referenced in a specified
+number of seconds (in OpenBSD 4.1).  For example, the command</P
+><PRE
+CLASS="SCREEN"
+># pfctl -t bruteforce -T expire 86400</PRE
+><P
+>will remove <SAMP
+CLASS="COMPUTEROUTPUT"
+>&lt;bruteforce&gt;</SAMP
+> table
+entries which have not been referenced for 86400 seconds.</P
+></DIV
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1522"
+HREF="bruteforce.html#AEN1522"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>At the time this was written, password gropers trying high ports was purely theoretical, but in early 2013, I received confirmation that such attempts were indeed happening, see <A
+HREF="http://bsdly.blogspot.ca/2013/02/theres-no-protection-in-high-ports.html"
+TARGET="_top"
+>There's No Protection In High Ports Anymore. If Indeed There Ever Was.</A
+> for a longer description.</P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1526"
+HREF="bruteforce.html#AEN1526"
+><SPAN
+CLASS="footnote"
+>[2]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>Introduced to FreeBSD in version
+6.0</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="vegard.authpf.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="expiretable.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>An open, yet tightly guarded wireless network with <SPAN
+CLASS="APPLICATION"
+>authpf</SPAN
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using <SPAN
+CLASS="APPLICATION"
+>expiretable</SPAN
+> to tidy your tables</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

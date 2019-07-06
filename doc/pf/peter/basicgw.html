@@ -1,0 +1,302 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>A simple gateway, NAT if you need it</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Statistics from pfctl"
+HREF="pfctlstats.html"><LINK
+REL="NEXT"
+TITLE="What is your local network, anyway?"
+HREF="whatsyourlocalnet.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="pfctlstats.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="whatsyourlocalnet.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="BASICGW"
+></A
+>A simple gateway, NAT if you need it</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="basicgw.html#GWPITFALLS"
+>Gateways and the pitfalls of in, out and on</A
+></DT
+><DT
+><A
+HREF="whatsyourlocalnet.html"
+>What is your local network, anyway?</A
+></DT
+><DT
+><A
+HREF="gwsimplesetup.html"
+>Setting up</A
+></DT
+></DL
+></DIV
+><P
+>At this point we finally move on to the more realistic or at least
+more common setups, where the machine with the packet filter or
+firewall configured also acts as a gateway for at least one other
+machine.</P
+><P
+>The other machines on the inside may of course also run firewall
+software, but even if they do, it does not affect what we are
+interested in here to any significant degree.</P
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="GWPITFALLS"
+>Gateways and the pitfalls of in, out and on</A
+></H1
+><P
+>In the single machine setup, life is relatively simple.  Traffic you
+create should either pass or not out to the rest of the world, and you
+decide what you let in from elsewhere.</P
+><P
+>When you set up a gateway, your perspective changes.  You go from the
+&quot;me versus the network out there&quot; setting to &quot;I am the
+one who decides what to pass to or from all the networks I am
+connected to&quot;.  The machine has several, or at least two, network
+interfaces, each connected to a separate net.</P
+><P
+>Now it's very reasonable to think that if you want traffic to pass
+from the network connected to <KBD
+CLASS="USERINPUT"
+>ep1</KBD
+> to hosts on
+the network connected to <KBD
+CLASS="USERINPUT"
+>ep0</KBD
+>, you will need a
+rule like this<A
+NAME="AEN641"
+HREF="#FTN.AEN641"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+>:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in inet proto tcp on ep1 from ep1:network to ep0:network \
+     port $ports </PRE
+><P
+></P
+><P
+>However, one of the most common and most complained-about mistakes in
+firewall configuration is not realizing that the &quot;to&quot;
+keyword does not in itself guarantee passage all the way there.  In
+fact, the rule we just wrote only lets the traffic pass in to the
+gateway itself, on the specific interface given in the rule.  </P
+><P
+>To let the packets get a bit further on and move into the next network
+over, you would need a matching rule which says something like</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass out inet proto tcp on ep0 from ep1:network to ep0:network \
+     port $ports </PRE
+><P
+>These rules will work, but they will not necessarily achieve what you want.  </P
+><P
+>If there are good reasons why you need to have rules which are this
+specific in your rule set, you know you need them and why.  By the end
+of this tutorial you should be able to articulate with some precision,
+in the context of your own network, just when such rules are needed.
+However for the basic gateway configurations we'll be dealing with
+here, what you really want to use is probably a rule which says</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass inet proto tcp from ep1:network to any port $ports </PRE
+><P
+>to let your local net access the Internet and leave the detective work
+to the <I
+CLASS="FIRSTTERM"
+>antispoof</I
+> and
+<I
+CLASS="FIRSTTERM"
+>scrub</I
+> code.  They are both pretty good these
+days, and we will get back to them later.  For now we just accept the
+fact that for simple setups, interface bound rules with in/out rules
+tend to add more clutter than they are worth to your rule sets.</P
+><P
+>For a busy network admin, a readable rule set is a safer rule set.</P
+><P
+>For the remainder of this tutorial, with some exceptions, we will keep
+the rules as simple as possible for readability.</P
+></DIV
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN641"
+HREF="basicgw.html#AEN641"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>Here you probably notice that we no
+longer have a <KBD
+CLASS="USERINPUT"
+>keep state</KBD
+> part. Keeping state is
+redundant if you are working with OpenBSD 4.1 or equivalent, but there
+is actually no need to remove the specification from your rules when
+upgrading your rule set from earlier versions.  To ease transition,
+the examples in this tutorial will make this distinction when
+needed. </P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="pfctlstats.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="whatsyourlocalnet.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Statistics from <SPAN
+CLASS="APPLICATION"
+>pfctl</SPAN
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>What is your local network, anyway?</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

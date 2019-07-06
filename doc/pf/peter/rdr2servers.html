@@ -1,0 +1,353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>A web server and a mail server on the inside</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Handling non-routable addresses from elsewhere"
+HREF="unrouteables.html"><LINK
+REL="NEXT"
+TITLE="Tables make your life easier"
+HREF="tables.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="unrouteables.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="tables.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="RDR2SERVERS"
+></A
+>A web server and a mail server on the inside</H1
+><P
+>Time passes, and needs change.  Rather frequently, a need to run
+externally accessible services develops.  This quite frequently
+becomes just a little harder because externally visible addresses are
+either not available or too expensive, and running several other services
+on a machine which is primarily a firewall is not a desirable option.</P
+><P
+>The redirection mechanisms in PF makes it relatively easy to keep
+servers on the inside.  If we assume that we need to run a web server
+which serves up data in clear text (http) and encrypted (https) and in
+addition we want a mail server which sends and receives e-mail while
+letting clients inside and outside the local network use a number of
+well known submission and retrieval protocols, the following lines 
+may be all that's needed in addition to the rule set we developed earlier:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>webserver = "192.168.2.7"
+webports = "{ http, https }"
+emailserver = "192.168.2.5"
+email = "{ smtp, pop3, imap, imap3, imaps, pop3s }"
+
+match in on $ext_if proto tcp to $ext_if port $webports rdr-to $webserver
+match in on $ext_if proto tcp to $ext_if port $email rdr-to $emailserver
+
+pass proto tcp from any to $webserver port $webports 
+pass proto tcp from any to $emailserver port $email 
+pass proto tcp from $emailserver to any port smtp </PRE
+><P
+>The combination of <KBD
+CLASS="USERINPUT"
+>match</KBD
+> and <KBD
+CLASS="USERINPUT"
+>pass</KBD
+> rules above is very close to the way things were done in pre-OpenBSD 4.7 PF versions, and if you are upgrading from a previous version, this is the kind of quick edit that could bridge the syntax gap quickly. But you could also opt to go for the new style, and write this slightly more compact version instead:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in on $ext_if inet proto tcp to $ext_if port $webports rdr-to $webserver
+pass in on $ext_if inet proto tcp to $ext_if port $email rdr-to $mailserver
+pass on $int_if inet proto tcp to $webserver port $webports
+pass on $int_if inet proto tcp to $mailserver port $email</PRE
+><P
+>in pre-OpenBSD 4.7 syntax, the equivalent rules are:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>webserver = "192.168.2.7"
+webports = "{ http, https }"
+emailserver = "192.168.2.5"
+email = "{ smtp, pop3, imap, imap3, imaps, pop3s }"
+
+rdr on $ext_if proto tcp from any to $ext_if port \
+       $webports -&gt; $webserver
+rdr on $ext_if proto tcp from any to $ext_if port \
+       $email -&gt; $emailserver
+
+pass proto tcp from any to $webserver port $webports 
+pass proto tcp from any to $emailserver port $email 
+pass proto tcp from $emailserver to any port smtp </PRE
+><P
+>Previous versions of this document had the flag 'synproxy' in the pass
+rules, indicating that some backends might be in need of assistance during connection setup,
+with the gateway handling the three way handshake on behalf of your server or client before
+handing the connection over to the application.  The intention was to provide a
+certain amount of protection against various SYN based attacks.  The general recommendation today is rather to keep things simple and fix the back end.</P
+><P
+>Rule sets for configurations with DMZ networks isolated behind
+separate network interfaces and in some cases services running on
+alternative ports will not necessarily be much different from this one.</P
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="RDRFROMINSIDE"
+>Taking care of your own - the inside</A
+></H1
+><P
+>Everything I've said so far is excellent and correct as long as all you
+are interested in is getting traffic from hosts outside your local net
+to reach your servers.  </P
+><P
+>If you want the hosts in your local net to be able to use the services
+on these machines, you will soon see that the traffic originating in
+your local network most likely never reaches the external
+interface. The external interface is where all the redirection and
+translation happens, and consequently the redirections do not quite
+work from the inside.  The problem is common enough that the PF
+documentation lists four different solutions to the
+problem.<A
+NAME="AEN1097"
+HREF="#FTN.AEN1097"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></P
+><P
+>The options listed in the PF user guide are</P
+><P
+></P
+><UL
+><LI
+><P
+>'Split horizon' DNS, which means configuring your name service to
+provide one set of replies for requests originating in the local net and
+a different one for requests from elsewhere</P
+></LI
+><LI
+><P
+>  proxying using software such as <SPAN
+CLASS="APPLICATION"
+><A
+HREF="http://man.openbsd.org/nc"
+TARGET="_top"
+>nc</A
+></SPAN
+> (NetCat)</P
+></LI
+><LI
+><P
+>treating the local net as a special case for redirection and NAT.</P
+><P
+>We will be looking into this option (actually a pretty hackish workaround) below.</P
+></LI
+><LI
+><P
+>Or simply moving your servers to a separate network, aka a 'DMZ', with
+only minor changes to your PF rules.</P
+></LI
+></UL
+><P
+>We need to intercept the network packets originating in the local
+network and handle those connections correctly, making sure any
+returning traffic is directed to the communication partner who
+actually originated the connection.</P
+><P
+>Returning to our previous example, we achieve this by adding 
+special case rules that mirror the ones designed to handle requests from the outside. First, the pass rules with redirections for OpenBSD 4.7 and newer:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>pass in on $ext_if inet proto tcp to $ext_if port $webports rdr-to $webserver
+pass in on $ext_if inet proto tcp to $ext_if port $email rdr-to $mailserver
+pass in log on $int_if inet proto tcp from $int_if:network to $ext_if port $webports rdr-to $webserver
+pass in log on $int_if inet proto tcp from $int_if:network to $ext_if port $email rdr-to $mailserver
+match out log on $int_if proto tcp from $int_if:network to $webserver port $webports nat-to $int_if
+pass on $int_if inet proto tcp to $webserver port $webports
+match out log on $int_if proto tcp from $int_if:network to $mailserver port $email nat-to $int_if
+pass on $int_if inet proto tcp to $mailserver port $email</PRE
+><P
+>The first two rules are identical to the original ones. The next two intercept the traffic from the local network and the rdr-to actions in both rewrite the destination address much as the corresponding rules do for the traffic that originates elsewhere. The pass on $int_if rules serve the same purpose as in the earlier version.</P
+><P
+> 
+The match rules with nat-to are there as a routing workaround. Without them, the webserver and mailserver hosts would route return traffic for the redirected connections directly back the hosts in the local network, where the traffic would not match any outgoing connection. With the nat-to in place, the servers consider the gateway as the source of the traffic, and will direct return traffic back the same path it came originally. The gateway of course matches the return traffic to the states created by connections from the clients in the local network, and applies the appropriate actions to return the traffic to the correct clients.</P
+><P
+>The equivalent rules for pre-OpenBSD 4.7 versions are at first sight a bit more confusing, but the end result is the same:</P
+><PRE
+CLASS="PROGRAMLISTING"
+>rdr on $int_if proto tcp from $localnet to $ext_if \
+       port $webports -&gt; $webserver
+rdr on $int_if proto tcp from $localnet to $ext_if \
+       port $email -&gt; $emailserver
+no nat on $int_if proto tcp from $int_if to $localnet
+nat on $int_if proto tcp from $localnet to $webserver \
+       port $webports -&gt; $int_if 
+nat on $int_if proto tcp from $localnet to $emailserver \
+       port $email -&gt; $int_if </PRE
+><P
+>It is well worth noting that we do not need to touch the
+<KBD
+CLASS="USERINPUT"
+>pass</KBD
+> rules at all.</P
+><P
+>I've had the good fortune to witness via email or IRC the reactions of
+several network admins at the point when the truth about this five
+line reconfiguration sank in.</P
+></DIV
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN1097"
+HREF="rdr2servers.html#AEN1097"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>See <A
+HREF="http://www.openbsd.org/faq/pf/rdr.html#reflect"
+TARGET="_top"
+>Redirection and
+Reflection</A
+> in the PF user guide.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="unrouteables.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="tables.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Handling non-routable addresses from elsewhere</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Tables make your life easier</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

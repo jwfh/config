@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>PF today</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Firewalling with OpenBSD's PF packet filter
+  "
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="NAT?"
+HREF="nat.html"><LINK
+REL="NEXT"
+TITLE="BSD vs Linux - Configuration"
+HREF="bsdvslinux.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><meta
+http-equiv="Content-Type"
+content="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Firewalling with OpenBSD's PF packet filter</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="nat.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="bsdvslinux.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="PFTODAY"
+></A
+>PF today</H1
+><P
+>At this point, we have covered a bit of background. Some years have passed 
+since 2001, and PF in its present OpenBSD 6.1 form is a packet filter which
+is capable of doing quite a few things, if you want it to.</P
+><P
+>For one thing, PF classifies packets based on protocol, port, packet
+type, source or destination address. With a reasonable degree of
+certainty it is also able to classify packets based on source
+operating system.</P
+><P
+>And even if NAT is not a necessary part of a packet filter, for
+practical reasons it's nice that the address rewriting logic is
+handled somewhere nearby. Consequently, PF contains NAT logic as well.</P
+><P
+>PF is able - based on various combinations of protocol, port and other
+data - to direct traffic to other destinations than those designated
+by the sender, for example to a different machine or for further
+processing by a program such as a daemon listening at a port, locally
+or on a different machine.</P
+><P
+>Before PF was written, OpenBSD already contained the <I
+CLASS="FIRSTTERM"
+>ALTQ</I
+> code to
+handle load balancing and traffic shaping. After a while, altq was
+integrated with PF. Mainly for practical reasons.<A
+NAME="AEN404"
+HREF="#FTN.AEN404"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></P
+><P
+>As a result of this, all those features are available to you via one
+single, essentially human readable configuration file, which is
+usually called <TT
+CLASS="FILENAME"
+>pf.conf</TT
+>, stored in the
+<TT
+CLASS="FILENAME"
+>/etc/</TT
+> directory.</P
+><P
+>This is now available as a part of the base system on OpenBSD, on
+FreeBSD where PF from version 5.4 is one of three firewalling systems
+to be loaded at will, and in NetBSD and DragonFlyBSD. The last two
+operating systems I have not had the resources to play much with
+myself.  Something about having both hardware and time available at
+the same time.  Anyway all indications are that only very minor
+details vary between these systems as far as PF is involved, except that the PF versions in the other systems tend to trail the OpenBSD PF versions by a few revisions, mostly due to variations in developent and release cycles.  With a <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>flag day</I
+></SPAN
+> release like OpenBSD 4.7, the differences between operating systems can be rather significant until all systems have caught up.</P
+></DIV
+><H3
+CLASS="FOOTNOTES"
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN404"
+HREF="pftoday.html#AEN404"
+><SPAN
+CLASS="footnote"
+>[1]</SPAN
+></A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>It should also be noted that ALTQ was superseded in OpenBSD 5.5 by a newer, all-HFSC queueing engine, see the relevant parts of <A
+HREF="http://www.nostarch.com/pf3"
+TARGET="_top"
+>The Book of PF</A
+> (3rd edition) or the <A
+HREF="http://home.nuug.no/~peter/pf/newest/"
+TARGET="_top"
+>slides</A
+>  matching my latest tutorial session for details.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="nat.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="bsdvslinux.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>NAT?</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>BSD vs Linux - Configuration</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
