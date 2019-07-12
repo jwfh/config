@@ -79,6 +79,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # Do updates
 case $OS in 
 	2)
+		sudo freebsd-update fetch && sudo freebsd-update install
 		sudo pkg upgrade -y
 		;;
 	3)
@@ -140,6 +141,24 @@ CC=`which clang`
 CXX=`which clang++`
 # export CPPFLAGS="-I/usr/local/openssl-1.0.2h/include"
 # export LDFLAGS="-L/usr/local/openssl-1.0.2h/lib"
+
+# Install Git
+binaryExists git
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y git
+			;;
+		3)
+			sudo apt install -y git
+			;;
+		4)
+			sudo pacman -Sy --noconfirm git
+			;;
+	esac
+fi
 
 # Install GDB and LLDB debuggers
 binaryExists gdb
@@ -263,6 +282,45 @@ if test $? -ne 0; then
 			;;
 		4)
 			sudo pacman -Sy --noconfirm pkgconf
+			;;
+	esac
+fi
+
+# Install Ninja build too
+binaryExists ninja
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			cd "$INSTALLDIR"
+			git clone https://github.com/ninja-build/ninja.git
+			cd ninja
+			git checkout release
+			./configure.py --bootstrap
+			sudo mv ninja /usr/local/bin/ninja
+			;;
+		2)
+			sudo pkg install -y ninja
+			;;
+		3)
+			sudo apt install -y ninja-build
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install MS Build
+binaryExists msbuild
+if test $? -ne 0; then
+	case $OS in
+		1)
+			;;
+		2)
+			sudo pkg install -y mono msbuild
+			;;
+		3)
+			;;
+		4)
 			;;
 	esac
 fi
@@ -447,24 +505,6 @@ if test $? -ne 0; then
 fi
 ## Note: On FreeBSD, one must import NumPy or SciPy BEFORE importing Numba, or Python will complain about missing shared object files
 
-# Install Git
-binaryExists git
-if test $? -ne 0; then
-	case $OS in 
-		1)
-			;;
-		2)
-			sudo pkg install -y git
-			;;
-		3)
-			sudo apt install -y git
-			;;
-		4)
-			sudo pacman -Sy --noconfirm git
-			;;
-	esac
-fi
-
 # This will in general install the PDF viewers. Just testing for XPDF since that binary will exist across all platforms after this section
 binaryExists xpdf
 if test $? -ne 0; then
@@ -482,8 +522,6 @@ if test $? -ne 0; then
 			;;
 	esac
 fi
-
-
 
 # Clone dotfiles from GitHub
 test -d "$HOME/.dotfiles" || git clone --recurse https://github.com/jwfh/dotfiles "$HOME/.dotfiles"
@@ -625,6 +663,12 @@ if test $? -ne 0; then
 	esac
 fi
 
+# Install common Node packages
+binaryExists coffee || npm i -g coffeescript 
+binaryExists tsc || npm i -g typescript
+binaryExists eslint || npm i -g eslint
+binaryExists gatsby || npm i -g gatsby gatsby-cli
+
 # Install Vim
 binaryExists vim
 if test $? -ne 0; then
@@ -696,15 +740,48 @@ if test $? -ne 0; then
 			sudo gmake --directory=build install
 			ln -sf `which ghb` /usr/local/bin/HandBrakeGUI
 			;;
+		4)
+			;;
 	esac
 fi
 
-# Install Node and NPM
+# Install Apache
+binaryExists apachectl
+if test $? -ne 0; then
+	case $OS in 
+		1)
+			;;
+		2)
+			sudo pkg install -y apache24 modsecurity3-apache
+			sudo cp "$HOME/.dotfiles/usr/local/etc/apache24/httpd.conf" "/usr/local/etc/apache24/httpd.conf"
+			cd "/usr/local/etc/apache24"
+			sudo openssl genrsa -out server.key 2048
+			sudo openssl req -new -key server.key -out server.csr
+			sudo openssl x509 -req -days 36500 -in server.csr -signkey server.key -out server.crt
+			sudo sysrc apache24_enable="YES"
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
 
+# Install a local DNS resolver
+binaryExists named
+if test $? -ne 0; then
+	case $OS in
+		1)
+			;;
+		2)
+			sudo pkg install -y bind-tools bind914
+			sudo sysrc named_enable="YES"
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
 
-# Install common Node packages
-binaryExists coffee || npm i -g coffeescript 
-binaryExists tsc || npm i -g typescript
-binaryExists eslint || npm i -g eslint
-binaryExists gatsby || npm i -g gatsby gatsby-cli
 
