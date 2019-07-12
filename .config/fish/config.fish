@@ -37,7 +37,10 @@ set -gx CPPFLAGS "-I/usr/local/opt/sqlite/include" $CPPFLAGS
 set -gx PKG_CONFIG_PATH "/usr/local/opt/sqlite/lib/pkgconfig" $PKG_CONFIG_PATH
 
 # Maybe fix libstdc++
-set -gx CPPFLAGS "-I/usr/include" $CPPFLAGS
+# Apparently clang[++] isn't looking in /usr/local/include
+set -gx CPPFLAGS "-I/usr/include -I/usr/local/include" $CPPFLAGS
+set -gx LDFLAGS "-L/usr/lib -L/usr/local/lib" $LDFLAGS
+
 
 # Enable Vi key bindings
 fish_vi_key_bindings
