@@ -524,32 +524,32 @@ if test $? -ne 0; then
 fi
 
 # Clone dotfiles from GitHub
-test -d "$HOME/.dotfiles" || git clone --recurse https://github.com/jwfh/dotfiles "$HOME/.dotfiles"
+test -d "$HOME/config" || git clone --recurse https://github.com/jwfh/dotfiles "$HOME/config"
 test -d "$HOME/.config" || mkdir "$HOME/.config"
 test -d "$HOME/.local/share" || mkdir -p "$HOME/.local/share"
 
-ln -s "$HOME/.dotfiles/.oh-my-zsh-addons/xxf/themes/xxf.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/xxf.zsh-theme"
-ln -sf "$HOME/.dotfiles/.config/fish" "$HOME/.config/fish"
-ln -sf "$HOME/.dotfiles/.config/omf" "$HOME/.config/omf"
-ln -sf "$HOME/.dotfiles/.local/share/fish" "$HOME/.local/share/fish"
-ln -sf "$HOME/.dotfiles/.local/share/omf" "$HOME/.local/share/omf"
-ln -sf "$HOME/.dotfiles/.vim" "$HOME/.vim"
-ln -s "$HOME/.dotfiles/.vimrc" "$HOME/.vimrc"
-ln -s "$HOME/.dotfiles/.zshrc" "$HOME/.zshrc"
-ln -sf "$HOME/.dotfiles/.eslintrc.yml" "$HOME/.eslintrc.yml"
-ln -sf "$HOME/.dotfiles/.oh-my-zsh" "$HOME/.oh-my-zsh"
-ln -sf "$HOME/.dotfiles/.texrc" "$HOME/.texrc"
-ln -sf "$HOME/.dotfiles/.config/texstudio" "$HOME/.config/texstudio"
-cp "$HOME/.dotfiles/.latexmkrc" "$HOME/.latexmkrc"
+ln -s "$HOME/config/.oh-my-zsh-addons/xxf/themes/xxf.zsh-theme" "$HOME/config/.oh-my-zsh/custom/themes/xxf.zsh-theme"
+ln -sf "$HOME/config/.config/fish" "$HOME/.config/fish"
+ln -sf "$HOME/config/.config/omf" "$HOME/.config/omf"
+ln -sf "$HOME/config/.local/share/fish" "$HOME/.local/share/fish"
+ln -sf "$HOME/config/.local/share/omf" "$HOME/.local/share/omf"
+ln -sf "$HOME/config/.vim" "$HOME/.vim"
+ln -s "$HOME/config/.vimrc" "$HOME/.vimrc"
+ln -s "$HOME/config/.zshrc" "$HOME/.zshrc"
+ln -sf "$HOME/config/.eslintrc.yml" "$HOME/.eslintrc.yml"
+ln -sf "$HOME/config/.oh-my-zsh" "$HOME/.oh-my-zsh"
+ln -sf "$HOME/config/.texrc" "$HOME/.texrc"
+ln -sf "$HOME/config/.config/texstudio" "$HOME/.config/texstudio"
+cp "$HOME/config/.latexmkrc" "$HOME/.latexmkrc"
 
 case $OS in 
 	1)
 		mkdir -p "$HOME/Library/Application Support/Code/User"
 		mkdir -p "$HOME/Library/Application Support/Code - Insiders/User"
-		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
-		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindinds.json"
-		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code - Insiders/User/settings.json"
-		ln -sf "$HOME/.dotfiles/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code - Insiders/User/keybindinds.json"
+		ln -sf "$HOME/config/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+		ln -sf "$HOME/config/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindinds.json"
+		ln -sf "$HOME/config/Library/Application Support/Code/User/settings.json" "$HOME/Library/Application Support/Code - Insiders/User/settings.json"
+		ln -sf "$HOME/config/Library/Application Support/Code/User/keybindings.json" "$HOME/Library/Application Support/Code - Insiders/User/keybindinds.json"
 		;;
 esac
 
@@ -753,7 +753,7 @@ if test $? -ne 0; then
 			;;
 		2)
 			sudo pkg install -y apache24 modsecurity3-apache
-			sudo cp "$HOME/.dotfiles/usr/local/etc/apache24/httpd.conf" "/usr/local/etc/apache24/httpd.conf"
+			sudo cp "$HOME/config/usr/local/etc/apache24/httpd.conf" "/usr/local/etc/apache24/httpd.conf"
 			cd "/usr/local/etc/apache24"
 			sudo openssl genrsa -out server.key 2048
 			sudo openssl req -new -key server.key -out server.csr
@@ -783,5 +783,137 @@ if test $? -ne 0; then
 			;;
 	esac
 fi
+
+# Install the desktop environment
+
+
+binaryExists Xorg
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install xorg-server xinit xterm xauth xscreensaver xf86-input-keyboard xf86-input-mouse xorg-driver
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists gnome-session
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y gnome3
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists i3status
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y i3status
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists i3
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y i3
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists i3lock
+if test $? -ne 0; then
+	# Install the colourer version!
+	case $OS in
+		2)
+			git clone --recurse git@github.com:jwfh/i3lock-color "$INSTALLDIR/i3lock-color"
+			cd "$INSTALLDIR/i3lock-color"
+			./configure
+			make
+			sudo make install
+			sudo chown root `which i3lock`
+			sudo chmod u+s `which i3lock`
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+false
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y xfce xfce4-desktop xfce4-mixer xfce4-screensaver xfce4-settings xfce4-appfinder xfce4-clipman-plugin xfce4-calculator-plugin xfce4-dashboard xfce4-notifyd xfce4-print xfce4-session xfce4-terminal xfce4-taskmanager xfce4-volumed xfce4-wm xfce4-wm-themes
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+if test $OS -eq 2; then
+	dmesg | grep NVIDIA
+	if test $? -ne 0; then
+		sudo pkg install -y x11/nvidia-driver
+	fi
+fi
+
+
+# Install CUPS
+binaryExists cupsctl
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y cups cups-cloud-print cups-filters cups-pdf cups-smb-backend
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install htop
+binaryExists htop
+if test $? -ne 0; then
+	case $OS in
+		1)
+			;;
+		2)
+			sudo pkg install -y htop
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+# Install fonts
+if test $OS -eq 2; then
+	sudo pkg install -y chinese/arphicttf chinese/font-std hebrew/culmus hebrew/elmar-fonts japanese/font-ipa japanese/font-ipa-uigothic japanese/font-ipaex japanese/font-kochi japanese/font-migmix japanese/font-migu japanese/font-mona-ipa japanese/font-motoya-al japanese/font-mplus-ipa japanese/font-sazanami japanese/font-shinonome japanese/font-takao japanese/font-ume japanese/font-vlgothic x11-fonts/hanazono-fonts-ttf japanese/font-mikachan korean/aleefonts-ttf korean/nanumfonts-ttf korean/unfonts-core x11-fonts/anonymous-pro x11-fonts/artwiz-aleczapka x11-fonts/dejavu x11-fonts/inconsolata-ttf x11-fonts/terminus-font x11-fonts/cantarell-fonts x11-fonts/droid-fonts-ttf x11-fonts/doulos x11-fonts/ubuntu-font x11-fonts/isabella x11-fonts/junicode x11-fonts/khmeros x11-fonts/padauk x11-fonts/stix-fonts x11-fonts/charis x11-fonts/urwfonts-ttf russian/koi8r-ps x11-fonts/geminifonts x11-fonts/cyr-rfx x11-fonts/paratype x11-fonts/gentium-plus
+fi
+
 
 

@@ -9,7 +9,7 @@ source $OMF_PATH/init.fish
 set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
-set -gx PATH $HOME/.cargo/bin $HOME/bin /usr/local/go/bin /opt/tools/anaconda3/bin $HOME/.dotfiles/bin /usr/local/bin $PATH
+set -gx PATH $HOME/.cargo/bin $HOME/bin /usr/local/go/bin /opt/tools/anaconda3/bin $HOME/config/bin /usr/local/bin $PATH
 
 set -x LESSOPEN '| lesspipe %s'
 
