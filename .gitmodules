@@ -100,3 +100,6 @@
 [submodule "texmf/tex/latex/memorial-latex"]
 	path = texmf/tex/latex/memorial-latex
 	url = https://github.com/jwfh/memorial-latex
+[submodule "src/xkcdpass/xkcdpass"]
+	path = src/xkcdpass/xkcdpass
+	url = git@github.com:jwfh/xkcdpass
