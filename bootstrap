@@ -325,6 +325,20 @@ if test $? -ne 0; then
 	esac
 fi
 
+# Install Swig
+binaryExists swig3.0
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y swig30
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
 # Install OpenSSL
 binaryExists openssl
 if test $? -ne 0; then
@@ -791,7 +805,7 @@ binaryExists Xorg
 if test $? -ne 0; then
 	case $OS in
 		2)
-			sudo pkg install xorg-server xinit xterm xauth xscreensaver xf86-input-keyboard xf86-input-mouse xorg-driver
+			sudo pkg install xorg-server xinit xterm xauth xscreensaver xf86-input-keyboard xf86-input-mouse xorg-driver xmodmap libgnome xautolock
 			;;
 		3)
 			;;
@@ -841,7 +855,7 @@ fi
 
 binaryExists i3lock
 if test $? -ne 0; then
-	# Install the colourer version!
+	# Install the coloured version!
 	case $OS in
 		2)
 			git clone --recurse git@github.com:jwfh/i3lock-color "$INSTALLDIR/i3lock-color"
@@ -915,5 +929,92 @@ if test $OS -eq 2; then
 	sudo pkg install -y chinese/arphicttf chinese/font-std hebrew/culmus hebrew/elmar-fonts japanese/font-ipa japanese/font-ipa-uigothic japanese/font-ipaex japanese/font-kochi japanese/font-migmix japanese/font-migu japanese/font-mona-ipa japanese/font-motoya-al japanese/font-mplus-ipa japanese/font-sazanami japanese/font-shinonome japanese/font-takao japanese/font-ume japanese/font-vlgothic x11-fonts/hanazono-fonts-ttf japanese/font-mikachan korean/aleefonts-ttf korean/nanumfonts-ttf korean/unfonts-core x11-fonts/anonymous-pro x11-fonts/artwiz-aleczapka x11-fonts/dejavu x11-fonts/inconsolata-ttf x11-fonts/terminus-font x11-fonts/cantarell-fonts x11-fonts/droid-fonts-ttf x11-fonts/doulos x11-fonts/ubuntu-font x11-fonts/isabella x11-fonts/junicode x11-fonts/khmeros x11-fonts/padauk x11-fonts/stix-fonts x11-fonts/charis x11-fonts/urwfonts-ttf russian/koi8r-ps x11-fonts/geminifonts x11-fonts/cyr-rfx x11-fonts/paratype x11-fonts/gentium-plus
 fi
 
+
+binaryExists feh
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y feh
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists dmenu
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y dmenu
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists alacritty
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y alacritty
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists arandr
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y arandr
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists polybar
+if test $? -ne 0; then
+	case $OS in
+		2)
+			sudo pkg install -y polybar
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
+
+binaryExists latex
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y texive-full tex-basic-engines tex-dvipdfmx tex-dvipsk tex-formats tex-kpathsea tex-luatex tex-xetex tex-xmltex tex-synctex tex-libtexlua tex-libtexluajit tex-web2c tex-xdvik texinfo texlive-base texlive-docs texlive-texmf texlive-texmf-source texlive-tlmgr texstudio latex-biber
+			;;
+	esac
+fi
+
+binaryExists ntfs-3g
+if test $? -ne 0; then
+	case $OS in 
+		2)
+			sudo pkg install -y fusefs-ntfs libfsntfs fusefs-ntfs-compression
+			;;
+		3)
+			;;
+		4)
+			;;
+	esac
+fi
 
 
