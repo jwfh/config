@@ -114,20 +114,23 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Do you really want to exit?'
 
 # Call lock script in ~/.dotfiles/bin/
 bindsym $mod+Shift+l exec lock
-bindsym $mod+Shift+s exec lock && systemctl suspend
+bindsym $mod+Shift+h exec lock && systemctl suspend
 
 # monitor layout
 exec --no-startup-id xrandr --output DP-4 --auto
 exec --no-startup-id xrandr --output HDMI-0 --auto --left-of DP-4
 
 # wallpaper
-exec --no-startup-id feh --bg-scale ~/.dotfiles/images/coffee.png
+exec --no-startup-id feh --bg-scale ~/config/images/coffee.png
 
 # status bar 
 exec --no-startup-id fish -c 'for window in top bottom; polybar $window >/dev/null ^&1 &;end'
 
+exec --no-startup-if synergys
+bindsym $mod+Shift+s exec synergytoggle
+
 # bar {
 # 	status_command i3status
-# 	# status_command $HOME/.dotfiles/wm/conky/i3status-conky
+# 	# status_command $HOME/config/wm/conky/i3status-conky
 # }
 
