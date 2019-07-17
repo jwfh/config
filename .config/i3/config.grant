@@ -129,11 +129,38 @@ exec --no-startup-id feh --bg-scale ~/config/images/coffee.png
 exec --no-startup-if synergys
 bindsym $mod+Shift+s exec synergytoggle
 
+font pango:Europa 8
 bar {
 	# status_command i3status
 	# font pango:Ubuntu 12
 	# font pango:Avenir Medium 12
-	font pango:Europa 12
+	font pango:Europa 11
 	status_command $HOME/config/wm/conky/i3status-conky
+	workspace_buttons yes
 }
 
+title_align center
+hide_edge_borders both
+
+# set primary gruvbox colorscheme colors
+set $bg #282828
+set $red #cc241d
+set $green #98971a
+set $yellow #d79921
+set $blue #076678
+set $purple #b16286
+set $aqua #689d68
+set $gray #a89984
+set $darkgray #1d2021
+
+#start of window title bars & borders section
+
+# class                 border|backgr|text|indicator|child_border
+client.focused          $blue $blue $darkgray $purple $darkgray
+client.focused_inactive $darkgray $darkgray $gray $purple $darkgray
+client.unfocused        $darkgray $darkgray $gray $purple $darkgray
+client.urgent           $red $red $white $red $red
+
+#end of window title bars & borders section
+
+focus_follows_mouse yes
