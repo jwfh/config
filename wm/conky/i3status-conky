@@ -3,7 +3,7 @@
 # taken for the i3 user guide
 
 # change this directory to where you have cloned the repo
-scripts="$HOME/.dotfiles/wm/conky"
+scripts="$HOME/config/wm/conky"
 
 # Send the header so that i3bar knows we want to use JSON:
 echo '{"version":1}'

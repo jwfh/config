@@ -88,9 +88,6 @@
 [submodule ".vim/bundle/vim-javascript"]
 	path = .vim/bundle/vim-javascript
 	url = git@github.com:pangloss/vim-javascript
-[submodule "wm/i3lock-color"]
-	path = wm/i3lock-color
-	url = git@github.com:PandorasFox/i3lock-color
 [submodule "wm/betterlockscreen"]
 	path = wm/betterlockscreen
 	url = git@github.com:pavanjadhaw/betterlockscreen
@@ -103,3 +100,12 @@
 [submodule "src/xkcdpass/xkcdpass"]
 	path = src/xkcdpass/xkcdpass
 	url = git@github.com:jwfh/xkcdpass
+[submodule ".local/share/fonts/source-code-pro"]
+	path = .local/share/fonts/source-code-pro
+	url = git@github.com:adobe-fonts/source-code-pro
+[submodule "src/i3lock-color/i3lock-color"]
+	path = src/i3lock-color/i3lock-color
+	url = git@github.com:jwfh/i3lock-color
+[submodule "src/synergy/synergy-core"]
+	path = src/synergy/synergy-core
+	url = git@github.com:symless/synergy-core
