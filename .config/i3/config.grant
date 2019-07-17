@@ -124,13 +124,16 @@ exec --no-startup-id xrandr --output HDMI-0 --auto --left-of DP-4
 exec --no-startup-id feh --bg-scale ~/config/images/coffee.png
 
 # status bar 
-exec --no-startup-id fish -c 'for window in top bottom; polybar $window >/dev/null ^&1 &;end'
+# exec --no-startup-id fish -c 'for window in top bottom; polybar $window >/dev/null ^&1 &;end'
 
 exec --no-startup-if synergys
 bindsym $mod+Shift+s exec synergytoggle
 
-# bar {
-# 	status_command i3status
-# 	# status_command $HOME/config/wm/conky/i3status-conky
-# }
+bar {
+	# status_command i3status
+	# font pango:Ubuntu 12
+	# font pango:Avenir Medium 12
+	font pango:Europa 12
+	status_command $HOME/config/wm/conky/i3status-conky
+}
 
