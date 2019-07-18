@@ -1,5 +1,5 @@
-all:
+install:
 	make PREFIX=`pwd`/../.. MANDIR=`pwd`/../../man -C neofetch install
 
-clean:
+uninstall:
 	rm -f ../../bin/neofetch
