@@ -1,12 +1,15 @@
-MAKE=	gmake
+PREFIX?=	/usr/local
+MANPREFIX?=	/usr/local
+MAKE=		gmake
+
+install: patch build do-install
 
 all: i3lock
 
-build: i3lock.c 
-	# This target should only be used within the i3lock-color repo
-	env MAKE=$(MAKE) autoreconf --install
-	env MAKE=$(MAKE) ./configure
-	$(MAKE) -j`sysctl -n hw.ncpu` -C `./config.guess`
+build: i3lock-color/i3lock.c 
+	cd i3lock-color && env MAKE=$(MAKE) autoreconf --install \
+		&& env MAKE=$(MAKE) ./configure \
+		&& $(MAKE) -j`sysctl -n hw.ncpu` -C `./config.guess`
 
 i3lock: .PHONY manpage
 	make -C i3lock-color -f ../Makefile build

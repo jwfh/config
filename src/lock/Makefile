@@ -1,5 +1,5 @@
-all: lock.sh
+install: lock.sh
 	test -f `pwd`/../../bin/lock || ln -s `pwd`/lock.sh `pwd`/../../bin/lock
 
-clean:
+uninstall:
 	rm -f `pwd`/../../bin/lock

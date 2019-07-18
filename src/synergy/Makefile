@@ -9,8 +9,8 @@ INSTALL_LIB=	install -s -m 0644
 INSTALL_SCRIPT=	install -m 555
 INSTALL_DATA=	install -m 0644
 INSTALL_MAN=	install -m 444
-PREFIX?=	usr/local
-MANPREFIX?=	usr/local
+PREFIX?=	/usr/local
+MANPREFIX?=	/usr/local
 PATH=		$(WRKSRC)/.bin:$(HOME)/.cargo/bin:$(HOME)/bin:/usr/local/go/bin:$(HOME)/config/bin:/usr/local/bin:/usr/bin:/sbin:/bin:/usr/sbin:/usr/local/sbin
 
 PATCHFILES!=	find $(WRKSRC) -type f \( -name config.libpath -o  -name config.rpath -o -name configure -o -name libtool.m4 -o  -name ltconfig -o -name libtool -o -name aclocal.m4 -o  -name acinclude.m4 \)

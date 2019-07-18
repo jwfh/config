@@ -1,10 +1,37 @@
-all: fun
-	find . -type d -depth 1 -exec make -C {} \;
+OS!=		uname -s
+PREFIX?=	$(HOME)/config
+DEST=		$(PREFIX)/bin
 
-fun:
-	test -e `pwd`/../bin/kitty || ln -s `which cat` `pwd`/../bin/kitty
-	test -e `pwd`/../bin/recycle || ln -s `which rm` `pwd`/../bin/recycle
-	test -e `pwd`/../bin/compost || ln -s `which rm` `pwd`/../bin/compost
+MACOS=	\
+	andersonLectures \
+	dictpass \
+	fonts \
+	fun \
+
+warn:
+	@printf "Run \`make %s\` to build." ${OS}
+
+FreeBSD: \
+	andersonLectures \
+	dictpass \
+	fonts \
+	fun \
+	i3lock-color \
+	
+macOS: $(MACOS)
+
+
+
+
+
+
+andersonLectures dictpass fonts i3lock-color: .PHONY
+	make PREFIX=$(PREFIX) -C $@ install
+
+uninstall:
+	rm -rf ../bin/*
 
 clean:
-	rm -rf ../bin/*
+	find . -type d -depth 1 -exec make -C {} clean \;
+
+.PHONY:
