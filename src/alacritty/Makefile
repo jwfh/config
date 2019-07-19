@@ -1,5 +1,5 @@
-PKGS=		
-PORTS=		compton compton-conf
+PKGS=		alacritty
+PORTS=		
 OS!=		uname -s
 
 install: $(OS)-install

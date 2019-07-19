@@ -8,8 +8,8 @@ WRKSRC!=	pwd
 
 EXE=		andersonLectures
 
-install: $(EXE)
-	$(INSTALL_SCRIPT) $(WRKSRC)/$(EXE) $(PREFIX)/bin
+install: ${EXE}
+	${INSTALL_SCRIPT} ${WRKSRC}/${EXE} ${PREFIX}/bin
 
 uninstall:
-	rm -f $(PREFIX)/bin/$(EXE)
+	rm -f ${PREFIX}/bin/${EXE}
