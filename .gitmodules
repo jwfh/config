@@ -118,3 +118,6 @@
 [submodule ".local/share/fonts/powerline-extra-symbols"]
 	path = .local/share/fonts/powerline-extra-symbols
 	url = git@github.com:ryanoasis/powerline-extra-symbols
+[submodule "src/vscode/electron-apps-freebsd"]
+	path = src/vscode/electron-apps-freebsd
+	url = git@github.com:jwfh/electron-apps-freebsd
