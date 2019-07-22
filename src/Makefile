@@ -7,19 +7,26 @@ PORTSTYPE!=	test -d ${PORTSDIR}/.svn && echo "SVN" || echo "PORTSNAP"
 ALL=	\
 	alacritty \
 	andersonLectures \
+	compton \
 	dictpass \
+	findport \
 	fonts \
 	fun \
 	i3lock-color \
+	lesspipe \
+	vscode \
 
 FREEBSD=\
+	findport \
+	lesspipe \
+	fun \
+	vscode \
 	alacritty \
 	andersonLectures \
+	compton \
 	dictpass \
 	fonts \
-	fun \
 	i3lock-color \
-
 
 MACOS=	\
 	alacritty \
@@ -27,6 +34,7 @@ MACOS=	\
 	dictpass \
 	fonts \
 	fun \
+	lesspipe \
 
 warn:
 	@printf "Run \`make %s\` to build." ${OS}
@@ -35,8 +43,9 @@ FreeBSD: ports ${FREEBSD}
 
 macOS: ${MACOS}
 
-${ALL}: .PHONY
-	make PREFIX=${PREFIX} -C $@ install
+.PHONY: ${ALL}
+${ALL}: 
+	@${MAKE} PREFIX=${PREFIX} -C $@ install
 
 ports: ${PORTSDIR}
 .if ${PORTSTYPE} == "SVN"
@@ -54,5 +63,3 @@ uninstall:
 
 clean:
 	find . -type d -depth 1 -exec make -C {} clean \;
-
-.PHONY:

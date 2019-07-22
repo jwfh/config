@@ -1,0 +1,95 @@
+#!/usr/bin/env sh
+
+usage() {
+	echo "port -- easily manage FreeBSD ports"
+	echo ""
+	echo "Usage: $0 [-i port-name] [-d port-name] [-r port-name]"
+}
+
+CONFIRM=0
+PORTSDIR=/usr/ports
+MAKE=`which make`
+
+sudo -v
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+exec 3<&0
+while getopts "yi:d:r:" opt; do
+	case ${opt} in
+		y)
+			CONFIRM=1
+			echo "===> Disabled user confirmation"
+			;;
+		i)
+			echo "===> Installing port \`${OPTARG}'"
+			PORT=`findport -n1 -e ${OPTARG}`
+			if test -z "$PORT"; then
+				echo "===>  Can't find port \`${OPTARG}'"
+				printf "===>  Press [ENTER] to continue or ^C to abort"
+				read keypress <&3
+			else
+				if test $CONFIRM -ne 1; then
+					printf "===>  Found port \`$PORT', is this right? (Y/n) "
+					read yn <&3
+				fi
+				if test $CONFIRM -eq 1 || test "$yn" != "n" && test "$yn" != "N"; then
+					(test -e "$PORTSDIR$PORT/Makefile" \
+						&& echo "===>  Found $PORTSDIR$PORT/Makefile") \
+						|| (echo "===>  $PORTSDIR$PORT/Makefile does not exist" && exit 1)
+					sudo $MAKE -C "$PORTSDIR$PORT" all install clean || exit 1
+					echo "===>  Successfully installed \`$OPTARG'"
+				fi
+			fi
+			;;
+		d)
+			echo "===> Deinstalling port \`${OPTARG}'"
+			PORT=`findport -n1 -e ${OPTARG}`
+			if test -z "$PORT"; then
+				echo "===>  Can't find port \`${OPTARG}'"
+				printf "===>  Press [ENTER] to continue or ^C to abort"
+				read keypress <&3
+			else
+				if test $CONFIRM -ne 1; then
+					printf "===>  Found port \`$PORT', is this right? (Y/n) "
+					read yn <&3
+				fi
+				if test $CONFIRM -eq 1 || test "$yn" != "n" && test "$yn" != "N"; then
+					(test -e "$PORTSDIR$PORT/Makefile" \
+						&& echo "===>  Found $PORTSDIR$PORT/Makefile") \
+						|| (echo "===>  $PORTSDIR$PORT/Makefile does not exist" && exit 1)
+					sudo $MAKE -C "$PORTSDIR$PORT" deinstall clean || exit 1
+					echo "===>  Successfully deinstalled \`$OPTARG'"
+				fi
+			fi
+			;;
+
+		r)
+			echo "===> Reinstalling port \`${OPTARG}'"
+			PORT=`findport -n1 -e ${OPTARG}`
+			if test -z "$PORT"; then
+				echo "===>  Can't find port \`${OPTARG}'"
+				printf "===>  Press [ENTER] to continue or ^C to abort"
+				read keypress <&3
+			else
+				if test $CONFIRM -ne 1; then
+					printf "===>  Found port \`$PORT', is this right? (Y/n) "
+					read yn <&3
+				fi
+				if test $CONFIRM -eq 1 || test "$yn" != "n" && test "$yn" != "N"; then
+					(test -e "$PORTSDIR$PORT/Makefile" \
+						&& echo "===>  Found $PORTSDIR$PORT/Makefile") \
+						|| (echo "===>  $PORTSDIR$PORT/Makefile does not exist" && exit 1)
+					sudo $MAKE -C "$PORTSDIR$PORT" reinstall clean || exit 1
+					echo "===>  Successfully reinstalled \`$OPTARG'"
+				fi
+			fi
+			;;
+			
+		\?)
+			echo ""
+			usage
+			exit 1
+			;;
+	esac
+done
+exec 3<&-

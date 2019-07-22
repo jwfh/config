@@ -1,0 +1,52 @@
+#!/usr/bin/env sh
+
+USAGE="Usage: $0 [-n num-results] [-e] port-name"
+OPTIND=1
+EXACT=0
+n=0
+
+: ${PORTSDIR:="/usr/ports"}
+
+while getopts "en:" opt; do
+	case "$opt" in
+		e)
+			EXACT=1
+			;;
+		n)
+			n=$OPTARG
+			;;
+		\?)
+			echo "$USAGE"
+			exit 1
+			;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+[ "${1:-}" = "--" ] && shift
+
+
+if [ $# -le 0 ]; then
+	echo "No port name given"
+	echo "$USAGE"
+fi
+
+for portname in $@
+do
+	if [ $EXACT -eq 0 ]; then
+		foundports=`find $PORTSDIR -type d -mindepth 2 -maxdepth 2 \
+			-name "*$portname*" \
+			| sed "s#^${PORTSDIR}##"`
+	else
+		foundports=`find $PORTSDIR -type d -mindepth 2 -maxdepth 2 \
+			-name "$portname" \
+			| sed "s#^${PORTSDIR}##"`
+	fi
+	numports=`echo $foundports | wc -w`
+	if [ $n -eq 0 ]; then
+		printf "$foundports"
+	else
+		printf "$foundports" | head -n $n
+	fi
+done
