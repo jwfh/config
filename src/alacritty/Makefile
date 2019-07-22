@@ -2,24 +2,27 @@ PKGS=		alacritty
 PORTS=		
 OS!=		uname -s
 
-install: $(OS)-install
-deinstall: $(OS)-deinstall
+install: .PHONY ${OS}-install
+deinstall: .PHONY ${OS}-deinstall
 
-FreeBSD-install: $(PORTS:=-port)
-FreeBSD-deinstall: $(PORTS:=-rmport)
+FreeBSD-install: .PHONY ${PKGS:=-pkg} ${PORTS:=-port} 
+FreeBSD-deinstall: .PHONY ${PKGS:=-rmpkg} ${PORTS:=-rmport} 
 
+## We have no way using dependencies to determine whether a package/port has already 
+## been installed. Hence all of the below targets require .PHONY as a dependency.
+## pkg(1) and/or the Ports Makefiles have mechanisms to deal with an attempt to 
+## install a package that has already been installed.
 
-$(PORTS:=-port): 
-	@env PORTNAME=$(@:-port=) PORTPATH=$$(find /usr/ports -type d -name $(@:-port=) -mindepth 2 -maxdepth 2) $(MAKE) $@install
+${PKGS:=-pkg}: .PHONY
+	sudo pkg install -y ${@:-pkg=}
 
-$(PORTS:=-rmport): 
-	@env PORTNAME=$(@:-rmport=) PORTPATH=$$(find /usr/ports -type d -name $(@:-rmport=) -mindepth 2 -maxdepth 2) $(MAKE) $(@:-rmport=-)portdeinstall
+${PKGS:=-rmpkg}: .PHONY
+	sudo pkg remove -y ${@:-pkg=}
 
-$(PORTS:=-portinstall): $(PORTPATH)/Makefile
-	@printf "\n===> Switching to %s to build %s\n" "$(PORTPATH)" "$(PORTNAME)"
-	sudo make -C "$(PORTPATH)" all install clean
+${PORTS:=-port}: .PHONY
+	port -i ${@:-port=}
 
-$(PORTS:=-portdeinstall): $(PORTPATH)/Makefile
-	@printf "\n===> Switching to %s to deinstall %s\n" "$(PORTPATH)" "$(PORTNAME)"
-	sudo make -C "$(PORTPATH)" deinstall clean
+${PORTS:=-rmport}: .PHONY
+	port -d ${@:-rmport=}
 
+.PHONY:
