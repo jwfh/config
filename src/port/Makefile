@@ -7,7 +7,7 @@ INSTALL_MAN=	install -m 444
 WRKSRC!=	pwd
 DEST=		${PREFIX}/bin
 
-EXE=		findport
+EXE=		port
 
 install: ${EXE:=-install}
 uninstall: ${EXE:=-uninstall}

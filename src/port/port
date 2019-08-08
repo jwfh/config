@@ -10,7 +10,7 @@ CONFIRM=0
 PORTSDIR=/usr/ports
 MAKE=`which make`
 
-sudo -v
+sudo true
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 exec 3<&0
@@ -36,7 +36,7 @@ while getopts "yi:d:r:" opt; do
 					(test -e "$PORTSDIR$PORT/Makefile" \
 						&& echo "===>  Found $PORTSDIR$PORT/Makefile") \
 						|| (echo "===>  $PORTSDIR$PORT/Makefile does not exist" && exit 1)
-					sudo $MAKE -C "$PORTSDIR$PORT" all install clean || exit 1
+					sudo $MAKE -C "$PORTSDIR$PORT" all install || exit 1
 					echo "===>  Successfully installed \`$OPTARG'"
 				fi
 			fi
@@ -57,7 +57,7 @@ while getopts "yi:d:r:" opt; do
 					(test -e "$PORTSDIR$PORT/Makefile" \
 						&& echo "===>  Found $PORTSDIR$PORT/Makefile") \
 						|| (echo "===>  $PORTSDIR$PORT/Makefile does not exist" && exit 1)
-					sudo $MAKE -C "$PORTSDIR$PORT" deinstall clean || exit 1
+					sudo $MAKE -C "$PORTSDIR$PORT" deinstall || exit 1
 					echo "===>  Successfully deinstalled \`$OPTARG'"
 				fi
 			fi
