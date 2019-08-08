@@ -9,7 +9,19 @@ source $OMF_PATH/init.fish
 set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
-set -gx PATH $HOME/.cargo/bin $HOME/bin /usr/local/go/bin /opt/tools/anaconda3/bin $HOME/config/bin /usr/local/bin $PATH
+set -gx PATH $HOME/.cargo/bin $HOME/bin $HOME/config/bin /usr/local/bin $PATH
+
+if test -d /usr/local/go/bin  
+	set -gx PATH /usr/local/go/bin $PATH
+end
+
+if test -d /opt/tools/anaconda3/bin 
+	set -gx PATH /opt/tools/anaconda3/bin $PATH
+end
+
+if test -d /usr/local/lib/php/arcanist/bin
+	set -gx PATH /usr/local/lib/php/arcanist/bin $PATH
+end
 
 set -x LESSOPEN '| lesspipe %s'
 
@@ -40,7 +52,6 @@ set -gx PKG_CONFIG_PATH "/usr/local/opt/sqlite/lib/pkgconfig" $PKG_CONFIG_PATH
 # Apparently clang[++] isn't looking in /usr/local/include
 set -gx CPPFLAGS "-I/usr/include -I/usr/local/include" $CPPFLAGS
 set -gx LDFLAGS "-L/usr/lib -L/usr/local/lib" $LDFLAGS
-
 
 # Enable Vi key bindings
 fish_vi_key_bindings
