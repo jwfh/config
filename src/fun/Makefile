@@ -1,9 +1,17 @@
 PREFIX?=	/usr/local
+INSTALL_PROGRAM=install -s -m 555
+INSTALL_LIB=	install -s -m 0644
+INSTALL_SCRIPT=	install -m 555
+INSTALL_DATA=	install -m 0644
+INSTALL_MAN=	install -m 444
+WRKSRC!=	pwd
 DEST=		${PREFIX}/bin
 LINKS= \
        		kitty \
 		recycle \
-		compost
+		compost \
+		bat
+BAT!=		which bat
 CAT!=		which cat
 RM!=		which rm
 
@@ -11,17 +19,21 @@ install: ${LINKS:=-install}
 
 uninstall: ${LINKS:=-uninstall}
 
-kitty-install:
+bat-install: ${BAT}
 	@printf "===> Linking script \`${@:-install=}\`\n"
-	@test -f ${DEST}/kitty || ln -s ${CAT} ${DEST}/kitty
+	@${INSTALL_SCRIPT} -l sa ${BAT} ${DEST}/cat
 
-recycle-install:
+kitty-install: ${CAT}
 	@printf "===> Linking script \`${@:-install=}\`\n"
-	@test -f ${DEST}/recycle || ln -s ${RM} ${DEST}/recycle
+	@${INSTALL_SCRIPT} -l sa ${CAT} ${DEST}/kitty
 
-compost-install:
+recycle-install: ${RM}
 	@printf "===> Linking script \`${@:-install=}\`\n"
-	@test -f ${DEST}/compost || ln -s ${RM} ${DEST}/compost
+	@${INSTALL_SCRIPT} -l sa ${RM} ${DEST}/recycle
+
+compost-install: ${RM}
+	@printf "===> Linking script \`${@:-install=}\`\n"
+	@${INSTALL_SCRIPT} -l sa ${RM} ${DEST}/compost
 
 ${LINKS:=-uninstall}:
 	@printf "===> Unlinking script \`${@:-uninstall=}\`\n"
