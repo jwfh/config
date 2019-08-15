@@ -121,3 +121,6 @@
 [submodule "src/vscode/freebsd-vscode"]
 	path = src/vscode/freebsd-vscode
 	url = git@github.com:jwfh/freebsd-vscode
+[submodule "src/opencv/opencv"]
+	path = src/opencv/opencv
+	url = git@github.com:opencv/opencv
