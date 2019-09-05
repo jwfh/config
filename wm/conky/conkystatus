@@ -35,7 +35,7 @@ conky.config = {
 
 conky.text = [[
 [
-    { "full_text": "${if_up re0} LAN ${addr re0} ${upspeed re0}↑ ${downspeed re0}↓ |${endif}${if_up wlan0} WLAN ${addr wlan0} ${upspeed wlan0}↑ ${downspeed wlan0}↓ |${endif} DISK ${diskio_read /dev/ada}/${diskio_write /dev/ada} | LOAD ${loadavg} | MEM ${mem}/${memmax} ${memperc}% | CPU ${cpu cpu0}% ${cpu cpu1}% ${cpu cpu2}% ${cpu cpu3}% ${freq_g}GHz ${acpitemp}º " , "color": "\#32302f" },
+    { "full_text": "${if_up re0} LAN ${addr re0} ${upspeed re0}↑ ${downspeed re0}↓ |${endif}${if_up wlan0} WLAN ${addr wlan0} ${upspeed wlan0}↑ ${downspeed wlan0}↓ |${endif} DISK ${diskio_read /dev/ada}/${diskio_write /dev/ada} | LOAD ${loadavg} | MEM ${mem}/${memmax} ${memperc}% | CPU ${cpu cpu0}% ${cpu cpu1}% ${cpu cpu2}% ${cpu cpu3}% ${freq_g}GHz ${exec cputemp}º " , "color": "\#32302f" },
     { "full_text": " ${time %y-%m-%d %H:%M:%S} " , "color": "\#928374" }
 ],
 ]];

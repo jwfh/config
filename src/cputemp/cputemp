@@ -1,0 +1,12 @@
+#!/usr/bin/env fish
+
+set -x NCPU (sysctl -n hw.ncpu)
+set -x sum 0
+
+for cpu in (seq 0 (math $NCPU-1))
+        set sum (math $sum+(sysctl -n dev.cpu.$cpu.temperature | rev | cut -c 2- | rev))
+end
+
+set -x temp 
+
+printf '%.3f\n' (math $sum/$NCPU)

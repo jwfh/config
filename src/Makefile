@@ -8,6 +8,7 @@ ALL=	\
 	alacritty \
 	andersonLectures \
 	compton \
+	cputemp \
 	dictpass \
 	findport \
 	fonts \
@@ -21,6 +22,7 @@ FREEBSD=\
 	lesspipe \
 	fun \
 	vscode \
+	cputemp \
 	alacritty \
 	andersonLectures \
 	compton \
