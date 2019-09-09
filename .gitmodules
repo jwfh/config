@@ -124,3 +124,6 @@
 [submodule "src/opencv/opencv"]
 	path = src/opencv/opencv
 	url = git@github.com:opencv/opencv
+[submodule "src/texlive/freebsd-texlive"]
+	path = src/texlive/freebsd-texlive
+	url = git@github.com:uzsolt/freebsd-texlive
