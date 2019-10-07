@@ -127,3 +127,6 @@
 [submodule "src/texlive/freebsd-texlive"]
 	path = src/texlive/freebsd-texlive
 	url = git@github.com:uzsolt/freebsd-texlive
+[submodule ".vim/bundle/Jenkinsfile-vim-syntax"]
+	path = .vim/bundle/Jenkinsfile-vim-syntax
+	url = git@github.com:martinda/Jenkinsfile-vim-syntax
