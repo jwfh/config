@@ -130,3 +130,9 @@
 [submodule ".vim/bundle/Jenkinsfile-vim-syntax"]
 	path = .vim/bundle/Jenkinsfile-vim-syntax
 	url = git@github.com:martinda/Jenkinsfile-vim-syntax
+[submodule ".vim/bundle/vim-terraform"]
+	path = .vim/bundle/vim-terraform
+	url = git@github.com:hashivim/vim-terraform
+[submodule ".vim/bundle/vim-terraform-completion"]
+	path = .vim/bundle/vim-terraform-completion
+	url = git@github.com:juliosueiras/vim-terraform-completion
