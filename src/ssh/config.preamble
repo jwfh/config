@@ -1,0 +1,5 @@
+This file was generated from the site wide configuration repository and any 
+changes may be destroyed in the next configuration update. To modify this 
+file, edit one of the SSH configuration files in your dotfiles repo's src/ssh 
+directory.
+

@@ -143,6 +143,11 @@ CFLAGS+=       -fno-strict-aliasing
 .endif
 .endif
 
+BINMODE=		555
+MANMODE=		444
+STRIP=			-s
+_SHAREMODE=		0644
+
 # A few aliases for *-install targets
 INSTALL_PROGRAM=	${INSTALL} ${COPY} ${STRIP} -m ${BINMODE}
 INSTALL_KLD=		${INSTALL} ${COPY} -m ${BINMODE}

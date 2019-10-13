@@ -8,8 +8,7 @@ CONFIGURABLE=		0
 ALL_TARGET?=		all
 INSTALL_TARGET?=	install
 
-.BEGIN:			pre-banner \
-			check-uid
+.BEGIN:			check-uid
 .MAIN: 			${ALL_TARGET}
 .END:			post-banner
 
@@ -20,17 +19,6 @@ install: 		configuration \
 			${LOCALDEPS} \
 			do-install
 deinstall: check do-deinstall
-
-# Fetch
-.if !target(do-fetch)
-do-fetch:
-.if !empty(DISTFILES)
-	@${SETENV} \
-			${_DO_FETCH_ENV} ${_MASTER_SITES_ENV} \
-			dp_SITE_FLAVOR=MASTER \
-			${SH} ${SCRIPTSDIR}/do-fetch.sh ${DISTFILES:C/.*/'&'/}
-	.endif
-.endif
 
 # Extract
 
@@ -49,7 +37,7 @@ do-extract: ${EXTRACT_WRKDIR}
 		${CHMOD} -R ug-s ${WRKDIR}; \
 		${CHOWN} -R 0:0 ${WRKDIR}; \
 	fi
-	.endif
+.endif
 
 # Configure
 
@@ -104,7 +92,7 @@ do-build:
 			fi; \
 		${FALSE}; \
 		fi)
-	.endif
+.endif
 
 # Install
 

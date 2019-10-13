@@ -1,5 +1,5 @@
 OS!=		uname -s
-PREFIX?=	${HOME}/config
+PREFIX?=	/usr/local
 DEST=		${PREFIX}/bin
 PORTSDIR=	/usr/ports
 PORTSTYPE!=	test -d ${PORTSDIR}/.svn && echo "SVN" || echo "PORTSNAP"
@@ -16,6 +16,7 @@ ALL=	\
 	i3lock-color \
 	lesspipe \
 	vscode \
+	ssh \
 
 FREEBSD=\
 	findport \
@@ -37,6 +38,7 @@ MACOS=	\
 	fonts \
 	fun \
 	lesspipe \
+	ssh \
 
 warn:
 	@printf "Run \`make %s\` to build." ${OS}

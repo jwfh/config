@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+function sshaddkeys {
+	ssh-add -L | grep -e '^ssh' >/dev/null 2>&1
+	if test $? -ne 0; then
+		printf "Adding SSH identities to agent\n"
+		ssh-add
+		ssh-add -KA
+		ssh-add ~/.ssh/*.pem
+	else
+		printf "Agent already has %d SSH identities\n" `ssh-add -L | wc -l`
+	fi
+}
+
+sshaddkeys
