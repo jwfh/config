@@ -9,6 +9,7 @@ ALL=	\
 	andersonLectures \
 	compton \
 	cputemp \
+	i3wm \
 	dictpass \
 	findport \
 	fonts \
@@ -25,9 +26,9 @@ FREEBSD=\
 	cputemp \
 	alacritty \
 	andersonLectures \
-	compton \
 	dictpass \
 	fonts \
+	i3wm \
 	i3lock-color \
 
 MACOS=	\
