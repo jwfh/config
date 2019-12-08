@@ -73,9 +73,6 @@
 [submodule ".vim/bundle/YouCompleteMe"]
 	path = .vim/bundle/YouCompleteMe
 	url = git@github.com:Valloric/YouCompleteMe
-[submodule "wm/aphelia"]
-	path = wm/aphelia
-	url = git@github.com:vardy/aphelia
 [submodule "wm/tinywm"]
 	path = wm/tinywm
 	url = git@github.com:mackstann/tinywm
