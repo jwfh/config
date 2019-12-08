@@ -103,9 +103,6 @@
 [submodule ".local/share/fonts/source-code-pro"]
 	path = .local/share/fonts/source-code-pro
 	url = git@github.com:adobe-fonts/source-code-pro
-[submodule "src/synergy/synergy-core"]
-	path = src/synergy/synergy-core
-	url = git@github.com:symless/synergy-core
 [submodule ".local/share/fonts/Hack"]
 	path = .local/share/fonts/Hack
 	url = git@github.com:source-foundry/Hack
