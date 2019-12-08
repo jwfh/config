@@ -1,5 +1,0 @@
-# Device	Mountpoint							FStype	Options						Dump	Pass#
-/dev/ada0p5	none								swap	sw						0	0
-/dev/ada0p7	/								ufs	rw						1	1
-proc		/proc								procfs  rw						0	0
-/dev/ada1p3	/mnt/grant-old							ufs	rw						0	0

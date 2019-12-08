@@ -73,12 +73,6 @@
 [submodule ".vim/bundle/YouCompleteMe"]
 	path = .vim/bundle/YouCompleteMe
 	url = git@github.com:Valloric/YouCompleteMe
-[submodule "wm/aphelia"]
-	path = wm/aphelia
-	url = git@github.com:vardy/aphelia
-[submodule "wm/tinywm"]
-	path = wm/tinywm
-	url = git@github.com:mackstann/tinywm
 [submodule ".vim/bundle/vimtex"]
 	path = .vim/bundle/vimtex
 	url = git@github.com:lervag/vimtex
@@ -88,9 +82,6 @@
 [submodule ".vim/bundle/vim-javascript"]
 	path = .vim/bundle/vim-javascript
 	url = git@github.com:pangloss/vim-javascript
-[submodule "wm/betterlockscreen"]
-	path = wm/betterlockscreen
-	url = git@github.com:pavanjadhaw/betterlockscreen
 [submodule "term/gruvbox-contrib"]
 	path = term/gruvbox-contrib
 	url = git@github.com:morhetz/gruvbox-contrib
@@ -103,27 +94,12 @@
 [submodule ".local/share/fonts/source-code-pro"]
 	path = .local/share/fonts/source-code-pro
 	url = git@github.com:adobe-fonts/source-code-pro
-[submodule "src/i3lock-color/i3lock-color"]
-	path = src/i3lock-color/i3lock-color
-	url = git@github.com:jwfh/i3lock-color
-[submodule "src/synergy/synergy-core"]
-	path = src/synergy/synergy-core
-	url = git@github.com:symless/synergy-core
-[submodule "src/neofetch/neofetch"]
-	path = src/neofetch/neofetch
-	url = git@github.com:dylanaraps/neofetch
 [submodule ".local/share/fonts/Hack"]
 	path = .local/share/fonts/Hack
 	url = git@github.com:source-foundry/Hack
 [submodule ".local/share/fonts/powerline-extra-symbols"]
 	path = .local/share/fonts/powerline-extra-symbols
 	url = git@github.com:ryanoasis/powerline-extra-symbols
-[submodule "src/vscode/freebsd-vscode"]
-	path = src/vscode/freebsd-vscode
-	url = git@github.com:jwfh/freebsd-vscode
-[submodule "src/opencv/opencv"]
-	path = src/opencv/opencv
-	url = git@github.com:opencv/opencv
 [submodule "src/texlive/freebsd-texlive"]
 	path = src/texlive/freebsd-texlive
 	url = git@github.com:uzsolt/freebsd-texlive
@@ -136,3 +112,9 @@
 [submodule ".vim/bundle/vim-terraform-completion"]
 	path = .vim/bundle/vim-terraform-completion
 	url = git@github.com:juliosueiras/vim-terraform-completion
+[submodule ".vim/bundle/vim-polyglot"]
+	path = .vim/bundle/vim-polyglot
+	url = git@github.com:sheerun/vim-polyglot
+[submodule ".vim/bundle/nerdtree"]
+	path = .vim/bundle/nerdtree
+	url = git@github.com:scrooloose/nerdtree
