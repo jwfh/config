@@ -1,16 +1,23 @@
 include ../../config.mk
 
 CASKS= \
+	adobe-creative-cloud \
 	alacritty \
 	atom \
 	cd-to \
 	cmake \
+	docker \
 	iterm2 \
+	mactex \
+	messenger \
+	metasploit \
 	mono-mdk \
 	osxfuse \
+	skype \
 	visual-studio \
 	visual-studio-code \
 	vlc \
+	wireshark \
 	xquartz \
 	xscreensaver
 
@@ -22,6 +29,9 @@ uninstall: $(BOTTLES:=/uninstall) $(CASKS:=/uninstall)
 
 %/install: check-brew
 	$(BREW) cask install $(@:/install=)
+
+%/reinstall: check-brew
+	$(BREW) cask reinstall $(@:/reinstall=)
 
 %/uninstall: check-brew
 	$(BREW) cask uninstall $(@:/uninstall=)

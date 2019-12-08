@@ -4,6 +4,7 @@ BOTTLES= \
 	arping \
 	asciidoc \
 	atlantis \
+	awscli \
 	cairo \
 	certbot \
 	clamav \
@@ -19,6 +20,7 @@ BOTTLES= \
 	gnupg \
 	gnuplot \
 	google-authenticator-libpam \
+	handbrake \
 	htop \
 	imagemagick \
 	ipython \
@@ -34,9 +36,11 @@ BOTTLES= \
 	pdf-redact-tools \
 	pypy \
 	python \
+	qt5 \
 	subnetcalc \
 	tcpdump \
 	terminator \
+	terraform@0.11 \
 	termshark \
 	uwsgi \
 	wget 
