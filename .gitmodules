@@ -73,9 +73,6 @@
 [submodule ".vim/bundle/YouCompleteMe"]
 	path = .vim/bundle/YouCompleteMe
 	url = git@github.com:Valloric/YouCompleteMe
-[submodule "wm/tinywm"]
-	path = wm/tinywm
-	url = git@github.com:mackstann/tinywm
 [submodule ".vim/bundle/vimtex"]
 	path = .vim/bundle/vimtex
 	url = git@github.com:lervag/vimtex
