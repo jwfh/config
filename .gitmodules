@@ -106,9 +106,6 @@
 [submodule "src/synergy/synergy-core"]
 	path = src/synergy/synergy-core
 	url = git@github.com:symless/synergy-core
-[submodule "src/neofetch/neofetch"]
-	path = src/neofetch/neofetch
-	url = git@github.com:dylanaraps/neofetch
 [submodule ".local/share/fonts/Hack"]
 	path = .local/share/fonts/Hack
 	url = git@github.com:source-foundry/Hack
