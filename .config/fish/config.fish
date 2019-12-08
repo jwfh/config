@@ -104,3 +104,4 @@ function suid --description 'Like su but takes a UID to assume; UID need not exi
         echo sudo -u \#$argv[1] $argv[2..]
     end
 end
+set -g fish_user_paths "/usr/local/opt/qt/bin" $fish_user_paths
