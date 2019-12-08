@@ -136,3 +136,9 @@
 [submodule ".vim/bundle/vim-terraform-completion"]
 	path = .vim/bundle/vim-terraform-completion
 	url = git@github.com:juliosueiras/vim-terraform-completion
+[submodule ".vim/bundle/vim-polyglot"]
+	path = .vim/bundle/vim-polyglot
+	url = git@github.com:sheerun/vim-polyglot
+[submodule ".vim/bundle/nerdtree"]
+	path = .vim/bundle/nerdtree
+	url = git@github.com:scrooloose/nerdtree

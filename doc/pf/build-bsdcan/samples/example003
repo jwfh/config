@@ -1,3 +1,0 @@
-clients = "192.168.103/24"
-block
-pass from $clients

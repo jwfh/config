@@ -1,179 +1,271 @@
 # Ensure .CURDIR contains an absolute path without a trailing slash.  
-.CURDIR:=		${.CURDIR:tA}
+.CURDIR:=		$(.CURDIR:tA)
 
-.include "config.commands.mk"
-.include "config.env.mk"
+check_defined = \
+    $(strip $(foreach 1,$1, \
+        $(call __check_defined,$1,$(strip $(value 2)))))
+__check_defined = \
+    $(if $(value $1),, \
+      $(error Undefined $1$(if $2, ($2))))
+
+ifndef _COMMANDSMKINCLUDED
+
+_COMMANDSMKINCLUDED=	yes
+
+AWK?=			/usr/bin/awk
+BASENAME?=		/usr/bin/basename
+BRANDELF?=		/usr/bin/brandelf
+BREW?=			/usr/local/bin/brew
+BSDMAKE?=		/usr/local/bin/bmake
+BZCAT?=			/usr/bin/bzcat
+BZIP2_CMD?=		/usr/bin/bzip2
+CARGO?=			/usr/local/bin/cargo
+CAT?=			/bin/cat
+CHGRP?=			/usr/bin/chgrp
+CHMOD?=			/bin/chmod
+CHOWN?=			/usr/sbin/chown
+CHROOT?=		/usr/sbin/chroot
+COMM?=			/usr/bin/comm
+CP?=			/bin/cp
+CPIO?=			/usr/bin/cpio
+CUT?=			/usr/bin/cut
+DC?=			/usr/bin/dc
+DIALOG?=		/usr/bin/dialog
+DIALOG4PORTS?=		$(LOCALBASE)/bin/dialog4ports
+DIFF?=			/usr/bin/diff
+DIRNAME?=		/usr/bin/dirname
+DISKUTIL?= 		/usr/sbin/diskutil
+EGREP?=			/usr/bin/egrep
+EXPR?=			/bin/expr
+FALSE?=			false	# Shell builtin
+FETCH_BINARY?=		/usr/bin/fetch
+FETCH_ARGS?=		-Fpr
+FETCH_REGET?=		1
+FETCH_CMD?=		$(FETCH_BINARY) $(FETCH_ARGS)
+FILE?=			/usr/bin/file
+FIND?=			/usr/bin/find
+FLEX?=			/usr/bin/flex
+FMT?=			/usr/bin/fmt
+FMT_80?=		$(FMT) 75 79
+GIT?=			/usr/bin/git
+GMAKE?=			/usr/bin/make
+GREP?=			/usr/bin/grep
+GUNZIP_CMD?=		/usr/bin/gunzip -f
+GZCAT?=			/usr/bin/gzcat
+GZIP?=			-9
+GZIP_CMD?=		/usr/bin/gzip -nf $(GZIP)
+HDIUTIL?=		/usr/bin/hdiutil
+HDIUTIL_MOUNT?=		$(HDIUTIL) mount -nobrowse
+HEAD?=			/usr/bin/head
+HOSTNAME_CMD?=		/bin/hostname
+ID?=			/usr/bin/id
+IDENT?=			/usr/bin/ident
+INSTALL?=		/usr/bin/install
+JOT?=			/usr/bin/jot
+LDCONFIG?=		/sbin/ldconfig
+LHA_CMD?=		$(LOCALBASE)/bin/lha
+LN?=			/bin/ln
+LS?=			/bin/ls
+MAKE?=			/usr/bin/make
+MKDIR?=			/bin/mkdir -p
+MKTEMP?=		/usr/bin/mktemp
+MOUNT?=			/sbin/mount
+MOUNT_DEVFS?=		$(MOUNT) -t devfs devfs
+# XXX: this is a work-around for an obscure bug where
+# mount -t nullfs returns zero status on errors within
+# a make target
+MOUNT_NULLFS?=		/sbin/mount_nullfs
+MV?=			/bin/mv
+OBJCOPY?=		/usr/bin/objcopy
+OBJDUMP?=		/usr/bin/objdump
+PASTE?=			/usr/bin/paste
+PATCH?=			/usr/bin/patch
+
+PAX?=			/bin/pax
+PRINTF?=		/usr/bin/printf
+PS_CMD?=		/bin/ps
+PW?=			/usr/sbin/pw
+READELF?=		/usr/bin/readelf
+REALPATH?=		/bin/realpath
+RLN?=			$(INSTALL) -l rs
+RM?=			/bin/rm -f
+RMDIR?=			/bin/rmdir
+RUBY?=			/usr/bin/ruby
+SED?=			/usr/bin/sed
+SETENV?=		/usr/bin/env
+SH?=			/bin/sh
+SORT?=			/usr/bin/sort
+STRIP_CMD?=		/usr/bin/strip
+STAT?=			/usr/bin/stat
+# Command to run commands as privileged user
+# Example: "/usr/local/bin/sudo -E sh -c" to use "sudo" instead of "su"
+SU_CMD?=		/usr/bin/sudo /usr/bin/su - root -c
+SYSCTL?=		/sbin/sysctl
+TAIL?=			/usr/bin/tail
+TEST?=			test	# Shell builtin
+TOUCH?=			/usr/bin/touch
+TOUCH_FLAGS?=		-f
+TR?=			/usr/bin/tr
+TRUE?=			true	# Shell builtin
+UMOUNT?=		/sbin/umount
+UNAME?=			/usr/bin/uname
+UNMAKESELF_CMD?=	$(LOCALBASE)/bin/unmakeself
+UNZIP_CMD?=		$(LOCALBASE)/bin/unzip
+UNZIP_NATIVE_CMD?=	/usr/bin/unzip
+WHICH?=			/usr/bin/which
+XARGS?=			/usr/bin/xargs
+XMKMF?=			$(LOCALBASE)/bin/xmkmf
+YACC?=			/usr/bin/yacc
+
+XZ?=			-Mmax
+XZCAT=			/usr/bin/xzcat $(XZ)
+XZ_CMD?=		/usr/bin/xz $(XZ)
+
+MD5?=			/sbin/md5
+SHA256?=		/sbin/sha256
+SOELIM?=		/usr/bin/soelim
+
+TAR?=	/usr/bin/tar
+
+ECHO_CMD?=		echo	# Shell builtin
+
+# Used to print all the '===>' style prompts - override this to turn them off.
+ECHO_MSG?=		$(ECHO_CMD)
+
+# Macro for doing in-place file editing using regexps
+REINPLACE_ARGS?=	-i.bak
+REINPLACE_CMD?=	$(SED) $(REINPLACE_ARGS)
+
+MAKE_FLAGS?=	-f
+MAKEFILE?=		Makefile
+MAKE_CMD?=		$(MAKE)
+MAKE_ENV+=		PREFIX=$(PREFIX) \
+			LOCALBASE=$(LOCALBASE) \
+			CC="$(CC)" CFLAGS="$(CFLAGS)" \
+			CPP="$(CPP)" CPPFLAGS="$(CPPFLAGS)" \
+			LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" \
+			CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" \
+			MANPREFIX="$(MANPREFIX)"
+
+# Add -fno-strict-aliasing to CFLAGS with optimization level -O2 or higher.
+# gcc 4.x enable strict aliasing optimization with -O2 which is known to break
+# a lot of ports.
+ifndef WITHOUT_NO_STRICT_ALIASING
+ifeq ($(CC),"icc")
+ifeq ($(findstring -fno-strict-aliasing,$(CFLAGS)),"")
+CFLAGS+=       -fno-strict-aliasing
+endif
+endif
+endif
+
+BINMODE=		555
+MANMODE=		444
+STRIP=			-s
+_SHAREMODE=		0644
+
+INSTALL_PROGRAM=	$(INSTALL) $(COPY) $(STRIP) -m $(BINMODE)
+INSTALL_KLD=		$(INSTALL) $(COPY) -m $(BINMODE)
+INSTALL_LIB=		$(INSTALL) $(COPY) $(STRIP) -m $(_SHAREMODE)
+INSTALL_SCRIPT=		$(INSTALL) $(COPY) -m $(BINMODE)
+INSTALL_DATA=		$(INSTALL) $(COPY) -m $(_SHAREMODE)
+INSTALL_MAN=		$(INSTALL) $(COPY) -m $(MANMODE)
+
+CONFIGURE_SCRIPT?=	configure
+CONFIGURE_CMD?=		./$(CONFIGURE_SCRIPT)
+CONFIGURE_TARGET?=	$(HOSTARCH)-jwfhbld-$(OPSYS:tl)$(OSREL)
+CONFIGURE_TARGET:=	$(CONFIGURE_TARGET:S/--build=//)
+CONFIGURE_LOG?=		config.log
+
+endif
+
+ARCH:=		$(shell $(UNAME) -p)
+OPSYS:=		$(shell $(UNAME) -s)
+FQDN:=		$(shell $(HOSTNAME_CMD))
+
+LOCALBASE?=	/usr/local
+PREFIX?=	$(LOCALBASE)
+MANPREFIX?=	$(LOCALBASE)
+LOCALDEPS?=	# User configurable
+LOCALBUILDS:=	$(shell $(FIND) "$(PWD)" -type d -maxdepth 1 \
+		| $(XARGS) -n1 $(BASENAME) \
+		| $(SORT) \
+		| $(SED) -e 's/^/local-/')
+
+MANDIRS+=	$(MANPREFIX)/man
+INFO_PATH?=	share/info
+
+UID:=		$(shell $(ID) -u)
+GID:=		$(shell $(ID) -g)
+
+WRKSRC=		$(PWD)
 
 CONFIGURABLE=		0
-ALL_TARGET?=		all
+ALL_TARGET?=		warn
 INSTALL_TARGET?=	install
 
-.BEGIN:			check-uid
-.MAIN: 			${ALL_TARGET}
-.END:			post-banner
+.DEFAULT_GOAL:=		$(ALL_TARGET)
 
-all: 			check-local-deps \
-			make-configuration \
-			do-build 
-install: 		configuration \
-			${LOCALDEPS} \
-			do-install
-deinstall: check do-deinstall
+SUBPROJECTS:=	$(patsubst ./%,%,$(shell $(FIND) . -mindepth 1 \( ! \( -regex '.*\.venv.*' -o -regex '.*\.pytest_cache.*' -o -regex '.*\.git/.*' \) \) -type d -exec [ -f {}/Makefile ] \; -print -prune 2>/dev/null))
 
-# Extract
 
-clean-wrkdir:
-	@${RM} -r ${WRKDIR}
+AUTODOC_OFFSET:=	30
 
-.if !target(do-extract)
-do-extract: ${EXTRACT_WRKDIR}
-	@for file in ${EXTRACT_ONLY}; do \
-		if ! (cd ${EXTRACT_WRKDIR} && ${EXTRACT_CMD} ${EXTRACT_BEFORE_ARGS} ${_DISTDIR}/$$file ${EXTRACT_AFTER_ARGS});\
-		then \
-			exit 1; \
-		fi; \
+autodoc-default: Makefile
+	@awk '\
+	BEGIN { \
+		title="$(CURDIR) Available Targets"; \
+		print title; \
+		while (c++ < length(title)) \
+			printf "‾"; print ""; \
+	} \
+	/^##/ {\
+		if ((getline targetname) > 0) { \
+			if (/^[[:space:]]*$$/ !~ targetname) \
+				++targets; \
+			sub(/:.*$$/, "", targetname); \
+			sub(/^## ?/, ""); \
+			sub(/##.*$$/,""); \
+			printf "%-$(AUTODOC_OFFSET)s%s\n", targetname, $$0; \
+		}\
+	} \
+	END { \
+		print "\nParsed "targets" auto-doc targets"; \
+	}' $<
+
+autodoc-quiet-default: Makefile
+	@awk '\
+	/^##/ {\
+		if ((getline targetname) > 0) { \
+			sub(/:.*$$/, "", targetname); \
+			sub(/^## ?/, ""); \
+			sub(/##.*$$/,""); \
+			printf "%-$(AUTODOC_OFFSET)s%s\n", targetname, $$0; \
+		}\
+	}' $<
+
+simple-doc:
+	$(call check_defined $(SIMPLE_DOC_ITEMS), Need to define SIMPLE_DOC_ITEMS)
+	$(call check_defined $(SIMPLE_DOC_INSTALL_STR), Need to define SIMPLE_DOC_INSTALL_STR)
+	$(call check_defined $(SIMPLE_DOC_UNINSTALL_STR), Need to define SIMPLE_DOC_UNINSTALL_STR)
+	$(call check_defined $(SIMPLE_DOC_ITERATOR), Need to define SIMPLE_DOC_ITERATOR)
+	@for $(SIMPLE_DOC_ITERATOR) in $(SIMPLE_DOC_ITEMS); do \
+		$(PRINTF) "%-$(AUTODOC_OFFSET)s$(SIMPLE_DOC_INSTALL_STR)\n" $$$(SIMPLE_DOC_ITERATOR)/install; \
+		$(PRINTF) "%-$(AUTODOC_OFFSET)s$(SIMPLE_DOC_UNINSTALL_STR)\n" $$$(SIMPLE_DOC_ITERATOR)/uninstall; \
 	done
-	@if [ ${UID} = 0 ]; then \
-		${CHMOD} -R ug-s ${WRKDIR}; \
-		${CHOWN} -R 0:0 ${WRKDIR}; \
-	fi
-.endif
 
-# Configure
-
-.if !target(do-configure)
-do-configure:
-	@if [ -f ${SCRIPTDIR}/configure ]; then \
-		cd ${.CURDIR} && ${SETENV} ${SCRIPTS_ENV} ${SH} \
-		  ${SCRIPTDIR}/configure; \
+check-brew:
+	if [ ! -f $(BREW) ]; then \
+		$(RUBY) -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; \
 	fi
-.if defined(GNU_CONFIGURE)
-	@CONFIG_GUESS_DIRS=$$(${FIND} ${WRKDIR} -name config.guess -o -name config.sub \
-		| ${XARGS} -n 1 ${DIRNAME}); \
-	for _D in $${CONFIG_GUESS_DIRS}; do \
-		${RM} $${_D}/config.guess; \
-		${CP} ${TEMPLATES}/config.guess $${_D}/config.guess; \
-		${CHMOD} a+rx $${_D}/config.guess; \
-		${RM} $${_D}/config.sub; \
-		${CP} ${TEMPLATES}/config.sub $${_D}/config.sub; \
-		${CHMOD} a+rx $${_D}/config.sub; \
+
+warn:
+	@echo "Make a specific target. To list targets run \`make list\`."
+
+LIST_DEFAULT_TARGET:=	autodoc-quiet
+list-default: autodoc-quiet
+	@for PROJECT in $(SUBPROJECTS); do \
+		$(MAKE) -C $$PROJECT --no-print-directory $(LIST_DEFAULT_TARGET) | $(SED) -e "s#^#$$PROJECT/#"; \
 	done
-.endif
-.if defined(HAS_CONFIGURE)
-	@${MKDIR} ${CONFIGURE_WRKSRC}
-	@(cd ${CONFIGURE_WRKSRC} && \
-	    ${SET_LATE_CONFIGURE_ARGS} \
-		if ! ${SETENV} CC="${CC}" CPP="${CPP}" CXX="${CXX}" \
-	    CFLAGS="${CFLAGS}" CPPFLAGS="${CPPFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-	    LDFLAGS="${LDFLAGS}" LIBS="${LIBS}" \
-	    INSTALL="/usr/bin/install -c" \
-	    INSTALL_DATA="${INSTALL_DATA}" \
-	    INSTALL_LIB="${INSTALL_LIB}" \
-	    INSTALL_PROGRAM="${INSTALL_PROGRAM}" \
-	    INSTALL_SCRIPT="${INSTALL_SCRIPT}" \
-	    ${CONFIGURE_ENV} ${CONFIGURE_CMD} ${CONFIGURE_ARGS}; then \
-			 ${ECHO_MSG} "===>  Script \"${CONFIGURE_SCRIPT}\" failed unexpectedly."; \
-			 (${ECHO_CMD} ${CONFIGURE_FAIL_MESSAGE}) | ${FMT_80} ; \
-			 ${FALSE}; \
-		fi)
-.endif
-.endif
 
-
-# Build
-# XXX: ${MAKE_ARGS:N${DESTDIRNAME}=*} would be easier but it is not valid with the old fmake
-DO_MAKE_BUILD?=	${SETENV} ${MAKE_ENV} ${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${_MAKE_JOBS} ${MAKE_ARGS:C,^${DESTDIRNAME}=.*,,g}
-.if !target(do-build)
-do-build:
-	@(cd ${BUILD_WRKSRC}; if ! ${DO_MAKE_BUILD} ${ALL_TARGET}; then \
-		if [ -n "${BUILD_FAIL_MESSAGE}" ] ; then \
-			${ECHO_MSG} "===> Compilation failed unexpectedly."; \
-			(${ECHO_CMD} "${BUILD_FAIL_MESSAGE}") | ${FMT_80} ; \
-			fi; \
-		${FALSE}; \
-		fi)
-.endif
-
-# Install
-
-.if !target(do-install) && !defined(NO_INSTALL)
-do-install:
-	@(cd ${INSTALL_WRKSRC} && ${SETENV} ${MAKE_ENV} ${FAKEROOT} ${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
-.endif
-
-check-uid:
-.if defined(UID) && ${UID} != 0 && !defined(INSTALL_AS_USER)
-	@${ECHO_MSG} "===>  Switching to root credentials for '${.TARGET}' target"
-	@cd ${.CURDIR} && \
-		${SU_CMD} "${MAKE_CMD} ${.TARGET}"
-	@${ECHO_MSG} "===>  Returning to user credentials"
-.endif
-
-check-local-deps: 
-.for dep in ${LOCALDEPS}
-.	if empty(LOCALBUILDS:M${dep})
-		@${ECHO_MSG} "===> No local build for ${dep}"
-		@${FALSE}
-.	endif
-.endfor
-
-make-configuration: ${CONFFILE}.base 
-.if exists(${CONFFILE})
-	@${ECHO} "===> Backing up existing i3 configuration at ${CONFFILE}"
-	${MV} "${CONFFILE}" "${CONFFILE:=.bak}"
-.else 
-	@${ECHO} "===> No existing i3 configuration exists at ${CONFFILE}"
-.endif
-	@${ECHO} "===> Creating new i3 configuration file at ${CONFFILE}"
-
-	@${ECHO} "  ===> Prefacing configuation file with global options"
-	${CAT} ${CONFFILE}.base >> ${CONFFILE}
-
-.if exists(${CONFFILE}.${HOSTNAME})
-	@${ECHO} "  ===> Customizing with host-specific options for ${HOSTNAME:tu}"
-	${CAT} "${CONFFILE}.${HOSTNAME}" >> "${CONFFILE}"
-.else
-	@${ECHO} "  ===> No host-specific options found for ${HOSTNAME:tu}"
-.endif
-
-
-${LOCALBUILDS}:
-	@${ECHO} "===> Running local rule for ${.TARGET}"
-	${MAKE} PREFIX=${PREFIX} -C ${.CURDIR:C/\/[^\/]*$//} ${.TARGET}
-
-
-
-extract-message:
-	@${ECHO_MSG} "===>  Extracting for ${PKGNAME}"
-patch-message:
-	@${ECHO_MSG} "===>  Patching for ${PKGNAME}"
-configure-message:
-	@${ECHO_MSG} "===>  Configuring for ${PKGNAME}"
-build-message:
-	@${ECHO_MSG} "===>  Building for ${PKGNAME}"
-stage-message:
-	@${ECHO_MSG} "===>  Staging for ${PKGNAME}"
-install-message:
-	@${ECHO_MSG} "===>  Installing for ${PKGNAME}"
-test-message:
-	@${ECHO_MSG} "===>  Testing for ${PKGNAME}"
-package-message:
-	@${ECHO_MSG} "===>  Building package for ${PKGNAME}"
-
-# Empty pre-* and post-* targets
-
-.if exists(${SCRIPTDIR})
-.for stage in pre post
-.for name in pkg check-sanity fetch extract patch configure build stage install package
-
-.if !target(${stage}-${name}-script)
-.if exists(${SCRIPTDIR}/${stage}-${name})
-${stage}-${name}-script:
-	@ cd ${.CURDIR} && ${SETENV} ${SCRIPTS_ENV} ${SH} \
-			${SCRIPTDIR}/${.TARGET:S/-script$//}
-.endif
-.endif
-
-.endfor
-.endfor
-.endif
+%: %-default
+	@$(TRUE)

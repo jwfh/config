@@ -1,6 +1,6 @@
 {
   // Adjust the zoom level of the window. The original size is 0 and each increment above (e.g. 1) or below (e.g. -1) represents zooming 20% larger or smaller. You can also enter decimals to adjust the zoom level with a finer granularity.
-  "window.zoomLevel": 1,
+  "window.zoomLevel": 0,
   // Enable Emmet abbreviations in languages that are not supported by default. Add a mapping here between the language and emmet supported language.
   //  E.g.: `{"vue-html": "html", "javascript": "javascriptreact"}`
   "emmet.includeLanguages": {
@@ -33,8 +33,6 @@
   "prettier.htmlWhitespaceSensitivity": "strict",
   // Specify the end of line used by prettier
   "prettier.endOfLine": "lf",
-  // Use 'prettier-eslint' instead of 'prettier'. Other settings will only be fallbacks in case they could not be inferred from eslint rules.
-  "prettier.eslintIntegration": true,
   // If true, will use single instead of double quotes
   "prettier.singleQuote": true,
   // Controls the font size in pixels.
@@ -53,7 +51,7 @@
   //  - bounded: Lines will wrap at the minimum of viewport and `editor.wordWrapColumn`.
   "editor.wordWrap": "on",
   // Specifies the color theme used in the workbench.
-  "workbench.colorTheme": "Gruvbox Dark (Hard)",
+  "workbench.colorTheme": "Gruvbox Dark (Medium)",
   "git.autofetch": true,
   "git.defaultCloneDirectory": "$HOME/Repositories",
   "git.detectSubmodulesLimit": 50,
@@ -83,5 +81,7 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "javascript.updateImportsOnFileMove.enabled": "always"
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500
 }

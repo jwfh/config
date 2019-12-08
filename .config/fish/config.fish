@@ -15,12 +15,29 @@ if test -d /usr/local/go/bin
 	set -gx PATH /usr/local/go/bin $PATH
 end
 
+if test -d $HOME/.poetry/bin
+	set -gx PATH $HOME/.poetry/bin $PATH
+end
+
+if test -d $HOME/Library/Python/3.7/bin
+	set -gx PATH $HOME/Library/Python/3.7/bin $PATH
+end
+
+if test -d $HOME/.local/bin
+	set -gx PATH $HOME/.local/bin $PATH
+end
+
 if test -d /opt/tools/anaconda3/bin 
 	set -gx PATH /opt/tools/anaconda3/bin $PATH
 end
 
+
 if test -d /usr/local/lib/php/arcanist/bin
 	set -gx PATH /usr/local/lib/php/arcanist/bin $PATH
+end
+
+if test -d /Library/PostgreSQL/9.6/bin
+	set -gx PATH /Library/PostgreSQL/9.6/bin $PATH
 end
 
 set -x LESSOPEN '| lesspipe %s'
@@ -63,10 +80,27 @@ alias gd='git diff'
 function shortURI --description 'Uses go.jwfh.ca to shorten a URI'
 	if test (count $argv) -eq 1
 		set uri $argv[1]
-		curl -d url="$uri" https://go.jwfh.ca/api/create
+		curl -sSf -d url="$uri" https://go.jwfh.ca/api/create | python3 -m json.tool
 	else if test (count $argv) -eq 2
 		set uri $argv[1]
 		set short $argv[2]
-		curl -d url="$uri" -d short="$short" https://go.jwfh.ca/api/create
+		curl -sSf -d url="$uri" -d short="$short" https://go.jwfh.ca/api/create | python3 -m json.tool
 	end 
 end 
+
+set -g fish_user_paths "/usr/local/opt/expat/bin" $fish_user_paths
+set -gx LDFLAGS "-L/usr/local/opt/expat/lib" $LDFLAGS
+set -gx CPPFLAGS "-I/usr/local/opt/expat/include" $CPPFLAGS
+set -gx PKG_CONFIG_PATH "/usr/local/opt/expat/lib/pkgconfig" $PKG_CONFIG_PATH
+set -g fish_user_paths "/usr/local/opt/util-linux/bin" $fish_user_paths
+set -g fish_user_paths "/usr/local/opt/util-linux/sbin" $fish_user_paths
+set -g fish_user_paths "/usr/local/opt/gnu-getopt/bin" $fish_user_paths
+set -g fish_user_paths "/usr/local/opt/terraform@0.11/bin" $fish_user_paths
+
+function suid --description 'Like su but takes a UID to assume; UID need not exist on system.'
+    if test (count $argv) -lt 1
+        printf "suid requires at least 1 argument"
+    else
+        echo sudo -u \#$argv[1] $argv[2..]
+    end
+end

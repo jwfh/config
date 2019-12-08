@@ -34,7 +34,7 @@ let g:syntastic_check_on_wq = 0
 " set hidden
 " set wildmenu
 " set wildmode=longest,list,full
-" set visualbell
+set visualbell
 " set cursorline
 " set ttyfast
 " set ruler
@@ -120,3 +120,24 @@ let g:syntastic_cpp_compiler_options = ' -std=c++17 -stdlib=libc++'
 nmap <C-V> "+gP
 imap <C-V> <ESC><C-V>a 
 vmap <C-C> "+y
+map <C-n> :NERDTreeToggle<CR>
+
+au BufNewFile,BufRead Jenkinsfile setf groovy
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+    " Use filetype detection and file-based automatic indenting.
+    filetype plugin indent on
+
+    " Use actual tab chars in Makefiles.
+    autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+endif
+
+" For everything else, use a tab width of 4 space chars.
+set tabstop=4       " The width of a TAB is set to 4.
+                    " Still it is a \t. It is just that
+                    " Vim will interpret it to be having
+                    " a width of 4.
+set shiftwidth=4    " Indents will have a width of 4.
+set softtabstop=4   " Sets the number of columns for a TAB.
+set expandtab       " Expand TABs to spaces.
