@@ -1,0 +1,19 @@
+#!/usr/bin/env fish
+
+# Check if Python is running using pgrep
+if pgrep -f 'alternatingLayouts'
+	# `set' will fail if pgrep does so if there is no running 
+	# process the loop never executes
+	while set pids (pgrep -f 'alternatingLayouts')
+		kill $pids
+		sleep 1
+	end
+else
+	alternatingLayouts &
+
+        # Since the above Python script doesn't exit, it doesn't set
+        # $status. Hence this script appears to fail when `prep(1)'
+        # on line 4 fails. Setting the return code here isn't the most
+        # elegant but it works.
+        true
+end

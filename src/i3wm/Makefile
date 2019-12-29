@@ -18,15 +18,25 @@ SUDO!=		which sudo
 TEST!=		which test
 MAKE!=		which ${MAKE}
 
+INSTALL_PROGRAM=install -s -m 555  
+INSTALL_LIB=	install -s -m 0644
+INSTALL_SCRIPT=	install -m 555
+INSTALL_DATA=	install -m 0644
+INSTALL_MAN=	install -m 444
+WRKSRC!=	pwd
+DEST=		${PREFIX}/bin
+
+EXE=		layouttoggle alternatingLayouts
+
 PREFIX?=	/usr/local
 LOCALBUILDS!=	${FIND} "${.CURDIR:C/\/[^\/]*$//}" -type d -maxdepth 1 | xargs -n1 basename | sort
-LOCALDEPS=		compton
+LOCALDEPS=	compton
 
 dryrun:
 	@${ECHO} "===> You must run \`${MAKE} -C ${.CURDIR} [makeconfig|install|uninstall]\`"
 	@${FALSE}
 
-install: check .PHONY ${OS}-install ${LOCALDEPS}
+install: check .PHONY ${EXE:=-install} ${OS}-install ${LOCALDEPS}
 deinstall: check .PHONY ${OS}-deinstall
 
 FreeBSD-install: .PHONY ${LOCALDEPS} ${PKGS:=-pkg} ${PORTS:=-port} 
@@ -63,6 +73,14 @@ DEPRULE=${LOCALBUILDS:M${DEP}}
 ${LOCALBUILDS}:
 	@${ECHO} "===> Running local rule for ${.TARGET}"
 	${MAKE} PREFIX=${PREFIX} -C ${.CURDIR:C/\/[^\/]*$//} ${.TARGET}
+
+${EXE:=-install}:
+	@printf "===> Linking script \`${@:-install=}\`\n"
+	@${INSTALL_SCRIPT} ${WRKSRC}/${@:-install=} ${DEST}
+
+${EXE:=-uninstall}:
+	@printf "===> Unlinking script \`${@:-uninstall=}\`\n"
+	@rm -f ${DEST}/${@:-uninstall=} 
 
 ## We have no way using dependencies to determine whether a package/port has already 
 ## been installed. Hence all of the below targets require .PHONY as a dependency.

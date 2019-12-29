@@ -58,7 +58,7 @@ FreeBSDbuild: synergy-core/CMakeLists.txt
 
 
 do-install:
-	${INSTALL_SCRIPT} ${PWD}/synergytoggle.fish ${PREFIX}/bin/synergytoggle
+	${INSTALL_SCRIPT} ${PWD}/synergytoggle ${PREFIX}/bin/synergytoggle
 .for f in synergyc synergyd synergys
 	${INSTALL_PROGRAM} ${BUILD_WRKSRC}/bin/${f} ${PREFIX}/bin
 .endfor

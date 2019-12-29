@@ -7,7 +7,7 @@ INSTALL_MAN=	install -m 444
 WRKSRC!=	pwd
 DEST=		${PREFIX}/bin
 
-EXE=		vowrtoggle
+EXE=		streamtheworld vowr
 
 install: ${EXE:=-install}
 
@@ -15,7 +15,7 @@ uninstall:
 	rm -f ${PREFIX}/bin/${EXE}
 
 ${EXE:=-install}:
-	@printf "===> Linking script \`${@:-install=}\`\n"
+	@printf "===> Linking script \`${@:-install=}\` to \`${DEST}\`\n"
 	@${INSTALL_SCRIPT} ${WRKSRC}/${@:-install=} ${DEST}
 
 ${EXE:=-uninstall}:

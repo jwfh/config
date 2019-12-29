@@ -1,0 +1,13 @@
+#!/usr/bin/env fish
+
+# Check if VOWR is streaming
+if pgrep -f 'VOWRAM'
+	# `set' will fail if pgrep does so if there is no running 
+	# process the loop never executes
+	while set pids (pgrep -f 'VOWRAM')
+		kill $pids
+		sleep 1
+	end
+else
+        streamtheworld VOWRAM
+end

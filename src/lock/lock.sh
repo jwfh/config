@@ -11,6 +11,8 @@ for RES in $SR; do
 done
 
 TMPBG=/tmp/screen.png
+test -e $TMPBG && rm -f $TMPBG
+
 scrot $TMPBG && convert $TMPBG -scale 5% -scale 2000% -draw "fill black fill-opacity 0.4 $rectangles" $TMPBG
 
 i3lock \

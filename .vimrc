@@ -25,16 +25,16 @@ let g:syntastic_check_on_wq = 0
 " set tabstop=2
 " set shiftwidth=2
 " set softtabstop=2
-" set expandtab
-" set encoding=utf-8
+set expandtab
+set encoding=utf-8
 " set scrolloff=3
 " set autoindent
-" set showmode
-" set showcmd
+set showmode
+set showcmd
 " set hidden
 " set wildmenu
 " set wildmode=longest,list,full
-" set visualbell
+set visualbell
 " set cursorline
 " set ttyfast
 " set ruler
@@ -104,9 +104,9 @@ set directory=~/.vim/backup/
 " nnoremap L g_
 " inoremap " '
 
-let g:syntastic_mode_map = {
-    \ "mode": "active",
-    \ "passive_filetypes": ["tex"] }
+" let g:syntastic_mode_map = {
+"     \ "mode": "active",
+"     \ "passive_filetypes": ["tex"] }
 let g:syntastic_python_checkers=['flake8']
 
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab

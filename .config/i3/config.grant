@@ -2,5 +2,7 @@
 exec --no-startup-id xrandr --output DP-4 --auto
 exec --no-startup-id xrandr --output HDMI-0 --auto --left-of DP-4
 
-exec --no-startup-if synergys
+exec --no-startup-id synergys
+exec --no-startup-id alternatingLayout
 bindsym $mod+Shift+s exec synergytoggle
+bindsym $mod+Shift+a exec layouttoggle
