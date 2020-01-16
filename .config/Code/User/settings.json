@@ -81,7 +81,27 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[c]": {
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 8
+  },
+  "[c++]": {
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 8
+  },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 500
+  "files.autoSaveDelay": 500,
+  "python.formatting.blackArgs": [
+    "-l100"
+  ],
+  "python.formatting.provider": "black",
+  "files.associations": {
+    "*.mk": "makefile"
+  },
+  "[makefile]": {
+    "editor.tabSize": 8
+  }
 }

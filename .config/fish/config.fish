@@ -45,8 +45,10 @@ set -x LESSOPEN '| lesspipe %s'
 set -gx PKG_CONFIG_PATH "/usr/local/opt/libffi/lib/pkgconfig" $PKG_CONFIG_PATH 
 
 # For compilers to find zlib you may need to set:
-set -gx LDFLAGS "-L/usr/local/opt/zlib/lib" $LDFLAGS
-set -gx CPPFLAGS "-I/usr/local/opt/zlib/include" $CPPFLAGS
+if test -d /usr/local/opt/zlib/lib
+    set -gx LDFLAGS "-L/usr/local/opt/zlib/lib" $LDFLAGS
+    set -gx CPPFLAGS "-I/usr/local/opt/zlib/include" $CPPFLAGS
+end
 
 # For pkg-config to find zlib you may need to set:
 set -gx PKG_CONFIG_PATH "/usr/local/opt/zlib/lib/pkgconfig" $PKG_CONFIG_PATH 
@@ -105,3 +107,4 @@ function suid --description 'Like su but takes a UID to assume; UID need not exi
     end
 end
 set -g fish_user_paths "/usr/local/opt/qt/bin" $fish_user_paths
+set -g fish_user_paths "/usr/local/opt/python@3.8/bin" $fish_user_paths
