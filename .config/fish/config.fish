@@ -70,3 +70,12 @@ function shortURI --description 'Uses go.jwfh.ca to shorten a URI'
 		curl -d url="$uri" -d short="$short" https://go.jwfh.ca/api/create
 	end 
 end 
+
+if test -z "$SSH_ENV"
+    set -xg SSH_ENV $HOME/.ssh/environment
+end
+
+if not __ssh_agent_is_started
+    __ssh_agent_start
+end
+
