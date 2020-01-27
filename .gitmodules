@@ -127,3 +127,18 @@
 [submodule "src/texlive/freebsd-texlive"]
 	path = src/texlive/freebsd-texlive
 	url = git@github.com:uzsolt/freebsd-texlive
+[submodule ".vim/bundle/Jenkinsfile-vim-syntax"]
+	path = .vim/bundle/Jenkinsfile-vim-syntax
+	url = git@github.com:martinda/Jenkinsfile-vim-syntax.git
+[submodule ".vim/bundle/nerdtree"]
+	path = .vim/bundle/nerdtree
+	url = git@github.com:scrooloose/nerdtree
+[submodule ".vim/bundle/vim-polyglot"]
+	path = .vim/bundle/vim-polyglot
+	url = git@github.com:sheerun/vim-polyglot
+[submodule ".vim/bundle/vim-terraform"]
+	path = .vim/bundle/vim-terraform
+	url = git@github.com:hashivim/vim-terraform
+[submodule ".vim/bundle/vim-terraform-completion"]
+	path = .vim/bundle/vim-terraform-completion
+	url = git@github.com:juliosueiras/vim-terraform-completion
