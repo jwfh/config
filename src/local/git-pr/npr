@@ -1,0 +1,156 @@
+#!/bin/sh
+
+INVOCATION_NAME=$0
+SCRIPT_LOCATION=`echo ${INVOCATION_NAME} | sed -e 's,[^/]*$,,;s,/$,,;s,^$,.,'`
+
+UPSTREAM_BRANCH=
+TITLE=
+MESSAGE=
+QUIET=0
+VERBOSE=0
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+INFO="${GREEN}INFO:${NC}"
+WARN="${YELLOW}WARN:${NC}"
+FATAL="${RED}FATAL:${NC}"
+
+[ ! -z "${EDITOR+x}" ] || EDITOR=`which vim`
+
+usage() {
+    echo "\
+Usage: ${INVOCATION_NAME} [options]
+
+Options: [defaults in brackets]
+  -h, --help        Print this help message
+  -q, --quiet       Do not print to standard out or standard error
+  -v, --verbose     Enable verbose logging
+  --branch=BRANCH   Upstream branch to open PR to [${UPSTREAM_BRANCH}]
+  --message=MSG     Set PR message [interactive editor with PR template]
+  --title=TITLE     Set PR title [last commit message]
+  --template=PATH   Path to a PR template to be used 
+                      Cannot be used with -m
+"
+    exit $1
+}
+
+default_branch() {
+    git symbolic-ref refs/remotes/origin/HEAD | sed "s@^refs/remotes/origin/@@"
+}
+
+last_commit_message() {
+    git show-branch --no-name HEAD
+}
+
+while [ "x$1" != "x" ]; do
+    option=$1
+    shift
+    args="${args} \"${option}\""
+    
+    case ${option} in 
+        *=*)
+            optarg=`echo ${option} | sed -e 's,^[^=]*=,,'`
+            ;;
+    esac
+
+    case ${option} in 
+        --help | --he* | -h)
+            usage 0
+            ;;
+        --quiet | --qu* | -q)
+            QUIET=1
+            ;;
+        --verbose | --ve* | -v)
+            VERBOSE=1
+            ;;
+        --branch* | --br*)
+            UPSTREAM_BRANCH=${optarg}
+            ;;
+        --message* | --me*)
+            MESSAGE=${optarg}
+            ;;
+        --title* | --ti*)
+            TITLE=${optarg}
+            ;;
+        --template* | --te*)
+            PR_TEMPLATE=${optarg}
+            ;;
+    esac
+done
+
+if [ "${QUIET}" = "0" ]; then
+    exec 3>&1
+    exec 4>&2
+else
+    exec 3>/dev/null
+    exec 4>/dev/null
+fi
+
+if [ "${VERBOSE}" = "0" ]; then
+    exec 5>/dev/null
+    exec 6>/dev/null
+else
+    exec 5>&3
+    exec 6>&2
+fi
+
+
+if git remote >/dev/null 2>&1; then :; else
+    {
+        echo ${FATAL} $0 must be run from a Git repository
+        echo
+        usage 1
+    } >&4
+fi
+
+if [ -z "${UPSTREAM_BRANCH}" ]; then
+    UPSTREAM_BRANCH=`default_branch 2>&6`
+    echo ${INFO} Upstream branch not set, attempting to determine... ${UPSTREAM_BRANCH} >&6
+fi
+
+if [ -z "${TITLE}" ]; then
+    TITLE=`last_commit_message 2>&6`
+    echo ${INFO} Pull request title not specified, using last commit message... \"${TITLE}\" >&6
+fi
+
+if [ -z "${MESSAGE}" ]; then
+    PR_TEMP_FILE=`mktemp`
+    if [ -z "${PR_TEMPLATE}" -o ! -e "${PR_TEMPLATE}" ]; then
+        CURDIR=`pwd`
+        unset PR_TEMPLATE
+        while [ "${CURDIR}" != "/" -a -z "${PR_TEMPLATE}" ]; do
+            if [ -e "${CURDIR}/.github/PULL_REQUEST_TEMPLATE.md" ]; then
+                PR_TEMPLATE="${CURDIR}/.github/PULL_REQUEST_TEMPLATE.md"
+            elif [ -e "${CURDIR}/PULL_REQUEST_TEMPLATE.md" ]; then
+                PR_TEMPLATE="${CURDIR}/PULL_REQUEST_TEMPLATE.md"
+            fi
+            CURDIR=`dirname "${CURDIR}"`
+        done
+        if [ -z "${PR_TEMPLATE+x}" ]; then
+            echo ${FATAL} Could not locate a pull request template >&4
+        else
+            echo ${INFO} Found pull request template at ${PR_TEMPLATE} >&6
+        fi
+    fi
+    cp "${PR_TEMPLATE}" "${PR_TEMP_FILE}"
+    $EDITOR "${PR_TEMP_FILE}"
+    MESSAGE=`cat "${PR_TEMP_FILE}"`
+    rm "${PR_TEMP_FILE}"
+else
+    echo ${INFO} Message was set on the command line\; omitting PR template search >&6
+fi
+
+REQUEST_JSON="{\
+\"title\":\"${TITLE}\",\
+\"body\":\"${MESSAGE}\",\
+\"head\":\"${FORK_ORG}:${CURRENT_BRANCH}\",\
+\"base\":\"${UPSTREAM_BRANCH}\"\
+}"
+
+{
+    echo ${INFO} JSON being sent to the GitHub API:
+    echo ${REQUEST_JSON} | jq
+} >&6
+
