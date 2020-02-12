@@ -4,8 +4,10 @@ INVOCATION_NAME=$0
 SCRIPT_LOCATION=`echo ${INVOCATION_NAME} | sed -e 's,[^/]*$,,;s,/$,,;s,^$,.,'`
 
 UPSTREAM_BRANCH=
+FORK_ORG=
+CURRENT_BRANCH=
 TITLE=
-MESSAGE=
+BODY=
 QUIET=0
 VERBOSE=0
 
@@ -28,20 +30,12 @@ Options: [defaults in brackets]
   -q, --quiet       Do not print to standard out or standard error
   -v, --verbose     Enable verbose logging
   --branch=BRANCH   Upstream branch to open PR to [${UPSTREAM_BRANCH}]
-  --message=MSG     Set PR message [interactive editor with PR template]
+  --body=MSG        Set PR message body [interactive editor with PR template]
   --title=TITLE     Set PR title [last commit message]
   --template=PATH   Path to a PR template to be used 
                       Cannot be used with -m
 "
     exit $1
-}
-
-default_branch() {
-    git symbolic-ref refs/remotes/origin/HEAD | sed "s@^refs/remotes/origin/@@"
-}
-
-last_commit_message() {
-    git show-branch --no-name HEAD
 }
 
 while [ "x$1" != "x" ]; do
@@ -68,8 +62,8 @@ while [ "x$1" != "x" ]; do
         --branch* | --br*)
             UPSTREAM_BRANCH=${optarg}
             ;;
-        --message* | --me*)
-            MESSAGE=${optarg}
+        --body* | --bo*)
+            BODY=${optarg}
             ;;
         --title* | --ti*)
             TITLE=${optarg}
@@ -96,6 +90,41 @@ else
     exec 6>&2
 fi
 
+current_branch() {
+    git rev-parse --abbrev-ref HEAD
+}
+
+default_branch() {
+    git symbolic-ref refs/remotes/origin/HEAD | sed "s@^refs/remotes/origin/@@"
+}
+
+last_commit_message() {
+    git show-branch --no-name HEAD
+}
+
+locate_pr_template() {
+    CURDIR=`pwd`
+    PR_TEMPLATE=
+    while [ "${CURDIR}" != "/" -a -z "${PR_TEMPLATE}" ]; do
+        if [ -e "${CURDIR}/.github/PULL_REQUEST_TEMPLATE.md" ]; then
+            PR_TEMPLATE="${CURDIR}/.github/PULL_REQUEST_TEMPLATE.md"
+        elif [ -e "${CURDIR}/PULL_REQUEST_TEMPLATE.md" ]; then
+            PR_TEMPLATE="${CURDIR}/PULL_REQUEST_TEMPLATE.md"
+        fi
+        CURDIR=`dirname "${CURDIR}"`
+    done
+    echo "${PR_TEMPLATE}"
+}
+
+author_pr_body() {
+    PR_TEMPLATE="$1"
+    PR_TEMP_FILE="`mktemp`"
+    cp "${PR_TEMPLATE}" "${PR_TEMP_FILE}"
+    $EDITOR "${PR_TEMP_FILE}"
+    cat "${PR_TEMP_FILE}"
+    rm "${PR_TEMP_FILE}"
+}
+
 
 if git remote >/dev/null 2>&1; then :; else
     {
@@ -115,36 +144,27 @@ if [ -z "${TITLE}" ]; then
     echo ${INFO} Pull request title not specified, using last commit message... \"${TITLE}\" >&6
 fi
 
-if [ -z "${MESSAGE}" ]; then
-    PR_TEMP_FILE=`mktemp`
-    if [ -z "${PR_TEMPLATE}" -o ! -e "${PR_TEMPLATE}" ]; then
-        CURDIR=`pwd`
-        unset PR_TEMPLATE
-        while [ "${CURDIR}" != "/" -a -z "${PR_TEMPLATE}" ]; do
-            if [ -e "${CURDIR}/.github/PULL_REQUEST_TEMPLATE.md" ]; then
-                PR_TEMPLATE="${CURDIR}/.github/PULL_REQUEST_TEMPLATE.md"
-            elif [ -e "${CURDIR}/PULL_REQUEST_TEMPLATE.md" ]; then
-                PR_TEMPLATE="${CURDIR}/PULL_REQUEST_TEMPLATE.md"
-            fi
-            CURDIR=`dirname "${CURDIR}"`
-        done
-        if [ -z "${PR_TEMPLATE+x}" ]; then
-            echo ${FATAL} Could not locate a pull request template >&4
-        else
-            echo ${INFO} Found pull request template at ${PR_TEMPLATE} >&6
-        fi
+if [ -z "${CURRENT_BRANCH}" ]; then
+    CURRENT_BRANCH=`current_branch 2>&6`
+fi
+
+if [ -z "${BODY}" ]; then
+    if [ -z "${PR_TEMPLATE+x}" -o ! -e "${PR_TEMPLATE}" ]; then
+        PR_TEMPLATE=`locate_pr_template 2>&6`
     fi
-    cp "${PR_TEMPLATE}" "${PR_TEMP_FILE}"
-    $EDITOR "${PR_TEMP_FILE}"
-    MESSAGE=`cat "${PR_TEMP_FILE}"`
-    rm "${PR_TEMP_FILE}"
+    if [ -z "${PR_TEMPLATE+x}" ]; then
+        echo ${FATAL} Could not locate a pull request template >&4
+    else
+        echo ${INFO} Found pull request template at ${PR_TEMPLATE} >&6
+    fi
+    BODY=`author_pr_body "${PR_TEMPLATE}"`
 else
     echo ${INFO} Message was set on the command line\; omitting PR template search >&6
 fi
 
 REQUEST_JSON="{\
 \"title\":\"${TITLE}\",\
-\"body\":\"${MESSAGE}\",\
+\"body\":\"${BODY}\",\
 \"head\":\"${FORK_ORG}:${CURRENT_BRANCH}\",\
 \"base\":\"${UPSTREAM_BRANCH}\"\
 }"
