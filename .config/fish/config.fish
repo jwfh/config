@@ -9,18 +9,10 @@ source $OMF_PATH/init.fish
 set -g CC /usr/bin/clang
 set -g CXX /usr/bin/clang++
 
-set -gx PATH $HOME/.cargo/bin $HOME/bin $HOME/config/bin /usr/local/bin $PATH
-
-if test -d /usr/local/go/bin  
-	set -gx PATH /usr/local/go/bin $PATH
-end
-
-if test -d /opt/tools/anaconda3/bin 
-	set -gx PATH /opt/tools/anaconda3/bin $PATH
-end
-
-if test -d /usr/local/lib/php/arcanist/bin
-	set -gx PATH /usr/local/lib/php/arcanist/bin $PATH
+for d in /usr/local/bin $HOME/.cargo/bin $HOME/.local/bin $HOME/bin $HOME/config/bin /usr/local/go/bin /opt/tools/anaconda3/bin /usr/local/lib/php/arcanist/bin
+        if test -d "$d"
+                set -gx PATH "$d" $PATH
+        end
 end
 
 set -x LESSOPEN '| lesspipe %s'
