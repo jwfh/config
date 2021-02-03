@@ -1,0 +1,56 @@
+[user]
+    name = Jacob House
+    email = me@jwfh.ca
+[sequence]
+    editor = vim
+[alias]
+    git = !git
+    fixup = commit --amend -C HEAD
+    npr = "!git remote -v | awk '/upstream.*push/ { print $2 }' | awk -F':' '{ print $2 }'"
+    drop = "!this() { if [ $# -gt 0 ]; then git reset --hard HEAD~$1; else git reset --hard HEAD^; fi; }; this" ; drop commit(s)
+    uc = "!this() { if [ $# -gt 0 ]; then git reset --soft HEAD~$1; else git reset --soft HEAD^; fi; }; this" ; undo commit(s)
+    up = "!this() { for arg in ${*}; do git s \"${arg}\" | awk '{ print $2 }' | xargs -n1 git co HEAD^ --; done; }; this" ; undo path(s)
+    a = add
+    ai = add --interactive
+    ap = add --patch
+    aa = add --update ; add all
+    co = checkout
+    ci = commit --verbose ; check in
+    ca = commit --all --verbose ; check (in) all
+    d = diff
+    ds = diff --cached ; diff staged
+    fm = "!git fu && git fo" ; fetch main 
+    fu = fetch upstream
+    fo = fetch origin
+    fa = "!git remote | xargs -n1 git fetch" ; fetch all
+    p = push
+    pm = pull --merge
+    pr = pull --rebase
+    s = status --short
+    st = status --porcelain
+    sl = status --long 
+    cp = cherry-pick
+    cpn = cherry-pick --no-commit
+    root = rev-parse --show-toplevel
+    pretty = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+    nb = !git checkout --track $(git config branch.$(git rev-parse --abbrev-ref HEAD).remote)/$(git rev-parse --abbrev-ref HEAD) -b ; new branch
+    nbm = !git checkout --track $(git config branch.$(git rev-parse --abbrev-ref HEAD).remote)/$(git rev-parse --abbrev-ref HEAD) -b && git fetch upstream && git reset --hard upstream/master ; new branch
+    rb = rebase
+    rbc = rebase --continue
+    rbn = "!this() { git fu && if [ $# -eq 0 ]; then git rebase upstream/master; else git rebase HEAD~$1; fi; }; this" ; rebase
+    rbi = "!this() { git fu && if [ $# -eq 0 ]; then git rebase -i upstream/master; else git rebase -i HEAD~$1; fi; }; this" ; rebase interactive
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    interactive = auto
+    ui = true
+    ager = true
+[core]
+    editor = vim
+[tag]
+    forceSignAnnotated = true
+[commit]
+    gpgsign = true
+[gpg]
+    program = gpg
