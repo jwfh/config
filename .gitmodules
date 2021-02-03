@@ -1,3 +1,24 @@
 [submodule ".vim/bundle"]
 	path = .vim/bundle
 	url = git@github.com:jwfh/vim-bundle
+[submodule ".local/share/omf"]
+	path = .local/share/omf
+	url = git@github.com:oh-my-fish/oh-my-fish
+[submodule "appearance/gruvbox-contrib"]
+	path = appearance/gruvbox-contrib
+	url = git@github.com:morhetz/gruvbox-contrib
+[submodule "texmf/tex/latex/memorial-latex"]
+	path = texmf/tex/latex/memorial-latex
+	url = git@github.com:jwfh/memorial-latex
+[submodule ".local/share/fonts/FiraCode"]
+	path = .local/share/fonts/FiraCode
+	url = git@github.com:tonsky/FiraCode
+[submodule ".local/share/fonts/Hack"]
+	path = .local/share/fonts/Hack
+	url = git@github.com:source-foundry/Hack
+[submodule ".local/share/fonts/powerline-extra-symbols"]
+	path = .local/share/fonts/powerline-extra-symbols
+	url = git@github.com:ryanoasis/powerline-extra-symbols
+[submodule ".local/share/fonts/source-code-pro"]
+	path = .local/share/fonts/source-code-pro
+	url = git@github.com:adobe-fonts/source-code-pro

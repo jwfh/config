@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ "$(id -u)" != "0" ]; then
+	echo ERROR: Need to run as root!
+	exit 1
+fi
+
+case "$(sudo defaults read com.apple.finder AlwaysOpenInColumnView)" in
+	True)
+		defaults write com.apple.finder AlwaysOpenInColumnView False
+		echo "INFO: Disabled column view"
+		;;
+	False)
+		defaults write com.apple.finder AlwaysOpenInColumnView True
+		echo "INFO: Enabled column view"
+		;;
+	*)
+		echo "ERROR: Invalid current value retrieved for plist domain (com.apple.finder, AlwaysOpenInColumnView)"
+		;;
+esac
+

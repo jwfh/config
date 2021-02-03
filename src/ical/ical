@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ $# -gt 0 ]; then
+    : "${days:="${1}"}"
+else
+    : "${days:=2}"
+fi
+
+/usr/local/bin/icalBuddy \
+  --excludeCals "Birthdays" \
+  --formatOutput \
+  --bullet "" \
+  --includeOnlyEventsFromNowOn \
+  --separateByDate \
+  --showTodaysSection \
+  --propertyOrder title,datetime,location \
+  --excludeEventProps notes,url \
+  --noPropNames \
+  --propertySeparators "|\n  |, |" \
+  --sectionSeparator "" \
+  "eventsToday+$((days - 1))"

@@ -39,6 +39,7 @@
     rbc = rebase --continue
     rbn = "!this() { git fu && if [ $# -eq 0 ]; then git rebase upstream/master; else git rebase HEAD~$1; fi; }; this" ; rebase
     rbi = "!this() { git fu && if [ $# -eq 0 ]; then git rebase -i upstream/master; else git rebase -i HEAD~$1; fi; }; this" ; rebase interactive
+	newrem = "!generate_remote() { NEW_ORG=\"${1}\";    ORIGIN=\"$(git remote -v | awk '/origin.*fetch/ { print $2 }')\";    DOMAIN=\"$(echo $ORIGIN | awk -F: '{ print $1 }')\";    ORG_REPO=\"$(echo $ORIGIN | awk -F: '{ print $2 }')\";    REPO=\"$(echo $ORG_REPO | awk -F/ '{ print $2 }')\";    printf \"%s:%s/%s\" \"${DOMAIN}\" \"${NEW_ORG}\" \"${REPO}\"; }; add_remote() { REMOTE_NAME=\"${1}\"; if [ $# -lt 2 ]; then NEW_ORG=\"${REMOTE_NAME}\"; else NEW_ORG=\"${2}\"; fi; git remote add \"${REMOTE_NAME}\" \"$(generate_remote \"${NEW_ORG}\")\"; }; add_remote"
 [color]
     diff = auto
     status = auto
