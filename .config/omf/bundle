@@ -1,0 +1,6 @@
+package autovenv
+package python
+theme agnoster
+theme bobthefish
+theme cbjohnson
+theme default

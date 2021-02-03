@@ -1,6 +1,7 @@
 [user]
     name = Jacob House
-    email = me@jwfh.ca
+    email = jacob.house@verafin.com
+    signingkey = 695448925C3FBEAE6B6E67DA1D2CB04CCC749789
 [sequence]
     editor = vim
 [alias]

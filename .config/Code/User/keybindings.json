@@ -1,0 +1,12 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key":"cmd+r",
+        "command":"workbench.action.reloadWindow",
+        "when":"editorTextFocus"
+    },
+    {
+        "key":"cmd+0",
+        "command":"workbench.action.zoomReset",
+    }
+]

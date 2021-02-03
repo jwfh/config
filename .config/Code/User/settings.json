@@ -1,0 +1,147 @@
+{
+  // Adjust the zoom level of the window. The original size is 0 and each increment above (e.g. 1) or below (e.g. -1) represents zooming 20% larger or smaller. You can also enter decimals to adjust the zoom level with a finer granularity.
+  "window.zoomLevel": 1,
+  // Enable Emmet abbreviations in languages that are not supported by default. Add a mapping here between the language and emmet supported language.
+  //  E.g.: `{"vue-html": "html", "javascript": "javascriptreact"}`
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "jsx": "html"
+  },
+  // Controls whether the editor should automatically format the pasted content. A formatter must be available and the formatter should be able to format a range in a document.
+  "editor.formatOnPaste": true,
+  // Format a file on save. A formatter must be available, the file must not be saved after delay, and the editor must not be shutting down.
+  "editor.formatOnSave": true,
+  // The number of spaces a tab is equal to. This setting is overridden based on the file contents when `editor.detectIndentation` is on.
+  "editor.tabSize": 2,
+  // Controls whether `editor.tabSize#` and `#editor.insertSpaces` will be automatically detected when a file is opened based on the file contents.
+  "editor.detectIndentation": true,
+  // Number of spaces it should use per tab
+  "prettier.tabWidth": 2,
+  // Controls the printing of trailing commas wherever possible.
+  //  Valid options:
+  //     'none' - No trailing commas
+  //     'es5' - Trailing commas where valid in ES5 (objects, arrays, etc)
+  //     'all' - Trailing commas wherever possible (function arguments)
+  "prettier.trailingComma": "all",
+  // Include parentheses around a sole arrow function parameter
+  "prettier.arrowParens": "always",
+  // Specify the global whitespace sensitivity for HTML files.
+  //  Valid options:
+  // 'css' - Respect the default value of CSS display property.
+  // 'strict' - Whitespaces are considered sensitive.
+  // 'ignore' - Whitespaces are considered insensitive.
+  "prettier.htmlWhitespaceSensitivity": "strict",
+  // Specify the end of line used by prettier
+  "prettier.endOfLine": "lf",
+  // If true, will use single instead of double quotes
+  "prettier.singleQuote": true,
+  // Controls the font size in pixels.
+  "editor.fontSize": 13,
+  // Enables/Disables font ligatures.
+  "editor.fontLigatures": true,
+  // Controls how the editor should render whitespace characters.
+  //  - none
+  //  - boundary: Render whitespace characters except for single spaces between words.
+  //  - all
+  "editor.renderWhitespace": "boundary",
+  // Controls how lines should wrap.
+  //  - off: Lines will never wrap.
+  //  - on: Lines will wrap at the viewport width.
+  //  - wordWrapColumn: Lines will wrap at `editor.wordWrapColumn`.
+  //  - bounded: Lines will wrap at the minimum of viewport and `editor.wordWrapColumn`.
+  "editor.wordWrap": "on",
+  // Specifies the color theme used in the workbench.
+  "workbench.colorTheme": "Gruvbox Dark (Medium)",
+  "git.autofetch": true,
+  "git.defaultCloneDirectory": "$HOME/Repositories",
+  "git.detectSubmodulesLimit": 50,
+  "git.showPushSuccessNotification": true,
+  // Whether to lint Python files.
+  "python.linting.enabled": true,
+  // Arguments passed in. Each argument is a separate item in the array.
+  "python.linting.flake8Args": [],
+  // Severity of Flake8 message type 'E'.
+  "python.linting.flake8CategorySeverity.E": "Error",
+  // Severity of Flake8 message type 'F'.
+  "python.linting.flake8CategorySeverity.F": "Error",
+  // Severity of Flake8 message type 'W'.
+  "python.linting.flake8CategorySeverity.W": "Warning",
+  // Whether to lint Python files using flake8
+  "python.linting.flake8Enabled": true,
+  // Path to flake8, you can use a custom version of flake8 by modifying this setting to include the full path.
+  "python.linting.flake8Path": "flake8",
+  // Patterns used to exclude files or folders from being linted.
+  "python.linting.ignorePatterns": [".vscode/*.py", "**/site-packages/**/*.py"],
+  // Whether to lint Python files when saved.
+  "python.linting.lintOnSave": true,
+  "prettier.bracketSpacing": false,
+  "[javascriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[c]": {
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 8
+  },
+  "[c++]": {
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 8
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "python.formatting.blackArgs": ["-l100"],
+  "python.formatting.provider": "black",
+  "files.associations": {
+    "*.mk": "makefile"
+  },
+  "[makefile]": {
+    "editor.tabSize": 8
+  },
+  "[dockerfile]": {
+    "editor.formatOnSave": false
+  },
+  "yaml.customTags": [
+    "!And",
+    "!And sequence",
+    "!If",
+    "!If sequence",
+    "!Not",
+    "!Not sequence",
+    "!Equals",
+    "!Equals sequence",
+    "!Or",
+    "!Or sequence",
+    "!FindInMap",
+    "!FindInMap sequence",
+    "!Base64",
+    "!Join",
+    "!Join sequence",
+    "!Cidr",
+    "!Ref",
+    "!Sub",
+    "!Sub sequence",
+    "!GetAtt",
+    "!GetAZs",
+    "!ImportValue",
+    "!ImportValue sequence",
+    "!Select",
+    "!Select sequence",
+    "!Split",
+    "!Split sequence"
+  ],
+  "yaml.validate": false,
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
