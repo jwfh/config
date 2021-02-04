@@ -1,2 +1,3 @@
 SCRIPT=	ical
-.include "../../Mk/config.subdir.mk"
+
+.include "../Mk/config.subdir.mk"

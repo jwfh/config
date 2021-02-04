@@ -1,7 +1,10 @@
 BASENAME=	${:!command -v basename!}
 COMMAND=	${:!command -v command!}
 ECHO=		${:!command -v echo!}
+ED=		${:!command -v ed!}
 CAT=		${:!command -v cat!}
+GIT=		${:!command -v git!}
+GREP=		${:!command -v grep!} -E
 MKDIR=		${:!command -v mkdir!} -p
 LN=		${:!command -v ln!}
 TAR=		${:!command -v tar!}
@@ -45,7 +48,9 @@ SCRIPTSGRP?=	${BINGRP}
 SCRIPTSMODE?=	${BINMODE}
 
 PROG_INSTALL_OWN?= 	-o ${BINOWN} -g ${BINGRP}
+LIB_INSTALL_OWN?= 	-o ${BINOWN} -g ${BINGRP}
 SCRIPTS_INSTALL_OWN?= 	-o ${SCRIPTSOWN} -g ${SCRIPTSGRP}
+LIB_COPY?= 		-C
 SCRIPTS_COPY?= 		-C
 
 str_RED!=	${TPUT} setaf 1
@@ -57,3 +62,5 @@ INFO=	${ECHO} '${str_GREEN}INFO:${str_NC}'
 WARN=	${ECHO} '${str_YELLOW}WARNING:${str_NC}'
 ERROR=	${ECHO} '${str_RED}ERROR:${str_NC}'
 
+
+REPO_ROOT!=	${GIT} rev-parse --show-toplevel
